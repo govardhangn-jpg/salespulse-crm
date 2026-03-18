@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesPulse CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0b0d12;--bg2:#10131a;--bg3:#161922;--bg4:#1e222e;--bg5:#252a38;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);--border3:rgba(255,255,255,0.18);
+  --text:#dde2ee;--text2:#8891aa;--text3:#4d5570;
+  --accent:#3b82f6;--accent-light:rgba(59,130,246,0.15);--accent-border:rgba(59,130,246,0.35);
+  --green:#10b981;--green-bg:rgba(16,185,129,0.12);--green-border:rgba(16,185,129,0.3);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.12);--amber-border:rgba(245,158,11,0.3);
+  --red:#ef4444;--red-bg:rgba(239,68,68,0.12);--red-border:rgba(239,68,68,0.3);
+  --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.12);
+  --teal:#14b8a6;--teal-bg:rgba(20,184,166,0.12);
+  --radius:10px;--radius-sm:6px;--radius-lg:14px;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;--font-mono:'DM Mono',monospace;
+  --sidebar-w:230px;--tr:0.18s ease;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);display:flex;font-size:13.5px;line-height:1.5;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:4px;}
+
+/* ── LOGIN SCREEN ─────────────────────────────────── */
+#loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;}
+#loginScreen.hidden{display:none;}
+.login-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:36px 40px;width:380px;box-shadow:0 24px 60px rgba(0,0,0,0.5);}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.login-logo-badge{width:38px;height:38px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;}
+.login-logo-badge svg{width:20px;height:20px;}
+.login-logo-name{font-family:var(--font-head);font-size:18px;font-weight:700;color:#fff;}
+.login-title{font-family:var(--font-head);font-size:20px;font-weight:600;color:#fff;margin-bottom:6px;}
+.login-sub{font-size:13px;color:var(--text3);margin-bottom:24px;}
+.login-hint{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.7;}
+.login-hint strong{color:var(--accent);}
+.login-error{background:var(--red-bg);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:9px 12px;font-size:12.5px;color:var(--red);margin-bottom:14px;display:none;}
+
+/* ── SIDEBAR ──────────────────────────────────────── */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:10;}
+.sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);}
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.logo-badge{width:34px;height:34px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo-badge svg{width:18px;height:18px;}
+.logo-name{font-family:var(--font-head);font-size:16px;font-weight:700;letter-spacing:-0.3px;color:#fff;}
+.logo-tag{font-size:10px;color:var(--text3);letter-spacing:0.5px;margin-top:1px;}
+.nav{flex:1;padding:10px 8px;overflow-y:auto;}
+.nav-group{margin-bottom:18px;}
+.nav-group-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;padding:0 8px;margin-bottom:5px;font-weight:500;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--tr);color:var(--text2);font-size:13px;position:relative;}
+.nav-item:hover{background:var(--bg4);color:var(--text);}
+.nav-item.active{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-border);}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-family:var(--font-mono);}
+.nav-badge.amber{background:var(--amber);color:#000;}
+.sidebar-footer{padding:12px 8px;border-top:1px solid var(--border);}
+.user-card{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:12px;font-weight:700;flex-shrink:0;}
+.avatar.admin{background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;}
+.avatar.sales{background:linear-gradient(135deg,#10b981,#14b8a6);color:#fff;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:10.5px;color:var(--text3);}
+.logout-btn{width:28px;height:28px;border-radius:6px;background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);transition:all var(--tr);flex-shrink:0;}
+.logout-btn:hover{background:var(--red-bg);color:var(--red);border-color:var(--red-border);}
+
+/* ── MAIN ─────────────────────────────────────────── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:52px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;background:var(--bg2);}
+.topbar-title{font-family:var(--font-head);font-size:15px;font-weight:600;color:#fff;letter-spacing:-0.2px;}
+.topbar-breadcrumb{font-size:12px;color:var(--text3);}
+.spacer{flex:1;}
+.topbar-actions{display:flex;align-items:center;gap:8px;}
+.notif-btn{position:relative;width:34px;height:34px;border-radius:var(--radius-sm);background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--tr);}
+.notif-btn:hover{background:var(--bg5);}
+.notif-btn svg{width:16px;height:16px;color:var(--text2);}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid var(--bg2);}
+.content{flex:1;overflow:hidden;display:flex;position:relative;}
+.page{display:none;flex:1;overflow-y:auto;padding:22px 24px;}
+.page.active{display:block;}
+
+/* ── BUTTONS ──────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all var(--tr);white-space:nowrap;}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.btn-primary:hover{background:#2563eb;}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-secondary{background:var(--bg4);color:var(--text);border-color:var(--border2);}
+.btn-secondary:hover{background:var(--bg5);}
+.btn-ghost{background:transparent;color:var(--text2);border-color:transparent;}
+.btn-ghost:hover{background:var(--bg4);color:var(--text);}
+.btn-danger{background:var(--red-bg);color:var(--red);border-color:var(--red-border);}
+.btn-danger:hover{background:rgba(239,68,68,0.22);}
+.btn-success{background:var(--green-bg);color:var(--green);border-color:var(--green-border);}
+.btn-sm{padding:5px 10px;font-size:12px;}
+.btn svg{width:14px;height:14px;}
+
+/* ── FORMS ────────────────────────────────────────── */
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px;letter-spacing:0.2px;}
+.form-label.required::after{content:' *';color:var(--red);}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],input[type=datetime-local],input[type=password],select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 11px;color:var(--text);font-family:var(--font-body);font-size:13px;transition:border-color var(--tr),box-shadow var(--tr);outline:none;-webkit-appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent-border);box-shadow:0 0 0 3px var(--accent-light);}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238891aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;cursor:pointer;}
+select option{background:var(--bg3);}
+textarea{resize:vertical;min-height:80px;line-height:1.5;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* ── CARDS ────────────────────────────────────────── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-family:var(--font-head);font-size:14px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px;}
+.card-title svg{width:16px;height:16px;color:var(--accent);}
+
+/* ── STATS ────────────────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:500;}
+.stat-value{font-family:var(--font-head);font-size:26px;font-weight:700;color:#fff;line-height:1;}
+.stat-sub{font-size:11px;color:var(--text2);margin-top:5px;}
+.stat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:2px 7px;border-radius:10px;margin-top:4px;}
+.stat-badge.up{background:var(--green-bg);color:var(--green);}
+.stat-badge.warn{background:var(--amber-bg);color:var(--amber);}
+
+/* ── TABLE ────────────────────────────────────────── */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead{background:var(--bg3);}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tbody tr{transition:background var(--tr);cursor:pointer;}
+tbody tr:hover{background:var(--bg3);}
+tbody tr.low-stock{background:rgba(239,68,68,0.04);}
+tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
+
+/* ── BADGES ───────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;}
+.badge-blue{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-border);}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.badge-purple{background:var(--purple-bg);color:var(--purple);}
+.badge-teal{background:var(--teal-bg);color:var(--teal);}
+.badge-gray{background:var(--bg4);color:var(--text2);border:1px solid var(--border2);}
+
+/* ── SEARCH / FILTER ──────────────────────────────── */
+.search-bar{display:flex;align-items:center;gap:10px;padding:0 0 16px;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;min-width:200px;max-width:300px;}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text3);}
+.search-wrap input{padding-left:34px;}
+.filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.filter-bar select{width:auto;padding:7px 28px 7px 10px;}
+
+/* ── TABS ─────────────────────────────────────────── */
+.tab-bar{display:flex;gap:2px;border-bottom:1px solid var(--border);margin-bottom:18px;}
+.tab{padding:9px 16px;font-size:13px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all var(--tr);font-weight:500;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ── MODAL ────────────────────────────────────────── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:100;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:560px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,0.5);}
+.modal-lg{width:720px;}
+.modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-title{font-family:var(--font-head);font-size:15px;font-weight:600;color:#fff;}
+.modal-close{width:28px;height:28px;border-radius:6px;background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:16px;transition:background var(--tr);}
+.modal-close:hover{background:var(--bg5);}
+.modal-body{padding:20px;overflow-y:auto;flex:1;}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;}
+
+/* ── NOTIFICATION PANEL ───────────────────────────── */
+.notif-panel{position:absolute;top:0;right:0;bottom:0;width:340px;background:var(--bg2);border-left:1px solid var(--border);z-index:50;transform:translateX(100%);transition:transform 0.2s ease;display:flex;flex-direction:column;}
+.notif-panel.open{transform:translateX(0);}
+.notif-panel-header{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.notif-panel-title{font-family:var(--font-head);font-size:14px;font-weight:600;color:#fff;}
+.notif-list{flex:1;overflow-y:auto;padding:8px;}
+.notif-item{padding:12px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:6px;cursor:pointer;transition:background var(--tr);}
+.notif-item:hover{background:var(--bg3);}
+.notif-item.unread{border-color:var(--accent-border);background:var(--accent-light);}
+.notif-item-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
+.notif-item-sub{font-size:12px;color:var(--text3);}
+.notif-time{font-size:11px;color:var(--text3);margin-top:5px;font-family:var(--font-mono);}
+
+/* ── DETAIL PANEL ─────────────────────────────────── */
+.detail-panel{width:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:width 0.2s ease;flex-shrink:0;}
+.detail-panel.open{width:380px;}
+.detail-panel-header{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.detail-close{width:28px;height:28px;border-radius:6px;background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);margin-left:auto;flex-shrink:0;}
+.detail-close:hover{background:var(--bg5);}
+.detail-body{flex:1;overflow-y:auto;padding:14px 18px;}
+.detail-section{margin-bottom:16px;}
+.detail-section-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.6px;font-weight:600;margin-bottom:8px;}
+.detail-row{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
+.detail-row:last-child{border-bottom:none;}
+.detail-key{font-size:12px;color:var(--text3);width:110px;flex-shrink:0;padding-top:1px;}
+.detail-val{font-size:13px;color:var(--text);flex:1;}
+
+/* ── INTERACTION LOG ──────────────────────────────── */
+.interaction-item{padding:14px 16px;border-radius:var(--radius);border:1px solid var(--border);margin-bottom:10px;background:var(--bg3);}
+.interaction-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.call-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.interaction-body{font-size:13px;color:var(--text2);line-height:1.5;}
+.next-action-bar{margin-top:10px;padding:8px 12px;background:var(--bg4);border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px;}
+.next-action-bar svg{width:14px;height:14px;color:var(--amber);}
+.next-action-text{font-size:12px;color:var(--text2);flex:1;}
+.next-action-date{font-size:11px;font-family:var(--font-mono);color:var(--amber);}
+
+/* ── INVENTORY ────────────────────────────────────── */
+.stock-bar{width:60px;height:5px;background:var(--bg5);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px;}
+.stock-fill{height:100%;border-radius:3px;}
+
+/* ── SLOTS ────────────────────────────────────────── */
+.slots-container{display:flex;flex-direction:column;gap:6px;}
+.slot-row{display:flex;gap:6px;align-items:center;}
+.slot-row input,.slot-row select{flex:1;}
+.slot-remove{width:28px;height:28px;border-radius:5px;background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.slot-remove:hover{background:rgba(239,68,68,0.25);}
+.add-slot-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--radius-sm);border:1px dashed var(--border2);color:var(--text3);font-size:12px;cursor:pointer;transition:all var(--tr);background:transparent;font-family:var(--font-body);margin-top:6px;}
+.add-slot-btn:hover{border-color:var(--accent-border);color:var(--accent);background:var(--accent-light);}
+
+/* ── MISC ─────────────────────────────────────────── */
+.pending-flag{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--radius-sm);padding:8px 12px;display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:12px;color:var(--amber);}
+.pending-flag svg{width:14px;height:14px;flex-shrink:0;}
+.template-selector{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-title{font-family:var(--font-head);font-size:15px;font-weight:600;color:#fff;letter-spacing:-0.2px;}
+.section-sub{font-size:12px;color:var(--text3);margin-top:1px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.activity-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+.activity-text{font-size:13px;color:var(--text);}
+.activity-time{font-size:11px;color:var(--text3);font-family:var(--font-mono);margin-top:2px;}
+.upcoming-item{padding:10px 12px;border-radius:var(--radius-sm);background:var(--bg3);border:1px solid var(--border);margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.upcoming-date{font-size:11px;font-family:var(--font-mono);color:var(--amber);width:90px;flex-shrink:0;}
+.upcoming-title{font-size:13px;color:var(--text);font-weight:500;}
+.upcoming-sub{font-size:11.5px;color:var(--text3);}
+.approval-item{display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:var(--radius);border:1px solid var(--border);margin-bottom:10px;background:var(--bg3);}
+.approval-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.approval-content{flex:1;min-width:0;}
+.approval-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
+.approval-meta{font-size:12px;color:var(--text3);}
+.typeahead-wrap{position:relative;}
+.typeahead-list{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);z-index:30;max-height:200px;overflow-y:auto;display:none;}
+.typeahead-list.open{display:block;}
+.typeahead-item{padding:8px 12px;cursor:pointer;font-size:13px;color:var(--text);transition:background var(--tr);}
+.typeahead-item:hover{background:var(--accent-light);color:var(--accent);}
+.typeahead-item-sub{font-size:11px;color:var(--text3);}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-row td{text-align:center;color:var(--text3);padding:30px;}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3);}
+.empty-state svg{width:40px;height:40px;margin-bottom:12px;opacity:0.3;}
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;}
+.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 15px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;min-width:260px;box-shadow:0 8px 24px rgba(0,0,0,0.3);animation:slideIn 0.2s ease;}
+.toast.success{border-color:var(--green-border);}
+.toast.warning{border-color:var(--amber-border);}
+.toast.error{border-color:var(--red-border);}
+@keyframes slideIn{from{transform:translateX(40px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes fadeOut{to{transform:translateX(40px);opacity:0;}}
+.toast.out{animation:fadeOut 0.2s ease forwards;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ LOGIN SCREEN ══════════════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <div class="login-logo-name">SalesPulse CRM</div>
+    </div>
+    <div class="login-title">Welcome back</div>
+    <div class="login-sub">Sign in to your account to continue</div>
+    <div class="login-hint">
+      <strong>Admin:</strong> admin@salespulse.com<br>
+      <strong>Sales (MH/KA):</strong> priya@salespulse.com<br>
+      <strong>Sales (GJ):</strong> rahul@salespulse.com<br>
+      All passwords: <strong>Password@123</strong>
+    </div>
+    <div class="login-error" id="loginError"></div>
+    <div class="form-group"><label class="form-label required">Email</label><input type="email" id="loginEmail" value="admin@salespulse.com" placeholder="you@company.com"></div>
+    <div class="form-group"><label class="form-label required">Password</label><input type="password" id="loginPassword" value="Password@123" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;" id="loginBtn" onclick="doLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- ══════════════════ APP SHELL ══════════════════ -->
+<aside class="sidebar" id="appSidebar">
+  <div class="sidebar-logo">
+    <div class="logo-wrap">
+      <div class="logo-badge"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <div><div class="logo-name">SalesPulse</div><div class="logo-tag">CRM Platform</div></div>
+    </div>
+  </div>
+  <nav class="nav">
+    <div class="nav-group">
+      <div class="nav-group-label">Main</div>
+      <div class="nav-item active" onclick="navigate('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
+      </div>
+      <div class="nav-item" onclick="navigate('customers',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Customers
+      </div>
+      <div class="nav-item" onclick="navigate('interactions',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Interactions
+      </div>
+      <div class="nav-item" onclick="navigate('inventory',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory
+        <span class="nav-badge amber" id="navLowStock" style="display:none">0</span>
+      </div>
+    </div>
+    <div class="nav-group admin-only" style="display:none">
+      <div class="nav-group-label">Administration</div>
+      <div class="nav-item" onclick="navigate('approvals',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Approvals
+        <span class="nav-badge" id="navPending" style="display:none">0</span>
+      </div>
+      <div class="nav-item" onclick="navigate('users',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>User Management
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar" id="userAvatar">AK</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebarUserName">Loading…</div>
+        <div class="user-role" id="sidebarUserRole"></div>
+      </div>
+      <div class="logout-btn" onclick="doLogout()" title="Logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="main" id="appMain">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="pageTitle">Dashboard</div>
+      <div class="topbar-breadcrumb" id="pageBreadcrumb">Overview</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="topbar-actions">
+      <button class="btn btn-primary btn-sm" onclick="openModal('newCustomerModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Customer
+      </button>
+      <button class="btn btn-secondary btn-sm" onclick="openModal('logInteractionModal')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Log Interaction
+      </button>
+      <div class="notif-btn" onclick="toggleNotifPanel()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="notif-dot" id="notifDot" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Total Customers</div><div class="stat-value" id="statCustomers">—</div><div class="stat-badge up" id="statCustomersBadge"></div></div>
+        <div class="stat-card"><div class="stat-label">Active Leads</div><div class="stat-value" id="statLeads">—</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Approvals</div><div class="stat-value" id="statPending">—</div><div class="stat-sub admin-only" style="display:none">Requires admin action</div></div>
+        <div class="stat-card"><div class="stat-label">Low Stock Alerts</div><div class="stat-value" id="statLowStock">—</div><div class="stat-sub">Below threshold</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header"><div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Upcoming Actions</div></div>
+          <div id="upcomingList"><div class="empty-state"><div class="spinner"></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Recent Activity</div></div>
+          <div id="activityFeed"><div class="empty-state"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMERS -->
+    <div class="page" id="page-customers" style="display:flex;flex-direction:row;gap:0;padding:0;overflow:hidden;">
+      <div style="flex:1;overflow-y:auto;padding:22px 24px;min-width:0;">
+        <div class="section-header">
+          <div><div class="section-title">Customers</div><div class="section-sub" id="customerFilterLabel">Loading…</div></div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('newCustomerModal')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Customer
+          </button>
+        </div>
+        <div class="search-bar">
+          <div class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search customers…" id="customerSearch" oninput="debounceLoadCustomers()"></div>
+          <div class="filter-bar">
+            <select id="filterState" onchange="loadCustomers()"><option value="">All States</option><option>Maharashtra</option><option>Gujarat</option><option>Karnataka</option><option>Tamil Nadu</option><option>Delhi</option></select>
+            <select id="filterStatus" onchange="loadCustomers()"><option value="">All Status</option><option value="active">Active</option><option value="pending">Pending</option></select>
+            <select id="filterCompetition" onchange="loadCustomers()"><option value="">All Types</option><option value="New Account">New Account</option><option value="Existing Account">Existing Account</option><option value="Competitor Account">Competitor</option></select>
+          </div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Customer</th><th>Segment</th><th>State</th><th>Type</th><th>Salesperson</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="customerTableBody"><tr class="loading-row"><td colspan="7"><div class="spinner"></div></td></tr></tbody>
+        </table></div>
+      </div>
+      <div class="detail-panel" id="customerDetailPanel">
+        <div class="detail-panel-header">
+          <div class="avatar admin" id="detailAvatar">AP</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-family:var(--font-head);font-size:14px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="detailName"></div>
+            <div style="font-size:12px;color:var(--text3);" id="detailMeta"></div>
+          </div>
+          <div class="detail-close" onclick="closeDetailPanel()">✕</div>
+        </div>
+        <div class="detail-body">
+          <div class="tab-bar">
+            <div class="tab active" onclick="switchDetailTab('info',this)">Info</div>
+            <div class="tab" onclick="switchDetailTab('contacts',this)">Contacts</div>
+            <div class="tab" onclick="switchDetailTab('products',this)">Products</div>
+            <div class="tab" onclick="switchDetailTab('competitors',this)">Competitors</div>
+          </div>
+          <div id="detailTabContent"></div>
+        </div>
+        <div style="padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" style="flex:1;" onclick="openInteractionForCustomer()">Log Interaction</button>
+          <button class="btn btn-danger btn-sm admin-only" id="deleteCustomerBtn" style="display:none" onclick="deleteCurrentCustomer()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERACTIONS -->
+    <div class="page" id="page-interactions">
+      <div class="section-header">
+        <div><div class="section-title">Interaction Log</div><div class="section-sub">All recorded calls, demos &amp; follow-ups</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('logInteractionModal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Log Interaction
+        </button>
+      </div>
+      <div class="search-bar">
+        <div class="filter-bar">
+          <select id="filterCallType" onchange="loadInteractions()"><option value="">All Call Types</option><option>Cold Call</option><option>Follow-up</option><option>Technical Support</option><option>Demo</option><option>Closing</option></select>
+        </div>
+      </div>
+      <div id="interactionsList"><div class="empty-state"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="page" id="page-inventory">
+      <div class="section-header">
+        <div><div class="section-title">Inventory Tracking</div><div class="section-sub">Stock levels at customer/dealer sites</div></div>
+        <button class="btn btn-secondary btn-sm" id="filterLowStockBtn" onclick="toggleLowStockFilter()">Show Low Stock Only</button>
+      </div>
+      <div id="lowStockAlert" style="display:none" class="pending-flag" style="border-color:var(--red-border);background:var(--red-bg);color:var(--red);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span id="lowStockAlertText"></span>
+      </div>
+      <div class="table-wrap" style="margin-top:12px;">
+        <table><thead><tr><th>Customer</th><th>Product</th><th>Group</th><th>Current Stock</th><th>Threshold</th><th>Level</th><th>Updated</th><th>Actions</th></tr></thead>
+        <tbody id="inventoryTableBody"><tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- APPROVALS (admin) -->
+    <div class="page" id="page-approvals">
+      <div class="section-header"><div><div class="section-title">Approval Queue</div><div class="section-sub">Pending customer registrations &amp; new product requests</div></div></div>
+      <div class="tab-bar">
+        <div class="tab active" onclick="loadApprovals('customers',this)">New Customers <span class="badge badge-amber" id="pendingCustCount" style="margin-left:6px;"></span></div>
+        <div class="tab" onclick="loadApprovals('products',this)">New Products <span class="badge badge-amber" id="pendingProdCount" style="margin-left:6px;"></span></div>
+      </div>
+      <div id="approvalContent"><div class="empty-state"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- USERS (admin) -->
+    <div class="page" id="page-users">
+      <div class="section-header">
+        <div><div class="section-title">User Management</div><div class="section-sub">State-to-user mapping &amp; access control</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('newUserModal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>User</th><th>Role</th><th>Assigned States</th><th>Last Login</th><th>Actions</th></tr></thead>
+        <tbody id="userTableBody"><tr class="loading-row"><td colspan="5"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- NOTIFICATION PANEL -->
+    <div class="notif-panel" id="notifPanel">
+      <div class="notif-panel-header">
+        <div class="notif-panel-title">Notifications</div>
+        <button class="btn btn-ghost btn-sm" onclick="markAllNotifRead()">Mark all read</button>
+      </div>
+      <div class="notif-list" id="notifList"><div class="empty-state"><div class="spinner"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODALS ══════════════════ -->
+
+<!-- NEW CUSTOMER -->
+<div class="modal-overlay" id="newCustomerModal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title">New Customer Request</div><div class="modal-close" onclick="closeModal('newCustomerModal')">✕</div></div>
+    <div class="modal-body">
+      <div class="pending-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>This submission will remain <strong style="margin:0 3px;">Pending</strong> until approved by an Admin.</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label required">Company Name</label><input type="text" id="nc_name" placeholder="e.g. Apex Manufacturing Pvt Ltd"></div>
+        <div class="form-group"><label class="form-label required">Segment</label>
+          <select id="nc_segment">
+            <option value="">Select segment…</option>
+            <optgroup label="Industry"><option value="Industry:Manufacturing">Manufacturing</option><option value="Industry:Pharma">Pharma</option><option value="Industry:Automotive">Automotive</option><option value="Industry:Textiles">Textiles</option></optgroup>
+            <optgroup label="Size"><option value="Size:Enterprise">Enterprise</option><option value="Size:Mid-Market">Mid-Market</option><option value="Size:SME">SME</option></optgroup>
+            <optgroup label="Services"><option value="Services:IT Services">IT Services</option><option value="Services:Retail">Retail</option></optgroup>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Unit / Plant</label>
+          <select id="nc_unit"><option>Unit 1</option><option>Unit 2</option><option>Unit 3</option><option>Plant - Pune</option><option>Plant - Nashik</option><option>Plant - Ahmedabad</option><option>Plant - Chennai</option><option>Plant - Bengaluru</option></select>
+        </div>
+        <div class="form-group"><label class="form-label required">Competition Type</label>
+          <select id="nc_competition"><option value="">Select…</option><option>New Account</option><option>Existing Account</option><option>Competitor Account</option></select>
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group" style="grid-column:span 2"><label class="form-label required">Address</label><input type="text" id="nc_street" placeholder="Street address"></div>
+        <div class="form-group"><label class="form-label required">PIN Code</label><input type="text" id="nc_pin" placeholder="400001" maxlength="6"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label required">State</label>
+          <select id="nc_state"><option value="">Select state…</option><option>Maharashtra</option><option>Gujarat</option><option>Karnataka</option><option>Tamil Nadu</option><option>Delhi</option><option>Rajasthan</option><option>Uttar Pradesh</option><option>Telangana</option><option>Goa</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">City</label><input type="text" id="nc_city" placeholder="City"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contacts <span style="color:var(--text3);font-weight:400">(up to 10)</span></label>
+        <div class="slots-container" id="nc_contactSlots">
+          <div class="slot-row"><input type="text" placeholder="Name" style="flex:1.2"><input type="tel" placeholder="Phone"><input type="text" placeholder="Designation"><div class="slot-remove" onclick="removeSlot(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+        </div>
+        <button type="button" class="add-slot-btn" onclick="addContactSlot('nc_contactSlots')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Contact</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Competitors <span style="color:var(--text3);font-weight:400">(up to 5)</span></label>
+        <div class="slots-container" id="nc_competitorSlots">
+          <div class="slot-row"><input type="text" placeholder="Competitor name"><input type="text" placeholder="Notes"><div class="slot-remove" onclick="removeSlot(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+        </div>
+        <button type="button" class="add-slot-btn" onclick="addCompetitorSlot('nc_competitorSlots')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Competitor</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('newCustomerModal')">Cancel</button>
+      <button class="btn btn-primary" id="submitCustomerBtn" onclick="submitNewCustomer()">Submit for Approval</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOG INTERACTION -->
+<div class="modal-overlay" id="logInteractionModal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title">Log Interaction</div><div class="modal-close" onclick="closeModal('logInteractionModal')">✕</div></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required">Customer</label>
+          <div class="typeahead-wrap">
+            <input type="text" id="li_customerSearch" placeholder="Type to search…" oninput="customerTypeahead(this)" onclick="customerTypeahead(this)" autocomplete="off">
+            <div class="typeahead-list" id="li_customerList"></div>
+            <input type="hidden" id="li_customerId">
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label required">Date &amp; Time</label><input type="datetime-local" id="li_date"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Product Group</label>
+          <select id="li_productGroup" onchange="loadProductsForGroup(this.value)">
+            <option value="">Select group…</option><option>Hardware</option><option>Software</option><option>Consumables</option><option>Services</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Product</label>
+          <select id="li_product" onchange="handleProductSelect(this.value)"><option value="">Select group first…</option></select>
+          <div id="li_newProductWrap" style="display:none;margin-top:6px;">
+            <div class="pending-flag" style="margin-bottom:6px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>New product — will be flagged pending for admin approval.</div>
+            <input type="text" id="li_newProductName" placeholder="Enter new product name…">
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Stock at Site (consumables)</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="number" id="li_stock" placeholder="Units" style="max-width:110px;" oninput="checkStockAlert()">
+            <input type="number" id="li_threshold" placeholder="Threshold" style="max-width:110px;">
+            <span id="li_stockBadge"></span>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label required">Call Type</label>
+          <select id="li_callType"><option value="">Select…</option><option>Cold Call</option><option>Follow-up</option><option>Technical Support</option><option>Demo</option><option>Closing</option><option>Site Visit</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Send Intro Email</label>
+        <button type="button" class="btn btn-secondary" onclick="previewEmail()" style="width:100%;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Preview &amp; Send Template
+        </button>
+      </div>
+      <div class="form-group">
+        <div class="template-selector">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <select onchange="applyQuickNote(this.value)" style="background:transparent;border:none;color:var(--amber);padding:0;font-size:12px;flex:1;">
+            <option value="">⚡ Quick Note Templates…</option>
+            <option value="Customer not available">Customer not available</option>
+            <option value="Interested in trial">Interested in trial</option>
+            <option value="Price too high — needs revision">Price too high — needs revision</option>
+            <option value="Requested a demo">Requested a demo</option>
+            <option value="Waiting for decision maker">Waiting for decision maker</option>
+            <option value="Using competitor product">Using competitor product</option>
+            <option value="Requested callback">Requested callback</option>
+          </select>
+        </div>
+        <label class="form-label">Notes</label>
+        <textarea id="li_notes" rows="3" placeholder="Enter notes…"></textarea>
+      </div>
+      <div style="padding:14px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border);">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Next Action Plan</div>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0"><label class="form-label">Action Type</label>
+            <select id="li_nextActionType"><option value="">Select…</option><option>Schedule Demo</option><option>Send Quote</option><option>Trial Follow-up</option><option>Cold Call</option><option>Site Visit</option><option>Close Deal</option><option>Send Proposal</option></select>
+          </div>
+          <div class="form-group" style="margin-bottom:0"><label class="form-label">Due Date &amp; Time</label><input type="datetime-local" id="li_nextActionDate"></div>
+        </div>
+        <div style="margin-top:10px;padding:8px 10px;background:var(--accent-light);border-radius:var(--radius-sm);border:1px solid var(--accent-border);font-size:11.5px;color:var(--accent);display:flex;align-items:center;gap:7px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Reminder will be sent 15 minutes before via in-app notification and email
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('logInteractionModal')">Cancel</button>
+      <button class="btn btn-primary" id="saveInteractionBtn" onclick="saveInteraction()">Save Interaction</button>
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL PREVIEW -->
+<div class="modal-overlay" id="emailPreviewModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Email Preview</div><div class="modal-close" onclick="closeModal('emailPreviewModal')">✕</div></div>
+    <div class="modal-body"><div id="emailPreviewContent" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;font-size:13px;color:var(--text2);line-height:1.7;"></div></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('emailPreviewModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="sendEmailIntro()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send Email
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW USER -->
+<div class="modal-overlay" id="newUserModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add New User</div><div class="modal-close" onclick="closeModal('newUserModal')">✕</div></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label class="form-label required">Full Name</label><input type="text" id="nu_name" placeholder="Full name"></div><div class="form-group"><label class="form-label required">Email</label><input type="email" id="nu_email" placeholder="email@company.com"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label required">Password</label><input type="password" id="nu_password" placeholder="Min 8 chars"></div><div class="form-group"><label class="form-label">Phone</label><input type="tel" id="nu_phone" placeholder="+91 98765 43210"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label required">Role</label><select id="nu_role"><option value="sales_rep">Sales Rep</option><option value="admin">Admin</option></select></div></div>
+      <div class="form-group"><label class="form-label">Assigned States</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border);" id="nu_statesGrid"></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('newUserModal')">Cancel</button><button class="btn btn-primary" id="saveUserBtn" onclick="saveNewUser()">Create User</button></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// API CLIENT
+// ══════════════════════════════════════════════
+const API = '/api';
+let authToken = localStorage.getItem('sp_token');
+let currentUser = JSON.parse(localStorage.getItem('sp_user') || 'null');
+let selectedCustomerData = null;
+let allActiveCustomers = [];
+let sendEmailOnSave = false;
+
+async function apiCall(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json', ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}) },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  };
+  const res = await fetch(API + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'API error');
+  return data;
+}
+
+// ══════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('loginError');
+  err.style.display = 'none';
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Signing in…';
+  try {
+    const data = await apiCall('POST', '/auth/login', { email, password });
+    authToken = data.token;
+    currentUser = data.data.user;
+    localStorage.setItem('sp_token', authToken);
+    localStorage.setItem('sp_user', JSON.stringify(currentUser));
+    document.getElementById('loginScreen').classList.add('hidden');
+    initApp();
+  } catch (e) {
+    err.textContent = e.message;
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = 'Sign In';
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('sp_token');
+  localStorage.removeItem('sp_user');
+  authToken = null; currentUser = null;
+  location.reload();
+}
+
+// ══════════════════════════════════════════════
+// APP INIT
+// ══════════════════════════════════════════════
+function initApp() {
+  if (!authToken || !currentUser) { document.getElementById('loginScreen').classList.remove('hidden'); return; }
+  document.getElementById('loginScreen').classList.add('hidden');
+
+  // Populate user info in sidebar
+  const isAdmin = currentUser.role === 'admin';
+  document.getElementById('userAvatar').textContent = currentUser.name.split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2);
+  document.getElementById('userAvatar').className = 'avatar ' + (isAdmin ? 'admin' : 'sales');
+  document.getElementById('sidebarUserName').textContent = currentUser.name;
+  document.getElementById('sidebarUserRole').textContent = isAdmin ? 'Administrator' : 'Sales Rep · ' + (currentUser.assignedStates || []).join(', ');
+
+  // Show admin sections
+  document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? '' : 'none');
+  if (isAdmin) document.getElementById('deleteCustomerBtn').style.display = '';
+
+  // Seed states in new user modal
+  const states = ['Maharashtra','Gujarat','Karnataka','Tamil Nadu','Delhi','Rajasthan','Uttar Pradesh','Telangana','Goa'];
+  document.getElementById('nu_statesGrid').innerHTML = states.map(s =>
+    `<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" data-state="${s}" style="width:auto;"> ${s}</label>`
+  ).join('');
+
+  // Set default datetime
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  document.getElementById('li_date').value = now.toISOString().slice(0,16);
+
+  loadDashboard();
+  loadNotifications();
+  // Poll notifications every 60s
+  setInterval(loadNotifications, 60000);
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+const PAGE_META = {
+  dashboard:    { title:'Dashboard', sub:'Overview' },
+  customers:    { title:'Customers', sub:'Manage accounts' },
+  interactions: { title:'Interaction Log', sub:'All calls & follow-ups' },
+  inventory:    { title:'Inventory Tracking', sub:'Stock at edge' },
+  approvals:    { title:'Approval Queue', sub:'Pending items' },
+  users:        { title:'User Management', sub:'Access control' },
+};
+
+function navigate(page, el) {
+  document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = ''; });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + page);
+  if (pg) { pg.classList.add('active'); pg.style.display = page === 'customers' ? 'flex' : 'block'; }
+  if (el) el.classList.add('active');
+  const m = PAGE_META[page] || {};
+  document.getElementById('pageTitle').textContent = m.title || page;
+  document.getElementById('pageBreadcrumb').textContent = m.sub || '';
+  closeDetailPanel();
+
+  if (page === 'dashboard')    loadDashboard();
+  if (page === 'customers')    loadCustomers();
+  if (page === 'interactions') loadInteractions();
+  if (page === 'inventory')    loadInventory();
+  if (page === 'approvals')    { loadApprovals('customers'); loadApprovals('products',null,true); }
+  if (page === 'users')        loadUsers();
+}
+
+// ══════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════
+async function loadDashboard() {
+  try {
+    const [statsData, upcomingData] = await Promise.all([
+      apiCall('GET', '/dashboard/stats'),
+      apiCall('GET', '/interactions/upcoming?days=7'),
+    ]);
+    const s = statsData.data.stats;
+    document.getElementById('statCustomers').textContent = s.totalCustomers;
+    document.getElementById('statLeads').textContent = s.activeLeads;
+    document.getElementById('statPending').textContent = s.pendingApprovals;
+    document.getElementById('statLowStock').textContent = s.lowStockCount;
+
+    // Update nav badges
+    if (s.pendingApprovals > 0) { const nb = document.getElementById('navPending'); nb.textContent = s.pendingApprovals; nb.style.display = ''; }
+    if (s.lowStockCount > 0) { const lb = document.getElementById('navLowStock'); lb.textContent = s.lowStockCount; lb.style.display = ''; }
+
+    // Upcoming actions
+    const ul = document.getElementById('upcomingList');
+    const items = upcomingData.data.interactions;
+    if (!items.length) { ul.innerHTML = '<div class="empty-state" style="padding:20px 0;">No upcoming actions</div>'; }
+    else ul.innerHTML = items.map(i => {
+      const d = new Date(i.nextAction.dueDate);
+      const dateStr = isToday(d) ? 'Today ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : d.toLocaleDateString('en-IN', {day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+      return `<div class="upcoming-item"><div class="upcoming-date">${dateStr}</div><div class="upcoming-content"><div class="upcoming-title">${i.nextAction.type} — ${i.customer?.name}</div><div class="upcoming-sub">${i.salesperson?.name || ''}</div></div></div>`;
+    }).join('');
+
+    // Activity feed
+    const af = document.getElementById('activityFeed');
+    const recent = statsData.data.recentInteractions;
+    if (!recent.length) { af.innerHTML = '<div class="empty-state" style="padding:20px 0;">No recent activity</div>'; }
+    else af.innerHTML = recent.map(i => `
+      <div class="activity-item">
+        <div class="activity-dot" style="background:var(--accent)"></div>
+        <div style="flex:1"><div class="activity-text">${i.callType} logged for <strong>${i.customer?.name || 'Customer'}</strong></div><div class="activity-time">${timeAgo(i.createdAt)}</div></div>
+      </div>`).join('');
+  } catch(e) { showToast('Failed to load dashboard: ' + e.message, 'error'); }
+}
+
+function isToday(d) { const n = new Date(); return d.getDate()===n.getDate()&&d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear(); }
+function timeAgo(ts) {
+  const s = Math.floor((Date.now()-new Date(ts))/1000);
+  if(s<60) return 'just now'; if(s<3600) return Math.floor(s/60)+' min ago';
+  if(s<86400) return Math.floor(s/3600)+' hr ago'; return Math.floor(s/86400)+' days ago';
+}
+
+// ══════════════════════════════════════════════
+// CUSTOMERS
+// ══════════════════════════════════════════════
+let customerDebounce;
+function debounceLoadCustomers() { clearTimeout(customerDebounce); customerDebounce = setTimeout(loadCustomers, 350); }
+
+async function loadCustomers() {
+  const tb = document.getElementById('customerTableBody');
+  tb.innerHTML = '<tr class="loading-row"><td colspan="7"><div class="spinner"></div></td></tr>';
+
+  const params = new URLSearchParams();
+  const search = document.getElementById('customerSearch').value.trim();
+  const state = document.getElementById('filterState').value;
+  const status = document.getElementById('filterStatus').value;
+  const comp = document.getElementById('filterCompetition').value;
+  if (search) params.set('search', search);
+  if (state) params.set('state', state);
+  if (status) params.set('status', status);
+  if (comp) params.set('competition', comp);
+
+  try {
+    const data = await apiCall('GET', '/customers?' + params);
+    const customers = data.data.customers;
+    allActiveCustomers = customers.filter(c => c.status === 'active');
+
+    const isAdmin = currentUser.role === 'admin';
+    document.getElementById('customerFilterLabel').textContent = isAdmin
+      ? `All states — ${data.total} customers`
+      : `Your states (${(currentUser.assignedStates||[]).join(', ')}) — ${data.total} customers`;
+
+    if (!customers.length) {
+      tb.innerHTML = '<tr><td colspan="7"><div class="empty-state">No customers found</div></td></tr>';
+      return;
+    }
+    tb.innerHTML = customers.map(c => {
+      const seg = c.segment ? `${c.segment.value}` : '—';
+      const state = c.address?.state || '—';
+      const sp = c.assignedTo?.name || c.submittedBy?.name || '—';
+      const statusBadge = c.status === 'active' ? 'badge-green' : c.status === 'pending' ? 'badge-amber' : 'badge-gray';
+      const compBadge = c.competition === 'New Account' ? 'badge-green' : c.competition === 'Competitor Account' ? 'badge-red' : 'badge-blue';
+      return `<tr onclick="openCustomerDetail('${c._id}')">
+        <td><div style="font-weight:500;color:#fff;">${c.name}</div><div style="font-size:11px;color:var(--text3);">${c.address?.city || ''}</div></td>
+        <td><span class="badge badge-gray">${seg}</span></td>
+        <td>${state}</td>
+        <td><span class="badge ${compBadge}">${c.competition}</span></td>
+        <td>${sp}</td>
+        <td><span class="badge ${statusBadge}">${c.status}</span></td>
+        <td>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openInteractionForCustomer('${c._id}','${c.name}')">Log</button>
+          ${isAdmin && c.status==='pending' ? `<button class="btn btn-success btn-sm" onclick="event.stopPropagation();approveCustomer('${c._id}','${c.name}')">Approve</button>` : ''}
+          ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteCustomer('${c._id}','${c.name}')">Del</button>` : ''}
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tb.innerHTML = '<tr><td colspan="7" style="color:var(--red);text-align:center;padding:20px;">Error: ' + e.message + '</td></tr>';
+  }
+}
+
+async function openCustomerDetail(id) {
+  try {
+    const data = await apiCall('GET', '/customers/' + id);
+    const c = data.data.customer;
+    selectedCustomerData = c;
+    const initials = c.name.split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2);
+    document.getElementById('detailAvatar').textContent = initials;
+    document.getElementById('detailName').textContent = c.name;
+    document.getElementById('detailMeta').textContent = (c.address?.state || '') + ' · ' + (c.segment?.value || '');
+    document.getElementById('customerDetailPanel').classList.add('open');
+    switchDetailTab('info', document.querySelector('#customerDetailPanel .tab'));
+  } catch(e) { showToast('Failed to load customer: ' + e.message, 'error'); }
+}
+
+function closeDetailPanel() { document.getElementById('customerDetailPanel').classList.remove('open'); selectedCustomerData = null; }
+
+function switchDetailTab(tab, el) {
+  if (el) { document.querySelectorAll('#customerDetailPanel .tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+  const c = selectedCustomerData; if (!c) return;
+  const cont = document.getElementById('detailTabContent');
+  if (tab === 'info') cont.innerHTML = `
+    <div class="detail-section"><div class="detail-section-label">General</div>
+      <div class="detail-row"><div class="detail-key">Segment</div><div class="detail-val"><span class="badge badge-gray">${c.segment?.value||'—'}</span></div></div>
+      <div class="detail-row"><div class="detail-key">State</div><div class="detail-val">${c.address?.state||'—'}</div></div>
+      <div class="detail-row"><div class="detail-key">City</div><div class="detail-val">${c.address?.city||'—'}</div></div>
+      <div class="detail-row"><div class="detail-key">PIN Code</div><div class="detail-val">${c.address?.pinCode||'—'}</div></div>
+      <div class="detail-row"><div class="detail-key">Unit</div><div class="detail-val">${c.unit||'—'}</div></div>
+      <div class="detail-row"><div class="detail-key">Competition</div><div class="detail-val"><span class="badge ${c.competition==='New Account'?'badge-green':c.competition==='Competitor Account'?'badge-red':'badge-blue'}">${c.competition}</span></div></div>
+      <div class="detail-row"><div class="detail-key">Status</div><div class="detail-val"><span class="badge ${c.status==='active'?'badge-green':'badge-amber'}">${c.status}</span></div></div>
+      <div class="detail-row"><div class="detail-key">Salesperson</div><div class="detail-val">${c.assignedTo?.name||c.submittedBy?.name||'—'}</div></div>
+    </div>`;
+  else if (tab === 'contacts') cont.innerHTML = `
+    <div class="detail-section"><div class="detail-section-label">Contacts (${c.contacts?.length||0})</div>
+      ${c.contacts?.length ? c.contacts.map(ct=>`<div class="detail-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
+        <div style="font-weight:500;font-size:13px;color:#fff;">${ct.name}${ct.isPrimary?' <span class="badge badge-blue" style="font-size:10px;margin-left:4px;">Primary</span>':''}</div>
+        <div style="font-size:12px;color:var(--text3);">${ct.designation||''} ${ct.phone?'· '+ct.phone:''}</div>
+      </div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0;">No contacts added</div>'}
+    </div>`;
+  else if (tab === 'products') cont.innerHTML = `
+    <div class="detail-section"><div class="detail-section-label">Product Interests (${c.productInterests?.length||0})</div>
+      ${c.productInterests?.length ? c.productInterests.map(p=>`<div class="detail-row"><div class="detail-val"><span class="badge badge-teal" style="margin-right:6px;">${p.productGroup}</span>${p.productName} ${p.potentialRevenue?'<span style="color:var(--text3);font-size:11px;margin-left:6px;">₹'+p.potentialRevenue+'L</span>':''}</div></div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0;">No products listed</div>'}
+    </div>`;
+  else if (tab === 'competitors') cont.innerHTML = `
+    <div class="detail-section"><div class="detail-section-label">Competitors (${c.competitors?.length||0})</div>
+      ${c.competitors?.length ? c.competitors.map(x=>`<div class="detail-row"><div class="detail-val"><span class="badge badge-red" style="margin-right:6px;">⚑</span>${x.name} ${x.notes?'<span style="color:var(--text3);font-size:11px;">— '+x.notes+'</span>':''}</div></div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0;">No competitors listed</div>'}
+    </div>`;
+}
+
+async function deleteCustomer(id, name) {
+  if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  try { await apiCall('DELETE', '/customers/'+id); showToast('Customer deleted', 'success'); loadCustomers(); } catch(e) { showToast(e.message, 'error'); }
+}
+async function deleteCurrentCustomer() {
+  if (!selectedCustomerData) return;
+  await deleteCustomer(selectedCustomerData._id, selectedCustomerData.name);
+  closeDetailPanel();
+}
+async function approveCustomer(id, name) {
+  try { await apiCall('POST', '/customers/'+id+'/approve'); showToast(name + ' approved!', 'success'); loadCustomers(); } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function submitNewCustomer() {
+  const btn = document.getElementById('submitCustomerBtn');
+  const segVal = document.getElementById('nc_segment').value;
+  const [segCat, segValue] = segVal.split(':');
+  const contacts = [...document.querySelectorAll('#nc_contactSlots .slot-row')].map(r => {
+    const inputs = r.querySelectorAll('input'); return { name:inputs[0].value, phone:inputs[1].value, designation:inputs[2].value };
+  }).filter(c => c.name);
+  const competitors = [...document.querySelectorAll('#nc_competitorSlots .slot-row')].map(r => {
+    const inputs = r.querySelectorAll('input'); return { name:inputs[0].value, notes:inputs[1].value };
+  }).filter(c => c.name);
+
+  const body = {
+    name: document.getElementById('nc_name').value.trim(),
+    segment: { category: segCat, value: segValue },
+    unit: document.getElementById('nc_unit').value,
+    competition: document.getElementById('nc_competition').value,
+    address: { street: document.getElementById('nc_street').value, city: document.getElementById('nc_city').value, state: document.getElementById('nc_state').value, pinCode: document.getElementById('nc_pin').value },
+    contacts, competitors,
+  };
+  if (!body.name || !body.segment.value || !body.competition || !body.address.state || !body.address.pinCode) { showToast('Please fill all required fields', 'warning'); return; }
+
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Submitting…';
+  try {
+    await apiCall('POST', '/customers', body);
+    showToast('Customer submitted for approval. Admin has been notified.', 'success');
+    closeModal('newCustomerModal');
+    if (document.getElementById('page-customers').classList.contains('active')) loadCustomers();
+  } catch(e) { showToast(e.message, 'error'); }
+  finally { btn.disabled = false; btn.innerHTML = 'Submit for Approval'; }
+}
+
+// ══════════════════════════════════════════════
+// INTERACTIONS
+// ══════════════════════════════════════════════
+async function loadInteractions() {
+  const el = document.getElementById('interactionsList');
+  el.innerHTML = '<div class="empty-state"><div class="spinner"></div></div>';
+  const params = new URLSearchParams();
+  const ct = document.getElementById('filterCallType').value;
+  if (ct) params.set('callType', ct);
+  try {
+    const data = await apiCall('GET', '/interactions?' + params);
+    const items = data.data.interactions;
+    if (!items.length) { el.innerHTML = '<div class="empty-state">No interactions logged yet.</div>'; return; }
+    const callColors = { 'Cold Call':'var(--accent)', 'Follow-up':'var(--teal)', 'Demo':'var(--purple)', 'Technical Support':'var(--amber)', 'Closing':'var(--green)', 'Site Visit':'var(--text2)' };
+    el.innerHTML = items.map(i => `
+      <div class="interaction-item">
+        <div class="interaction-header">
+          <div class="call-icon" style="background:${callColors[i.callType]||'var(--accent)'}22">
+            <svg viewBox="0 0 24 24" fill="none" stroke="${callColors[i.callType]||'var(--accent)'}" stroke-width="2" width="15" height="15"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text);">${i.customer?.name||'—'} — ${i.callType}</div><div style="font-size:11.5px;color:var(--text3);">${new Date(i.interactionDate).toLocaleString()} · ${i.salesperson?.name||''} · ${i.productName||''}</div></div>
+          <span class="badge" style="background:${callColors[i.callType]||'var(--accent)'}22;color:${callColors[i.callType]||'var(--accent)'};">${i.callType}</span>
+        </div>
+        <div class="interaction-body">${i.notes||'<em style="color:var(--text3);">No notes</em>'}</div>
+        ${i.nextAction?.type ? `<div class="next-action-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <div class="next-action-text">Next: <strong>${i.nextAction.type}</strong></div>
+          <div class="next-action-date">${i.nextAction.dueDate ? new Date(i.nextAction.dueDate).toLocaleDateString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : ''}</div>
+          ${!i.nextAction.isCompleted ? `<button class="btn btn-ghost btn-sm" onclick="completeAction('${i._id}')">Done ✓</button>` : '<span class="badge badge-green">Completed</span>'}
+        </div>` : ''}
+      </div>`).join('');
+  } catch(e) { el.innerHTML = '<div class="empty-state" style="color:var(--red);">Error: '+e.message+'</div>'; }
+}
+
+async function completeAction(id) {
+  try { await apiCall('PATCH', '/interactions/'+id+'/complete-action'); showToast('Action marked complete', 'success'); loadInteractions(); } catch(e) { showToast(e.message,'error'); }
+}
+
+function openInteractionForCustomer(id, name) {
+  if (id) {
+    document.getElementById('li_customerId').value = id;
+    document.getElementById('li_customerSearch').value = name || id;
+  }
+  openModal('logInteractionModal');
+}
+
+// Customer typeahead in interaction modal
+function customerTypeahead(inp) {
+  const q = inp.value.toLowerCase();
+  const list = document.getElementById('li_customerList');
+  const matches = allActiveCustomers.filter(c => c.name.toLowerCase().includes(q) || !q);
+  list.innerHTML = matches.slice(0,8).map(c => `
+    <div class="typeahead-item" onclick="selectCustomer('${c._id}','${c.name.replace(/'/g,"\\'")}')">
+      <div>${c.name}</div><div class="typeahead-item-sub">${c.address?.state||''} · ${c.segment?.value||''}</div>
+    </div>`).join('');
+  list.classList.toggle('open', matches.length > 0);
+}
+function selectCustomer(id, name) {
+  document.getElementById('li_customerId').value = id;
+  document.getElementById('li_customerSearch').value = name;
+  document.getElementById('li_customerList').classList.remove('open');
+}
+document.addEventListener('click', e => { if (!e.target.closest('.typeahead-wrap')) document.querySelectorAll('.typeahead-list').forEach(l=>l.classList.remove('open')); });
+
+// Products in interaction modal
+async function loadProductsForGroup(group) {
+  const sel = document.getElementById('li_product');
+  sel.innerHTML = '<option value="">Loading…</option>';
+  document.getElementById('li_newProductWrap').style.display = 'none';
+  if (!group) { sel.innerHTML = '<option value="">Select group first…</option>'; return; }
+  try {
+    const data = await apiCall('GET', '/products?group=' + group);
+    sel.innerHTML = '<option value="">Select product…</option>' +
+      data.data.products.map(p => `<option value="${p._id}" data-name="${p.name}">${p.name}${p.isPending?' (pending)':''}</option>`).join('') +
+      '<option value="__new__">+ Other / New Product…</option>';
+  } catch(e) { sel.innerHTML = '<option value="">Failed to load</option>'; }
+}
+function handleProductSelect(val) {
+  document.getElementById('li_newProductWrap').style.display = val === '__new__' ? '' : 'none';
+}
+
+function checkStockAlert() {
+  const stock = parseInt(document.getElementById('li_stock').value);
+  const threshold = parseInt(document.getElementById('li_threshold').value) || 10;
+  const badge = document.getElementById('li_stockBadge');
+  if (isNaN(stock)) { badge.innerHTML = ''; return; }
+  badge.innerHTML = stock <= threshold
+    ? '<span class="badge badge-red">⚠ Below threshold</span>'
+    : '<span class="badge badge-green">✓ OK</span>';
+}
+
+const QUICK_NOTES = {
+  'Customer not available': 'Customer was not available at the time of call. Left message with receptionist. Will attempt contact again.',
+  'Interested in trial': 'Customer expressed strong interest in a product trial. Would like to evaluate the solution for 2 weeks.',
+  'Price too high — needs revision': 'Customer indicated current pricing exceeds their budget. Revision or bundle discount needed.',
+  'Requested a demo': 'Customer has requested a formal product demonstration. Need to schedule at their premises.',
+  'Waiting for decision maker': 'Decision maker is currently unavailable. Team will present to management next week.',
+  'Using competitor product': 'Customer is currently using a competitor product. They have concerns about switching costs.',
+  'Requested callback': 'Customer requested a callback at a specific time. Will re-engage as per their preferred slot.',
+};
+function applyQuickNote(key) {
+  if (!key) return;
+  const t = document.getElementById('li_notes');
+  if (t) { t.value = QUICK_NOTES[key] || key; t.style.border = '1px solid var(--accent-border)'; setTimeout(()=>t.style.border='',1500); }
+}
+
+async function previewEmail() {
+  const customerId = document.getElementById('li_customerId').value;
+  const group = document.getElementById('li_productGroup').value;
+  if (!customerId) { showToast('Please select a customer first', 'warning'); return; }
+  try {
+    const data = await apiCall('POST', '/interactions/email-preview', { customerId, productGroup: group || 'Products' });
+    const t = data.data.template;
+    document.getElementById('emailPreviewContent').innerHTML = `<div style="font-weight:600;color:var(--text);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border);">Subject: ${t.subject}</div>${t.html}`;
+    sendEmailOnSave = true;
+    openModal('emailPreviewModal');
+  } catch(e) { showToast(e.message, 'error'); }
+}
+function sendEmailIntro() { closeModal('emailPreviewModal'); showToast('Email will be sent when you save the interaction', 'success'); }
+
+async function saveInteraction() {
+  const customerId = document.getElementById('li_customerId').value;
+  const callType = document.getElementById('li_callType').value;
+  if (!customerId) { showToast('Please select a customer', 'warning'); return; }
+  if (!callType) { showToast('Please select a call type', 'warning'); return; }
+
+  const productSel = document.getElementById('li_product');
+  let productId = productSel.value === '__new__' ? null : productSel.value;
+  let productName = productSel.options[productSel.selectedIndex]?.dataset.name || '';
+  const isNewProduct = productSel.value === '__new__';
+
+  // Create pending product first if needed
+  if (isNewProduct) {
+    const newName = document.getElementById('li_newProductName').value.trim();
+    if (!newName) { showToast('Please enter the new product name', 'warning'); return; }
+    try {
+      const pd = await apiCall('POST', '/products', { name: newName });
+      productId = pd.data.product._id;
+      productName = newName;
+      showToast('New product submitted for approval', 'success');
+    } catch(e) { showToast('Failed to create product: '+e.message, 'error'); return; }
+  }
+
+  const stock = document.getElementById('li_stock').value;
+  const threshold = document.getElementById('li_threshold').value;
+  const nextType = document.getElementById('li_nextActionType').value;
+  const nextDate = document.getElementById('li_nextActionDate').value;
+
+  const body = {
+    customer: customerId,
+    callType,
+    interactionDate: document.getElementById('li_date').value,
+    productGroup: document.getElementById('li_productGroup').value || undefined,
+    product: productId || undefined,
+    productName: productName || undefined,
+    notes: document.getElementById('li_notes').value,
+    sendEmail: sendEmailOnSave,
+    ...(stock ? { stockSnapshot: { unitsAtSite: parseInt(stock), threshold: parseInt(threshold)||10 } } : {}),
+    ...(nextType ? { nextAction: { type: nextType, dueDate: nextDate || undefined, assignedTo: currentUser.id } } : {}),
+  };
+
+  const btn = document.getElementById('saveInteractionBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Saving…';
+  try {
+    await apiCall('POST', '/interactions', body);
+    showToast('Interaction logged. Reminder scheduled.', 'success');
+    closeModal('logInteractionModal');
+    sendEmailOnSave = false;
+    if (document.getElementById('page-interactions').classList.contains('active')) loadInteractions();
+    if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
+    // Reset form
+    ['li_customerSearch','li_customerId','li_notes','li_stock','li_threshold','li_newProductName'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('li_productGroup').value='';
+    document.getElementById('li_product').innerHTML='<option value="">Select group first…</option>';
+    document.getElementById('li_nextActionType').value='';
+    document.getElementById('li_nextActionDate').value='';
+    document.getElementById('li_stockBadge').innerHTML='';
+  } catch(e) { showToast(e.message, 'error'); }
+  finally { btn.disabled=false; btn.innerHTML='Save Interaction'; }
+}
+
+// ══════════════════════════════════════════════
+// INVENTORY
+// ══════════════════════════════════════════════
+let showLowStockOnly = false;
+function toggleLowStockFilter() {
+  showLowStockOnly = !showLowStockOnly;
+  document.getElementById('filterLowStockBtn').textContent = showLowStockOnly ? 'Show All' : 'Show Low Stock Only';
+  loadInventory();
+}
+
+async function loadInventory() {
+  const tb = document.getElementById('inventoryTableBody');
+  tb.innerHTML = '<tr class="loading-row"><td colspan="8"><div class="spinner"></td></tr>';
+  try {
+    const data = await apiCall('GET', '/inventory' + (showLowStockOnly ? '?lowStock=true' : ''));
+    const items = data.data.inventory;
+    const lowCount = items.filter(i=>i.isBelowThreshold).length;
+    const alertEl = document.getElementById('lowStockAlert');
+    if (lowCount > 0) { alertEl.style.display='flex'; document.getElementById('lowStockAlertText').textContent = lowCount + ' item(s) are below the reorder threshold'; }
+    else alertEl.style.display='none';
+
+    if (!items.length) { tb.innerHTML='<tr><td colspan="8"><div class="empty-state">No inventory records</div></td></tr>'; return; }
+    tb.innerHTML = items.map(item => {
+      const pct = Math.min(Math.round((item.currentStock/Math.max(item.threshold*2,item.currentStock+1))*100),100);
+      const low = item.isBelowThreshold;
+      const mid = !low && item.currentStock <= item.threshold*1.5;
+      const color = low?'var(--red)':mid?'var(--amber)':'var(--green)';
+      return `<tr class="${low?'low-stock':''}">
+        <td><div style="font-weight:500;">${item.customer?.name||'—'}</div><div style="font-size:11px;color:var(--text3);">${item.customer?.address?.state||''}</div></td>
+        <td>${item.productName||item.product?.name||'—'}</td>
+        <td><span class="badge badge-gray">${item.productGroup||item.product?.group||'—'}</span></td>
+        <td><span style="font-family:var(--font-mono);font-weight:500;color:${color};">${item.currentStock} ${item.unit}</span></td>
+        <td style="color:var(--text3);font-family:var(--font-mono);font-size:12px;">${item.threshold}</td>
+        <td><div style="display:flex;align-items:center;gap:6px;"><div class="stock-bar"><div class="stock-fill" style="width:${pct}%;background:${color};"></div></div><span style="font-size:11px;color:${color};">${low?'⚠ Reorder':mid?'Low':'OK'}</span></div></td>
+        <td style="color:var(--text3);font-size:12px;">${new Date(item.updatedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</td>
+        <td>
+          <button class="btn btn-ghost btn-sm" onclick="updateStock('${item._id}','${item.productName||item.product?.name}',${item.currentStock},${item.threshold})">Update</button>
+          ${low?`<button class="btn btn-danger btn-sm" onclick="showToast('Reorder request sent','success')">Reorder</button>`:''}
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e) { tb.innerHTML='<tr><td colspan="8" style="color:var(--red);text-align:center;padding:20px;">'+e.message+'</td></tr>'; }
+}
+
+async function updateStock(id, productName, current, threshold) {
+  const newStock = prompt(`Update stock for "${productName}"\nCurrent: ${current} units\nEnter new quantity:`);
+  if (newStock === null) return;
+  const newThreshold = prompt(`Current threshold: ${threshold}\nEnter new threshold (or leave same):`);
+  try {
+    await apiCall('PATCH', '/inventory/'+id, { currentStock: parseInt(newStock), threshold: parseInt(newThreshold)||threshold, notes:'Manual update via CRM' });
+    showToast('Stock updated', 'success');
+    loadInventory();
+  } catch(e) { showToast(e.message,'error'); }
+}
+
+// ══════════════════════════════════════════════
+// APPROVALS
+// ══════════════════════════════════════════════
+async function loadApprovals(type, el, silent=false) {
+  if (el) { document.querySelectorAll('#page-approvals .tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+  const cont = document.getElementById('approvalContent');
+  if (!silent) cont.innerHTML = '<div class="empty-state"><div class="spinner"></div></div>';
+  try {
+    if (type === 'customers') {
+      const data = await apiCall('GET', '/customers/pending/list');
+      const items = data.data.customers;
+      document.getElementById('pendingCustCount').textContent = items.length || '';
+      if (!silent) {
+        if (!items.length) { cont.innerHTML='<div class="empty-state">No pending customer requests.</div>'; return; }
+        cont.innerHTML = items.map(c=>`
+          <div class="approval-item">
+            <div class="approval-icon" style="background:var(--accent-light)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" width="18" height="18"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+            <div class="approval-content">
+              <div class="approval-title">${c.name}</div>
+              <div class="approval-meta">${c.address?.state||''} · ${c.segment?.value||''} · by ${c.submittedBy?.name||''} · ${new Date(c.createdAt).toLocaleDateString()}</div>
+            </div>
+            <div style="display:flex;gap:6px;flex-shrink:0;">
+              <button class="btn btn-success btn-sm" onclick="approveItem('customer','${c._id}','${c.name}',this)">Approve</button>
+              <button class="btn btn-danger btn-sm" onclick="rejectItem('customer','${c._id}','${c.name}',this)">Reject</button>
+            </div>
+          </div>`).join('');
+      }
+    } else {
+      const data = await apiCall('GET', '/products/pending');
+      const items = data.data.products;
+      document.getElementById('pendingProdCount').textContent = items.length || '';
+      if (!silent) {
+        if (!items.length) { cont.innerHTML='<div class="empty-state">No pending product requests.</div>'; return; }
+        cont.innerHTML = items.map(p=>`
+          <div class="approval-item">
+            <div class="approval-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="18" height="18"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+            <div class="approval-content">
+              <div class="approval-title">${p.name} <span class="badge badge-amber" style="margin-left:8px;">Needs Categorization</span></div>
+              <div class="approval-meta">Submitted by ${p.submittedBy?.name||''} · ${new Date(p.createdAt).toLocaleDateString()}</div>
+              <div style="margin-top:8px;"><select id="prodGroup_${p._id}" style="width:auto;padding:5px 28px 5px 8px;font-size:12px;"><option value="">Assign to group…</option><option>Hardware</option><option>Software</option><option>Consumables</option><option>Services</option></select></div>
+            </div>
+            <div style="display:flex;gap:6px;flex-shrink:0;">
+              <button class="btn btn-success btn-sm" onclick="approveProduct('${p._id}','${p.name}',this)">Approve</button>
+              <button class="btn btn-danger btn-sm" onclick="rejectItem('product','${p._id}','${p.name}',this)">Reject</button>
+            </div>
+          </div>`).join('');
+      }
+    }
+  } catch(e) { if (!silent) cont.innerHTML='<div class="empty-state" style="color:var(--red);">'+e.message+'</div>'; }
+}
+
+async function approveItem(type, id, name, btn) {
+  btn.disabled=true;
+  try { await apiCall('POST', '/customers/'+id+'/approve'); showToast(name+' approved!','success'); btn.closest('.approval-item').style.opacity='0.4'; btn.closest('.approval-item').style.pointerEvents='none'; loadApprovals('customers',null,true); }
+  catch(e) { showToast(e.message,'error'); btn.disabled=false; }
+}
+async function approveProduct(id, name, btn) {
+  const group = document.getElementById('prodGroup_'+id)?.value;
+  if (!group) { showToast('Please assign a product group first','warning'); return; }
+  btn.disabled=true;
+  try { await apiCall('POST', '/products/'+id+'/approve', { group }); showToast(name+' approved as '+group,'success'); btn.closest('.approval-item').style.opacity='0.4'; btn.closest('.approval-item').style.pointerEvents='none'; }
+  catch(e) { showToast(e.message,'error'); btn.disabled=false; }
+}
+async function rejectItem(type, id, name, btn) {
+  const reason = prompt('Rejection reason for "'+name+'"?');
+  if (!reason) return;
+  btn.disabled=true;
+  try {
+    if (type==='customer') await apiCall('POST', '/customers/'+id+'/reject', { reason });
+    else await apiCall('DELETE', '/products/'+id);
+    showToast(name+' rejected','warning'); btn.closest('.approval-item').remove();
+  } catch(e) { showToast(e.message,'error'); btn.disabled=false; }
+}
+
+// ══════════════════════════════════════════════
+// USERS
+// ══════════════════════════════════════════════
+async function loadUsers() {
+  const tb = document.getElementById('userTableBody');
+  tb.innerHTML = '<tr class="loading-row"><td colspan="5"><div class="spinner"></div></td></tr>';
+  try {
+    const data = await apiCall('GET', '/users');
+    const users = data.data.users;
+    tb.innerHTML = users.map(u=>`<tr>
+      <td><div style="display:flex;align-items:center;gap:10px;">
+        <div class="avatar ${u.role==='admin'?'admin':'sales'}" style="width:30px;height:30px;font-size:11px;">${(u.name||'').split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2)}</div>
+        <div><div style="font-weight:500;">${u.name}</div><div style="font-size:11px;color:var(--text3);">${u.email}</div></div>
+      </div></td>
+      <td><span class="badge ${u.role==='admin'?'badge-purple':'badge-blue'}">${u.role==='admin'?'Admin':'Sales Rep'}</span></td>
+      <td><div style="display:flex;gap:4px;flex-wrap:wrap;">${(u.assignedStates||[]).map(s=>`<span class="badge badge-gray">${s}</span>`).join('')||'<span style="color:var(--text3)">None</span>'}</div></td>
+      <td style="color:var(--text3);font-size:12px;">${u.lastLogin?new Date(u.lastLogin).toLocaleDateString():'Never'}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="editUserStates('${u._id}','${u.name}','${(u.assignedStates||[]).join(',')}')">Edit States</button>
+        ${u._id!==currentUser.id?`<button class="btn btn-danger btn-sm" onclick="deactivateUser('${u._id}','${u.name}')">Remove</button>`:''}
+      </td>
+    </tr>`).join('');
+  } catch(e) { tb.innerHTML='<tr><td colspan="5" style="color:var(--red);text-align:center;padding:20px;">'+e.message+'</td></tr>'; }
+}
+
+async function saveNewUser() {
+  const name=document.getElementById('nu_name').value.trim();
+  const email=document.getElementById('nu_email').value.trim();
+  const password=document.getElementById('nu_password').value;
+  const role=document.getElementById('nu_role').value;
+  const phone=document.getElementById('nu_phone').value;
+  const assignedStates=[...document.querySelectorAll('#nu_statesGrid input:checked')].map(i=>i.dataset.state);
+  if(!name||!email||!password){showToast('Name, email and password are required','warning');return;}
+  const btn=document.getElementById('saveUserBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Creating…';
+  try{
+    await apiCall('POST','/auth/register',{name,email,password,role,phone,assignedStates});
+    showToast('User created successfully','success');closeModal('newUserModal');loadUsers();
+    document.getElementById('nu_name').value='';document.getElementById('nu_email').value='';document.getElementById('nu_password').value='';
+  }catch(e){showToast(e.message,'error');}
+  finally{btn.disabled=false;btn.innerHTML='Create User';}
+}
+
+async function editUserStates(id, name, currentStates) {
+  const states=['Maharashtra','Gujarat','Karnataka','Tamil Nadu','Delhi','Rajasthan','Uttar Pradesh','Telangana','Goa'];
+  const current=currentStates.split(',').filter(Boolean);
+  const chosen=prompt(`Edit states for ${name}\nCurrent: ${current.join(', ')||'None'}\n\nAvailable:\n${states.join(', ')}\n\nEnter comma-separated state names:`,'');
+  if(chosen===null)return;
+  const assignedStates=chosen.split(',').map(s=>s.trim()).filter(s=>states.includes(s));
+  try{await apiCall('PATCH','/users/'+id+'/states',{assignedStates});showToast('States updated for '+name,'success');loadUsers();}
+  catch(e){showToast(e.message,'error');}
+}
+
+async function deactivateUser(id, name) {
+  if(!confirm(`Deactivate ${name}?`))return;
+  try{await apiCall('DELETE','/users/'+id);showToast(name+' deactivated','success');loadUsers();}
+  catch(e){showToast(e.message,'error');}
+}
+
+// ══════════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════════
+async function loadNotifications() {
+  try {
+    const data = await apiCall('GET', '/notifications');
+    const notifs = data.data.notifications;
+    const unread = data.unreadCount;
+    const dot = document.getElementById('notifDot');
+    dot.style.display = unread > 0 ? '' : 'none';
+    const list = document.getElementById('notifList');
+    if (!notifs.length) { list.innerHTML = '<div class="empty-state">No notifications</div>'; return; }
+    list.innerHTML = notifs.map(n=>`
+      <div class="notif-item ${n.isRead?'':'unread'}" onclick="markNotifRead('${n._id}',this)">
+        <div class="notif-item-title">${n.title}</div>
+        <div class="notif-item-sub">${n.message}</div>
+        <div class="notif-time">${timeAgo(n.createdAt)}</div>
+      </div>`).join('');
+  } catch(e) { /* silently fail */ }
+}
+
+async function markNotifRead(id, el) {
+  try { await apiCall('PATCH','/notifications/'+id+'/read'); el.classList.remove('unread'); loadNotifications(); } catch(e){}
+}
+async function markAllNotifRead() {
+  try { await apiCall('PATCH','/notifications/mark-all-read'); loadNotifications(); showToast('All notifications marked read','success'); } catch(e){}
+}
+function toggleNotifPanel() {
+  document.getElementById('notifPanel').classList.toggle('open');
+  if (document.getElementById('notifPanel').classList.contains('open')) loadNotifications();
+}
+
+// ══════════════════════════════════════════════
+// SLOT HELPERS
+// ══════════════════════════════════════════════
+function addContactSlot(containerId) {
+  const c=document.getElementById(containerId);
+  if(c.querySelectorAll('.slot-row').length>=10){showToast('Max 10 contacts','warning');return;}
+  const row=document.createElement('div');row.className='slot-row';
+  row.innerHTML='<input type="text" placeholder="Name" style="flex:1.2"><input type="tel" placeholder="Phone"><input type="text" placeholder="Designation"><div class="slot-remove" onclick="removeSlot(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>';
+  c.appendChild(row);
+}
+function addCompetitorSlot(containerId) {
+  const c=document.getElementById(containerId);
+  if(c.querySelectorAll('.slot-row').length>=5){showToast('Max 5 competitors','warning');return;}
+  const row=document.createElement('div');row.className='slot-row';
+  row.innerHTML='<input type="text" placeholder="Competitor name"><input type="text" placeholder="Notes"><div class="slot-remove" onclick="removeSlot(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>';
+  c.appendChild(row);
+}
+function removeSlot(btn) {
+  const row=btn.closest('.slot-row');
+  if(row.parentNode.querySelectorAll('.slot-row').length<=1){showToast('At least one entry required','warning');return;}
+  row.remove();
+}
+
+// ══════════════════════════════════════════════
+// MODAL & TOAST
+// ══════════════════════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+function showToast(msg, type='info') {
+  const wrap=document.getElementById('toastWrap');
+  const t=document.createElement('div');
+  const icons={success:'<svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>',warning:'<svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" width="15" height="15"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',error:'<svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',info:'<svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'};
+  t.className='toast '+type;
+  t.innerHTML=(icons[type]||icons.info)+msg;
+  wrap.appendChild(t);
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),200);},3500);
+}
+
+// ══════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════
+if (authToken && currentUser) {
+  document.getElementById('loginScreen').classList.add('hidden');
+  initApp();
+} else {
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
