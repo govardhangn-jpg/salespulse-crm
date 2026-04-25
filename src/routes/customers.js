@@ -46,11 +46,13 @@ router.get(
       else filter['segment.value'] = category;
     }
 
-    // Sales reps only see approved customers + their own pending
+    // Sales reps only see their own customers (assigned to them or submitted by them)
+    // Admins see all customers across all states
     if (req.user.role !== 'admin') {
       filter.$or = [
-        { status: 'active' },
-        { status: 'pending', submittedBy: req.user._id },
+        { status: 'active',   assignedTo: req.user._id },
+        { status: 'active',   submittedBy: req.user._id },
+        { status: 'pending',  submittedBy: req.user._id },
       ];
     }
 
@@ -154,7 +156,11 @@ router.get(
   asyncHandler(async (req, res) => {
     const filter = { _id: req.params.id, ...req.stateFilter };
     if (req.user.role !== 'admin') {
-      filter.$or = [{ status: 'active' }, { status: 'pending', submittedBy: req.user._id }];
+      filter.$or = [
+        { status: 'active',  assignedTo: req.user._id },
+        { status: 'active',  submittedBy: req.user._id },
+        { status: 'pending', submittedBy: req.user._id },
+      ];
     }
 
     const customer = await Customer.findOne(filter)
