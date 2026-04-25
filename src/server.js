@@ -18,6 +18,8 @@ const interactionRoutes = require('./routes/interactions');
 const productRoutes = require('./routes/products');
 const inventoryRoutes = require('./routes/inventory');
 const { userRouter, notifRouter, dashRouter } = require('./routes/misc');
+const attendanceRoutes = require('./routes/attendance');
+const reportsRoutes    = require('./routes/reports');
 
 const app = express();
 
@@ -65,6 +67,8 @@ app.use('/api/inventory',     inventoryRoutes);
 app.use('/api/users',         userRouter);
 app.use('/api/notifications', notifRouter);
 app.use('/api/dashboard',     dashRouter);
+app.use('/api/attendance',    attendanceRoutes);
+app.use('/api/reports',       reportsRoutes);
 
 // ─── Health check ─────────────────────────────────────
 app.get('/api/health', (req, res) => {
