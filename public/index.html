@@ -47,7 +47,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);display
 .logo-wrap{display:flex;align-items:center;gap:10px;}
 .logo-badge{width:34px;height:34px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .logo-badge svg{width:18px;height:18px;}
-.logo-name{font-family:var(--font-head);font-size:16px;font-weight:700;letter-spacing:-0.3px;color:#fff;}
+.logo-name{font-family:var(--font-head);font-size:16px;font-weight:700;letter-spacing:-0.3px;color:var(--accent);}
 .logo-tag{font-size:10px;color:var(--text3);letter-spacing:0.5px;margin-top:1px;}
 .nav{flex:1;padding:10px 8px;overflow-y:auto;}
 .nav-group{margin-bottom:18px;}
@@ -114,14 +114,14 @@ textarea{resize:vertical;min-height:80px;line-height:1.5;}
 /* ── CARDS ────────────────────────────────────────── */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:16px;}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.card-title{font-family:var(--font-head);font-size:14px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px;}
+.card-title{font-family:var(--font-head);font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;}
 .card-title svg{width:16px;height:16px;color:var(--accent);}
 
 /* ── STATS ────────────────────────────────────────── */
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
 .stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
 .stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:500;}
-.stat-value{font-family:var(--font-head);font-size:26px;font-weight:700;color:#fff;line-height:1;}
+.stat-value{font-family:var(--font-head);font-size:26px;font-weight:700;color:var(--text);line-height:1;}
 .stat-sub{font-size:11px;color:var(--text2);margin-top:5px;}
 .stat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:2px 7px;border-radius:10px;margin-top:4px;}
 .stat-badge.up{background:var(--green-bg);color:var(--green);}
@@ -174,7 +174,7 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:560px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 4px 24px rgba(220,100,0,0.12);}
 .modal-lg{width:720px;}
 .modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.modal-title{font-family:var(--font-head);font-size:15px;font-weight:600;color:#fff;}
+.modal-title{font-family:var(--font-head);font-size:15px;font-weight:600;color:var(--text);}
 .modal-close{width:28px;height:28px;border-radius:6px;background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:16px;transition:background var(--tr);}
 .modal-close:hover{background:var(--bg5);}
 .modal-body{padding:20px;overflow-y:auto;flex:1;}
@@ -184,7 +184,7 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 .notif-panel{position:absolute;top:0;right:0;bottom:0;width:340px;background:var(--bg2);border-left:1px solid var(--border);z-index:50;transform:translateX(100%);transition:transform 0.2s ease;display:flex;flex-direction:column;}
 .notif-panel.open{transform:translateX(0);}
 .notif-panel-header{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.notif-panel-title{font-family:var(--font-head);font-size:14px;font-weight:600;color:#fff;}
+.notif-panel-title{font-family:var(--font-head);font-size:14px;font-weight:600;color:var(--text);}
 .notif-list{flex:1;overflow-y:auto;padding:8px;}
 .notif-item{padding:12px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:6px;cursor:pointer;transition:background var(--tr);}
 .notif-item:hover{background:var(--bg3);}
@@ -235,7 +235,7 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 .pending-flag svg{width:14px;height:14px;flex-shrink:0;}
 .template-selector{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.section-title{font-family:var(--font-head);font-size:15px;font-weight:600;color:#fff;letter-spacing:-0.2px;}
+.section-title{font-family:var(--font-head);font-size:15px;font-weight:600;color:var(--text);letter-spacing:-0.2px;}
 .section-sub{font-size:12px;color:var(--text3);margin-top:1px;}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .activity-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);}
@@ -413,7 +413,7 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
         <div class="search-bar">
           <div class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search customers…" id="customerSearch" oninput="debounceLoadCustomers()"></div>
           <div class="filter-bar">
-            <select id="filterState" onchange="loadCustomers()"><option value="">All States</option><option>Maharashtra</option><option>Gujarat</option><option>Karnataka</option><option>Tamil Nadu</option><option>Delhi</option></select>
+            <select id="filterState" onchange="loadCustomers()" class="admin-only" style="display:none"><option value="">All States</option><option>Maharashtra</option><option>Gujarat</option><option>Karnataka</option><option>Tamil Nadu</option><option>Delhi</option></select>
             <select id="filterStatus" onchange="loadCustomers()"><option value="">All Status</option><option value="active">Active</option><option value="pending">Pending</option></select>
             <select id="filterCompetition" onchange="loadCustomers()"><option value="">All Types</option><option value="New Account">New Account</option><option value="Existing Account">Existing Account</option><option value="Competitor Account">Competitor</option></select>
           </div>
@@ -427,7 +427,7 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
         <div class="detail-panel-header">
           <div class="avatar admin" id="detailAvatar">AP</div>
           <div style="flex:1;min-width:0;">
-            <div style="font-family:var(--font-head);font-size:14px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="detailName"></div>
+            <div style="font-family:var(--font-head);font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="detailName"></div>
             <div style="font-size:12px;color:var(--text3);" id="detailMeta"></div>
           </div>
           <div class="detail-close" onclick="closeDetailPanel()">✕</div>
@@ -1025,8 +1025,8 @@ async function loadCustomers() {
 
     const isAdmin = currentUser.role === 'admin';
     document.getElementById('customerFilterLabel').textContent = isAdmin
-      ? `All states — ${data.total} customers`
-      : `Your states (${(currentUser.assignedStates||[]).join(', ')}) — ${data.total} customers`;
+      ? `All customers — ${data.total} total`
+      : `My Customers — ${data.total} assigned to you`;
 
     if (!customers.length) {
       tb.innerHTML = '<tr><td colspan="7"><div class="empty-state">No customers found</div></td></tr>';
@@ -1039,7 +1039,7 @@ async function loadCustomers() {
       const statusBadge = c.status === 'active' ? 'badge-green' : c.status === 'pending' ? 'badge-amber' : 'badge-gray';
       const compBadge = c.competition === 'New Account' ? 'badge-green' : c.competition === 'Competitor Account' ? 'badge-red' : 'badge-blue';
       return `<tr onclick="openCustomerDetail('${c._id}')">
-        <td><div style="font-weight:500;color:#fff;">${c.name}</div><div style="font-size:11px;color:var(--text3);">${c.address?.city || ''}</div></td>
+        <td><div style="font-weight:500;color:var(--text);">${c.name}</div><div style="font-size:11px;color:var(--text3);">${c.address?.city || ''}</div></td>
         <td><span class="badge badge-gray">${seg}</span></td>
         <td>${state}</td>
         <td><span class="badge ${compBadge}">${c.competition}</span></td>
@@ -1771,7 +1771,7 @@ function renderSpReport(report) {
               <td>
                 <div style="display:flex;align-items:center;gap:8px;">
                   <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">${(r.salespersonName||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)}</div>
-                  <div><div style="font-weight:500;color:#fff;">${r.salespersonName||'—'}</div><div style="font-size:11px;color:var(--text3);">${r.salespersonEmail||''}</div></div>
+                  <div><div style="font-weight:500;color:var(--text);">${r.salespersonName||'—'}</div><div style="font-size:11px;color:var(--text3);">${r.salespersonEmail||''}</div></div>
                 </div>
               </td>
               <td><span style="font-family:'DM Mono',monospace;font-size:18px;font-weight:600;color:var(--accent);">${r.totalVisits}</span></td>
@@ -1818,7 +1818,7 @@ function renderStateReport(report) {
                   <div style="width:28px;height:28px;border-radius:6px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                   </div>
-                  <span style="font-weight:500;color:#fff;">${r.state||'Unknown'}</span>
+                  <span style="font-weight:500;color:var(--text);">${r.state||'Unknown'}</span>
                 </div>
               </td>
               <td><span style="font-family:'DM Mono',monospace;font-size:18px;font-weight:600;color:var(--accent);">${r.totalVisits}</span></td>
@@ -1862,7 +1862,7 @@ function renderCustReport(report) {
           ${report.map((r,i) => `
             <tr style="border-bottom:1px solid var(--border);">
               <td>
-                <div style="font-weight:500;color:#fff;">${r.customerName||'—'}</div>
+                <div style="font-weight:500;color:var(--text);">${r.customerName||'—'}</div>
                 <span class="badge badge-gray" style="font-size:10px;margin-top:3px;">${r.customerSegment||''}</span>
               </td>
               <td><div style="font-size:13px;">${r.customerState||'—'}</div><div style="font-size:11px;color:var(--text3);">${r.customerCity||''}</div></td>
