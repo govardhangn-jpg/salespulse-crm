@@ -7,7 +7,7 @@ const Notification = require('../models/Notification');
 const { sendEmail } = require('../utils/email');
 const { protect, applyStateFilter } = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/errorHandler');
-const { CALL_TYPES, ACTION_TYPES } = require('../models/Interaction');
+const { ACTIVITY_TYPES, VISIT_OUTCOMES, CALL_TYPES, ACTION_TYPES } = require('../models/Interaction');
 
 const router = express.Router();
 router.use(protect);
@@ -48,7 +48,8 @@ router.get(
     const filter = {};
 
     if (customer) filter.customer = customer;
-    if (callType) filter.callType = callType;
+    // Support both legacy callType and new activityTypes filter
+    if (callType) filter.activityTypes = callType;
 
     // Sales reps only see their own interactions
     if (req.user.role !== 'admin') {
@@ -97,7 +98,10 @@ router.post(
   '/',
   [
     body('customer').notEmpty().withMessage('Customer ID is required'),
-    body('callType').isIn(CALL_TYPES).withMessage('Invalid call type'),
+    body('activityTypes').isArray({ min: 1 }).withMessage('At least one activity type is required'),
+    body('activityTypes.*').isIn(ACTIVITY_TYPES).withMessage('Invalid activity type'),
+    body('visitOutcomes').optional().isArray(),
+    body('visitOutcomes.*').optional().isIn(VISIT_OUTCOMES).withMessage('Invalid visit outcome'),
     body('interactionDate').optional().isISO8601(),
     body('nextAction.type').optional().isIn(ACTION_TYPES),
     body('nextAction.dueDate').optional().isISO8601(),

@@ -104,17 +104,32 @@ router.post(
       return res.status(422).json({ status: 'fail', errors: errors.array() });
     }
 
+    const isAdmin = req.user.role === 'admin';
+
     const customerData = {
       ...req.body,
       submittedBy: req.user._id,
       assignedTo: req.user._id,
-      status: 'pending',
-      isPending: true,
+      // Admin -> instantly active; all others -> pending review
+      status: isAdmin ? 'active' : 'pending',
+      isPending: !isAdmin,
+      ...(isAdmin && {
+        approvedBy: req.user._id,
+        approvedAt: new Date(),
+      }),
     };
 
     const customer = await Customer.create(customerData);
 
-    // Notify all admins
+    if (isAdmin) {
+      return res.status(201).json({
+        status: 'success',
+        message: 'Customer added successfully.',
+        data: { customer },
+      });
+    }
+
+    // Non-admin: notify admins for review
     await notifyAdmins(
       'approval_needed',
       `New customer pending approval: ${customer.name}`,
@@ -124,7 +139,7 @@ router.post(
 
     res.status(201).json({
       status: 'success',
-      message: 'Customer submitted for approval. Admin has been notified.',
+      message: 'Customer submitted for review. An Admin will approve it shortly.',
       data: { customer },
     });
   })
