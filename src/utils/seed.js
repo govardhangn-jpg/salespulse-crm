@@ -184,7 +184,7 @@ const seed = async () => {
     {
       customer: apex._id, salesperson: priya._id,
       productGroup: 'Consumables', product: hw('Toner Cartridge Black')._id, productName: 'Toner Cartridge Black',
-      callType: 'Follow-up', interactionDate: daysAgo(0),
+      activityTypes: ['Follow-up'], callType: 'Follow-up', interactionDate: daysAgo(0),
       notes: 'Customer confirmed requirement of 50 units. Requested revised pricing for bulk order.',
       quickNoteUsed: null,
       stockSnapshot: { unitsAtSite: 24, threshold: 20, isBelowThreshold: false },
@@ -193,7 +193,7 @@ const seed = async () => {
     {
       customer: reliance._id, salesperson: priya._id,
       productGroup: 'Hardware', product: hw('Scanner Pro X')._id, productName: 'Scanner Pro X',
-      callType: 'Cold Call', interactionDate: daysAgo(0),
+      activityTypes: ['Cold Call'], callType: 'Cold Call', interactionDate: daysAgo(0),
       notes: 'Customer not available. Admin mentioned they are evaluating options. Follow up Thursday.',
       quickNoteUsed: 'Customer not available',
       nextAction: { type: 'Follow-up', dueDate: hoursFromNow(48), assignedTo: priya._id, isCompleted: false, reminderSent: false },
@@ -201,7 +201,7 @@ const seed = async () => {
     {
       customer: techparts._id, salesperson: rahul._id,
       productGroup: 'Hardware', product: hw('Barcode Reader Z')._id, productName: 'Barcode Reader Z',
-      callType: 'Demo', interactionDate: daysAgo(1),
+      activityTypes: ['Demo'], callType: 'Demo', interactionDate: daysAgo(1),
       notes: 'Interested in trial. Requested demo for 2 units. Very positive conversation — CEO personally engaged.',
       quickNoteUsed: 'Interested in trial',
       nextAction: { type: 'Schedule Demo', dueDate: hoursFromNow(72), assignedTo: rahul._id, isCompleted: false, reminderSent: false },
@@ -209,7 +209,7 @@ const seed = async () => {
     {
       customer: sunrise._id, salesperson: priya._id,
       productGroup: 'Consumables', product: hw('Thermal Paper A4')._id, productName: 'Thermal Paper A4',
-      callType: 'Technical Support', interactionDate: daysAgo(1),
+      activityTypes: ['Service'], callType: 'Service', interactionDate: daysAgo(1),
       notes: 'Price too high — needs revision. Asked for bundled pricing with Annual Maintenance Contract.',
       quickNoteUsed: 'Price too high — needs revision',
       stockSnapshot: { unitsAtSite: 2, threshold: 10, isBelowThreshold: true },
@@ -218,7 +218,7 @@ const seed = async () => {
     {
       customer: autoparts._id, salesperson: admin._id,
       productGroup: 'Hardware', product: hw('Printer LaserJet 500')._id, productName: 'Printer LaserJet 500',
-      callType: 'Demo', interactionDate: daysAgo(2),
+      activityTypes: ['Demo'], callType: 'Demo', interactionDate: daysAgo(2),
       notes: 'Demo scheduled and confirmed. Customer very interested in replacing existing HP units.',
       nextAction: { type: 'Close Deal', dueDate: hoursFromNow(120), assignedTo: admin._id, isCompleted: false, reminderSent: false },
     },
