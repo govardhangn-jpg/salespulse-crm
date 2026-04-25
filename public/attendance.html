@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Attendance — SalesPulse CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{
+  --bg:#ffffff;--bg2:#ffffff;--bg3:#fff8f3;--bg4:#fff0e6;--bg5:#ffe5cc;
+  --border:rgba(220,100,0,0.12);--border2:rgba(220,100,0,0.22);--border3:rgba(220,100,0,0.38);
+  --text:#c44e00;--text2:#d06020;--text3:#e8935a;
+  --accent:#e8590c;--al:rgba(232,89,12,0.10);--ab:rgba(232,89,12,0.35);
+  --green:#1e7a3c;--gl:rgba(30,122,60,0.10);--gb:rgba(30,122,60,0.28);
+  --amber:#c45000;--aml:rgba(196,80,0,0.10);--amb:rgba(196,80,0,0.28);
+  --red:#c0182a;--rl:rgba(192,24,42,0.09);--rb:rgba(192,24,42,0.28);
+  --purple:#8b5cf6;--teal:#14b8a6;
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
+  --r:10px;--rs:6px;--rl2:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);font-size:14px;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--accent-border,rgba(224,112,16,0.35));border-radius:4px;}
+
+/* ── LAYOUT ───────────────────────────────────── */
+.app{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:220px;min-width:220px;background:#ffffff;border-right:1px solid rgba(220,100,0,0.18);display:flex;flex-direction:column;}
+.logo{padding:18px 16px 14px;border-bottom:1px solid rgba(220,100,0,0.15);display:flex;align-items:center;gap:10px;}
+.logo-badge{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;}
+.logo-badge svg{width:16px;height:16px;}
+.logo-name{font-family:var(--fh);font-size:15px;font-weight:700;color:#fff;}
+.nav{flex:1;padding:10px 8px;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--rs);cursor:pointer;color:#d06020;font-size:13px;transition:all .15s;margin-bottom:2px;}
+.nav-item:hover{background:rgba(232,89,12,0.08);color:#e8590c;}
+.nav-item.active{background:rgba(232,89,12,0.12);color:#e8590c;border:1px solid rgba(232,89,12,0.35);}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;}
+.nav-label{font-size:10px;color:#e8935a;text-transform:uppercase;letter-spacing:.8px;padding:8px 10px 4px;font-weight:600;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:52px;background:#ffffff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;}
+.topbar-title{font-family:var(--fh);font-size:15px;font-weight:600;color:#fff;}
+.topbar-sub{font-size:12px;color:var(--text3);}
+.spacer{flex:1;}
+.back-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--rs);background:var(--bg4);border:1px solid var(--border2);color:var(--text2);font-size:12px;cursor:pointer;text-decoration:none;transition:all .15s;}
+.back-btn:hover{background:var(--bg5);color:var(--text);}
+.content{flex:1;overflow:hidden;}
+.page{display:none;height:100%;overflow-y:auto;padding:20px 24px;}
+.page.active{display:block;}
+
+/* ── BUTTONS ──────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--rs);font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap;}
+.btn-primary{background:#e8590c;color:#fff;}
+.btn-primary:hover{background:#c44800;}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+.btn-secondary{background:var(--bg4);color:var(--text);border-color:var(--border2);}
+.btn-secondary:hover{background:var(--bg5);}
+.btn-ghost{background:transparent;color:var(--text2);}
+.btn-ghost:hover{background:var(--bg4);color:var(--text);}
+.btn-danger{background:var(--rl);color:var(--red);border-color:var(--rb);}
+.btn-success{background:var(--gl);color:var(--green);border-color:var(--gb);}
+.btn-lg{padding:14px 28px;font-size:15px;border-radius:var(--r);justify-content:center;}
+.btn-xl{padding:18px 32px;font-size:16px;border-radius:12px;justify-content:center;width:100%;}
+.btn svg{width:15px;height:15px;}
+
+/* ── CLOCK WIDGET ─────────────────────────────── */
+.clock-hero{text-align:center;padding:28px 0 20px;}
+.clock-time{font-family:var(--fm);font-size:52px;font-weight:500;color:#fff;letter-spacing:2px;line-height:1;}
+.clock-date{font-size:14px;color:var(--text3);margin-top:8px;}
+.status-ring{width:120px;height:120px;border-radius:50%;margin:20px auto;position:relative;display:flex;align-items:center;justify-content:center;}
+.status-ring.out{background:var(--rl);border:3px solid var(--red);}
+.status-ring.in{background:var(--gl);border:3px solid var(--green);}
+.status-ring.done{background:var(--al);border:3px solid var(--accent);}
+.status-ring-label{font-family:var(--fh);font-size:13px;font-weight:600;text-align:center;line-height:1.3;}
+.status-ring.out .status-ring-label{color:var(--red);}
+.status-ring.in .status-ring-label{color:var(--green);}
+.status-ring.done .status-ring-label{color:var(--accent);}
+
+/* ── GEOFENCE STATUS ──────────────────────────── */
+.geo-status{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--r);border:1px solid var(--border2);background:var(--bg3);margin-bottom:14px;}
+.geo-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite;}
+.geo-dot.inside{background:var(--green);}
+.geo-dot.outside{background:var(--red);}
+.geo-dot.locating{background:var(--amber);}
+.geo-dot.error{background:var(--text3);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.geo-info{flex:1;}
+.geo-title{font-size:13px;font-weight:500;color:var(--text);}
+.geo-sub{font-size:12px;color:var(--text3);margin-top:2px;}
+.geo-dist{font-family:var(--fm);font-size:13px;font-weight:500;}
+.geo-dist.inside{color:var(--green);}
+.geo-dist.outside{color:var(--red);}
+
+/* ── MAP ──────────────────────────────────────── */
+.map-wrap{border-radius:var(--r);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;}
+#attendanceMap{height:240px;background:var(--bg3);}
+#adminMapFull{height:380px;background:var(--bg3);}
+
+/* ── PUNCH CARD ───────────────────────────────── */
+.punch-card{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.punch-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.punch-box-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:600;}
+.punch-box-time{font-family:var(--fm);font-size:20px;color:#fff;font-weight:500;}
+.punch-box-time.empty{color:var(--text3);font-size:14px;}
+.punch-box-zone{font-size:11px;color:var(--text3);margin-top:4px;}
+.punch-box-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;margin-top:4px;}
+
+/* ── STATS GRID ───────────────────────────────── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+.stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.stat-val{font-family:var(--fh);font-size:26px;font-weight:700;color:#fff;}
+.stat-sub{font-size:11px;color:var(--text2);margin-top:4px;}
+
+/* ── TABLE ────────────────────────────────────── */
+.table-wrap{border-radius:var(--r);border:1px solid var(--border);overflow-x:auto;margin-bottom:16px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead{background:var(--bg3);}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:var(--bg3);}
+.violation-row td:first-child{border-left:2px solid var(--red);}
+
+/* ── BADGES ───────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;}
+.b-green{background:var(--gl);color:var(--green);border:1px solid var(--gb);}
+.b-red{background:var(--rl);color:var(--red);border:1px solid var(--rb);}
+.b-amber{background:var(--aml);color:var(--amber);border:1px solid var(--amb);}
+.b-blue{background:var(--al);color:var(--accent);border:1px solid var(--ab);}
+.b-gray{background:var(--bg4);color:var(--text2);border:1px solid var(--border2);}
+.b-purple{background:rgba(139,92,246,.12);color:var(--purple);}
+
+/* ── SECTION HEADER ───────────────────────────── */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.sec-title{font-family:var(--fh);font-size:15px;font-weight:600;color:#fff;}
+.sec-sub{font-size:12px;color:var(--text3);margin-top:1px;}
+
+/* ── CARD ─────────────────────────────────────── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl2);padding:18px 20px;margin-bottom:14px;}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-title{font-family:var(--fh);font-size:14px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px;}
+
+/* ── FORMS ────────────────────────────────────── */
+.fg{margin-bottom:12px;}
+.fg label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:4px;}
+input,select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:8px 11px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .15s;-webkit-appearance:none;}
+input:focus,select:focus{border-color:var(--ab);box-shadow:0 0 0 3px var(--al);}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238891aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;}
+select option{background:var(--bg3);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* ── MODAL ────────────────────────────────────── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center;}
+.overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl2);width:520px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 4px 24px rgba(220,100,0,0.12);}
+.mh{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.mh-title{font-family:var(--fh);font-size:15px;font-weight:600;color:#fff;}
+.mc{padding:20px;overflow-y:auto;}
+.mf{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;}
+.mclose{width:28px;height:28px;border-radius:6px;background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:16px;}
+.mclose:hover{background:var(--bg5);}
+
+/* ── TOAST ────────────────────────────────────── */
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;}
+.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 15px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;min-width:260px;box-shadow:0 4px 16px rgba(220,100,0,0.10);animation:sIn .2s ease;}
+.toast.success{border-color:var(--gb);}
+.toast.error{border-color:var(--rb);}
+.toast.warning{border-color:var(--amb);}
+@keyframes sIn{from{transform:translateX(40px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes sOut{to{transform:translateX(40px);opacity:0;}}
+.toast.out{animation:sOut .2s ease forwards;}
+
+/* ── MISC ─────────────────────────────────────── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.empty{text-align:center;padding:32px;color:var(--text3);}
+.info-banner{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--bg3);margin-bottom:12px;font-size:13px;color:var(--text2);}
+.info-banner svg{width:15px;height:15px;flex-shrink:0;margin-top:1px;}
+.info-banner.warn{border-color:var(--amb);background:var(--aml);color:var(--amber);}
+.info-banner.ok{border-color:var(--gb);background:var(--gl);color:var(--green);}
+.info-banner.err{border-color:var(--rb);background:var(--rl);color:var(--red);}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.filter-row select,.filter-row input{width:auto;padding:7px 28px 7px 10px;}
+</style>
+</head>
+<body>
+
+<div class="app">
+<!-- ── SIDEBAR ──────────────────────────────── -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-badge"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+    <div class="logo-name">SalesPulse</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-label">Attendance</div>
+    <div class="nav-item active" onclick="showPage('punch',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Clock In / Out
+    </div>
+    <div class="nav-item" onclick="showPage('myHistory',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      My Attendance
+    </div>
+    <div class="nav-item admin-only" style="display:none" onclick="showPage('adminDash',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Team Dashboard
+    </div>
+    <div class="nav-item admin-only" style="display:none" onclick="showPage('zones',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 8 8c0 5.333-8 14-8 14S4 15.333 4 10a8 8 0 0 1 8-8z"/></svg>
+      Geofence Zones
+    </div>
+    <div class="nav-item admin-only" style="display:none" onclick="showPage('reports',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Reports
+    </div>
+    <div class="nav-label" style="margin-top:12px;">CRM</div>
+    <div class="nav-item" onclick="window.location='/'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      Back to CRM
+    </div>
+  </nav>
+  <div style="padding:12px 10px;border-top:1px solid rgba(220,100,0,0.15);">
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;">
+      <div class="avatar" id="sidebarAvatar" style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">AK</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:500;color:#c44e00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="sidebarName">Loading…</div>
+        <div style="font-size:11px;color:#e8935a;" id="sidebarRole"></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── MAIN ─────────────────────────────────── -->
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="pageTitle">Clock In / Out</div>
+      <div class="topbar-sub" id="pageSub">Mark your attendance</div>
+    </div>
+    <div class="spacer"></div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-family:var(--fm);font-size:12px;color:var(--text3);" id="liveDate"></span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ PAGE: CLOCK IN/OUT ══ -->
+    <div class="page active" id="page-punch">
+      <div style="max-width:500px;margin:0 auto;">
+        <div class="clock-hero">
+          <div class="clock-time" id="liveClock">00:00:00</div>
+          <div class="clock-date" id="liveClockDate"></div>
+          <div class="status-ring out" id="statusRing">
+            <div class="status-ring-label" id="statusRingLabel">NOT<br>CLOCKED IN</div>
+          </div>
+        </div>
+
+        <!-- Geofence live status -->
+        <div class="geo-status" id="geoStatus">
+          <div class="geo-dot locating" id="geoDot"></div>
+          <div class="geo-info">
+            <div class="geo-title" id="geoTitle">Acquiring GPS location…</div>
+            <div class="geo-sub" id="geoSub">Please allow location access when prompted</div>
+          </div>
+          <div class="geo-dist" id="geoDist"></div>
+        </div>
+
+        <!-- Live map -->
+        <div class="map-wrap">
+          <div id="attendanceMap"></div>
+        </div>
+
+        <!-- Today's punches -->
+        <div class="punch-card" id="punchCard">
+          <div class="punch-box">
+            <div class="punch-box-label">Clock In</div>
+            <div class="punch-box-time empty" id="punchInTime">— : —</div>
+            <div class="punch-box-zone" id="punchInZone"></div>
+          </div>
+          <div class="punch-box">
+            <div class="punch-box-label">Clock Out</div>
+            <div class="punch-box-time empty" id="punchOutTime">— : —</div>
+            <div class="punch-box-zone" id="punchOutZone"></div>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div id="actionArea" style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn btn-primary btn-xl" id="clockInBtn" onclick="doPunch('in')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Clock In
+          </button>
+          <button class="btn btn-secondary btn-xl" id="clockOutBtn" style="display:none" onclick="doPunch('out')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Clock Out
+          </button>
+        </div>
+
+        <div id="totalHoursRow" style="display:none;text-align:center;padding:14px;background:var(--bg3);border-radius:var(--r);border:1px solid var(--border);margin-top:12px;">
+          <div style="font-size:12px;color:var(--text3);">Total Hours Today</div>
+          <div style="font-family:var(--fm);font-size:28px;color:var(--green);font-weight:500;margin-top:4px;" id="totalHoursVal">0.00</div>
+        </div>
+
+        <div id="violationBanner" style="display:none;" class="info-banner err" style="margin-top:10px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span id="violationText"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: MY ATTENDANCE ══ -->
+    <div class="page" id="page-myHistory">
+      <div class="sec-head">
+        <div><div class="sec-title">My Attendance</div><div class="sec-sub">Your monthly attendance history</div></div>
+        <select id="monthPicker" onchange="loadMyHistory()" style="width:auto;padding:7px 28px 7px 10px;"></select>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;" id="myStatCards">
+        <div class="stat-box"><div class="stat-label">Present Days</div><div class="stat-val" id="myStatPresent">—</div></div>
+        <div class="stat-box"><div class="stat-label">Total Hours</div><div class="stat-val" id="myStatHours">—</div></div>
+        <div class="stat-box"><div class="stat-label">Late Arrivals</div><div class="stat-val" id="myStatLate" style="color:var(--amber);">—</div><div style="font-size:11px;color:#e8935a;">after 9:30 AM</div></div>
+        <div class="stat-box"><div class="stat-label">Early Exits</div><div class="stat-val" id="myStatEarly" style="color:var(--amber);">—</div><div style="font-size:11px;color:#e8935a;">before 6:00 PM</div></div>
+        <div class="stat-box"><div class="stat-label">Geo Violations</div><div class="stat-val" id="myStatViolations" style="color:var(--red);">—</div></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Clock In</th><th>Clock Out</th><th>Hours</th><th>Zone</th><th>Status</th><th>Geofence</th></tr></thead>
+          <tbody id="myHistoryBody"><tr><td colspan="7" class="empty"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: ADMIN TEAM DASHBOARD ══ -->
+    <div class="page" id="page-adminDash">
+      <div class="sec-head">
+        <div><div class="sec-title">Team Attendance</div><div class="sec-sub" id="adminDashSub">Today's overview</div></div>
+        <div style="display:flex;gap:8px;">
+          <input type="date" id="adminDatePicker" onchange="loadAdminDash()" style="width:auto;padding:7px 10px;">
+          <button class="btn btn-secondary" onclick="loadAdminDash()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="adminStatCards" style="margin-bottom:18px;grid-template-columns:repeat(5,1fr);">
+        <div class="stat-box"><div class="stat-label">Total Staff</div><div class="stat-val" id="aTotal">—</div></div>
+        <div class="stat-box"><div class="stat-label">Present</div><div class="stat-val" id="aPresent" style="color:var(--green);">—</div></div>
+        <div class="stat-box"><div class="stat-label">Absent</div><div class="stat-val" id="aAbsent" style="color:var(--red);">—</div></div>
+        <div class="stat-box"><div class="stat-label">Late Arrivals</div><div class="stat-val" id="aLate" style="color:var(--amber);">—</div><div style="font-size:11px;color:#e8935a;">after 9:30 AM</div></div>
+        <div class="stat-box"><div class="stat-label">Early Exits</div><div class="stat-val" id="aEarly" style="color:var(--amber);">—</div><div style="font-size:11px;color:#e8935a;">before 6:00 PM</div></div>
+      </div>
+
+      <!-- Admin live map -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-head"><div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 8 8c0 5.333-8 14-8 14S4 15.333 4 10a8 8 0 0 1 8-8z"/></svg>
+          Live Location Map — Today
+        </div></div>
+        <div class="map-wrap" style="margin-bottom:0;"><div id="adminMapFull"></div></div>
+      </div>
+
+      <div class="sec-head" style="margin-top:4px;">
+        <div class="sec-title" style="font-size:13px;">Attendance Records</div>
+        <div style="display:flex;gap:6px;">
+          <select id="adminFilterStatus" onchange="filterAdminTable()" style="width:auto;padding:6px 28px 6px 8px;font-size:12px;"><option value="">All Status</option><option value="present">Present</option><option value="half_day">Half Day</option><option value="absent">Absent</option></select>
+          <select id="adminFilterViolation" onchange="filterAdminTable()" style="width:auto;padding:6px 28px 6px 8px;font-size:12px;"><option value="">All</option><option value="true">Violations Only</option></select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Employee</th><th>Clock In</th><th>Clock Out</th><th>Hours</th><th>Status</th><th>Geofence</th><th>Actions</th></tr></thead>
+          <tbody id="adminTableBody"><tr><td colspan="7" class="empty"><div class="spinner"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: GEOFENCE ZONES ══ -->
+    <div class="page" id="page-zones">
+      <div class="sec-head">
+        <div><div class="sec-title">Geofence Zones</div><div class="sec-sub">Define allowed clock-in locations</div></div>
+        <button class="btn btn-primary" onclick="openAddZone()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Zone
+        </button>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-head"><div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 8 8c0 5.333-8 14-8 14S4 15.333 4 10a8 8 0 0 1 8-8z"/></svg>All Zones Map</div></div>
+        <div class="map-wrap" style="margin-bottom:0;"><div id="zonesMap" style="height:280px;background:var(--bg3);"></div></div>
+      </div>
+
+      <div id="zonesList"><div class="empty"><div class="spinner"></div></div></div>
+    </div>
+
+    <!-- ══ PAGE: REPORTS ══ -->
+    <div class="page" id="page-reports">
+      <div class="sec-head">
+        <div><div class="sec-title">Attendance Reports</div><div class="sec-sub">Monthly analysis and violations</div></div>
+      </div>
+      <div class="filter-row">
+        <select id="reportMonth" onchange="loadReport()" style="width:auto;"></select>
+        <select id="reportEmployee" onchange="loadReport()" style="width:auto;"><option value="">All Employees</option></select>
+        <button class="btn btn-secondary" onclick="exportReport()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+      </div>
+      <div id="reportContent"><div class="empty"><div class="spinner"></div></div></div>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end main -->
+</div><!-- end app -->
+
+<!-- ── MODALS ────────────────────────────────── -->
+
+<!-- Clock-out notes modal -->
+<div class="overlay" id="clockOutModal">
+  <div class="modal">
+    <div class="mh"><div class="mh-title">Clock Out</div><div class="mclose" onclick="closeModal('clockOutModal')">✕</div></div>
+    <div class="mc">
+      <div class="info-banner ok" id="coGeoStatus">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Location verified</span>
+      </div>
+      <div class="fg"><label>End-of-day notes (optional)</label><textarea id="coNotes" rows="3" placeholder="Brief summary of today's work…"></textarea></div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeModal('clockOutModal')">Cancel</button>
+      <button class="btn btn-primary" id="confirmClockOutBtn" onclick="confirmClockOut()">Confirm Clock Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Zone modal -->
+<div class="overlay" id="addZoneModal">
+  <div class="modal">
+    <div class="mh"><div class="mh-title" id="zoneModalTitle">Add Geofence Zone</div><div class="mclose" onclick="closeModal('addZoneModal')">✕</div></div>
+    <div class="mc">
+      <div class="info-banner" style="margin-bottom:12px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Click anywhere on the map below to set zone centre, or enter coordinates manually.
+      </div>
+      <div class="fg"><label>Zone Name *</label><input type="text" id="zn_name" placeholder="e.g. Head Office — Mumbai"></div>
+      <div class="fg"><label>Address / Description</label><input type="text" id="zn_address" placeholder="Building, area, city"></div>
+      <div class="form-row">
+        <div class="fg"><label>Latitude *</label><input type="number" id="zn_lat" placeholder="19.0607" step="0.0001"></div>
+        <div class="fg"><label>Longitude *</label><input type="number" id="zn_lng" placeholder="72.8656" step="0.0001"></div>
+      </div>
+      <div class="fg"><label>Radius (metres) *</label>
+        <input type="range" id="zn_radius" min="50" max="2000" value="200" step="50" oninput="document.getElementById('zn_radiusVal').textContent=this.value+'m'">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-top:4px;"><span>50m</span><span id="zn_radiusVal" style="color:var(--accent);font-weight:600;">200m</span><span>2000m</span></div>
+      </div>
+      <div id="addZoneMap" style="height:200px;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);margin-top:4px;"></div>
+      <input type="hidden" id="zn_editId">
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeModal('addZoneModal')">Cancel</button>
+      <button class="btn btn-primary" id="saveZoneBtn" onclick="saveZone()">Save Zone</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Override modal -->
+<div class="overlay" id="overrideModal">
+  <div class="modal">
+    <div class="mh"><div class="mh-title">Manual Override</div><div class="mclose" onclick="closeModal('overrideModal')">✕</div></div>
+    <div class="mc">
+      <div class="info-banner warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>This will clear any geofence violation flags.</div>
+      <input type="hidden" id="or_id">
+      <div class="form-row">
+        <div class="fg"><label>Clock In Time</label><input type="datetime-local" id="or_in"></div>
+        <div class="fg"><label>Clock Out Time</label><input type="datetime-local" id="or_out"></div>
+      </div>
+      <div class="fg"><label>Status</label><select id="or_status"><option value="present">Present</option><option value="half_day">Half Day</option><option value="on_leave">On Leave</option><option value="absent">Absent</option></select></div>
+      <div class="fg"><label>Reason *</label><input type="text" id="or_reason" placeholder="Reason for correction…"></div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeModal('overrideModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveOverride()">Save Override</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════
+const API = '/api';
+// Always read fresh from storage so refresh works
+function getToken() { return localStorage.getItem('sp_token'); }
+const user = JSON.parse(localStorage.getItem('sp_user') || 'null');
+
+if (!getToken() || !user) { window.location.href = '/'; }
+
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+let currentLat = null, currentLng = null;
+let nearestZone = null, distanceToZone = null, isInsideZone = false;
+let todayRecord = null;
+let punchMap = null, punchMarker = null, zoneCircles = [];
+let adminMap = null, zonesMap = null, addZoneMapL = null;
+let addZoneMarker = null;
+let allZones = [];
+let adminRecords = [];
+let watchId = null;
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+function init() {
+  // Set user info
+  const initials = user.name.split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2);
+  document.getElementById('sidebarAvatar').textContent = initials;
+  document.getElementById('sidebarName').textContent = user.name;
+  document.getElementById('sidebarRole').textContent = user.role === 'admin' ? 'Administrator' : 'Sales Rep';
+
+  // Admin sections
+  if (user.role === 'admin') document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+
+  // Live clock
+  setInterval(updateClock, 1000); updateClock();
+
+  // Month pickers
+  populateMonthPickers();
+
+  // Load today's status
+  loadTodayStatus();
+
+  // Start GPS watch
+  startGPS();
+}
+
+// ════════════════════════════════════════════════
+// CLOCK
+// ════════════════════════════════════════════════
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('liveClock').textContent = `${h}:${m}:${s}`;
+  const ds = now.toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('liveClockDate').textContent = ds;
+  document.getElementById('liveDate').textContent = now.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+}
+
+// ════════════════════════════════════════════════
+// GPS + GEOFENCE
+// ════════════════════════════════════════════════
+function startGPS() {
+  if (!navigator.geolocation) {
+    setGeoStatus('error', 'GPS Not Supported', 'Your browser does not support geolocation', '');
+    return;
+  }
+  setGeoStatus('locating', 'Acquiring GPS…', 'Please allow location access', '');
+  watchId = navigator.geolocation.watchPosition(onGPSSuccess, onGPSError, { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 });
+}
+
+async function onGPSSuccess(pos) {
+  currentLat = pos.coords.latitude;
+  currentLng = pos.coords.longitude;
+  const accuracy = Math.round(pos.coords.accuracy);
+
+  // Init or update punch map
+  if (!punchMap) initPunchMap();
+  updatePunchMapMarker(currentLat, currentLng, accuracy);
+
+  // Check geofence against all zones
+  if (allZones.length === 0) await loadAllZones();
+  checkGeofence();
+}
+
+function onGPSError(err) {
+  const msgs = { 1:'Location access denied — please enable in browser settings', 2:'Location unavailable', 3:'Location request timed out' };
+  setGeoStatus('error', 'GPS Error', msgs[err.code] || 'Unknown error', '');
+}
+
+async function loadAllZones() {
+  try {
+    const data = await apiFetch('GET', '/attendance/zones');
+    allZones = data.data.zones;
+  } catch(e) { allZones = []; }
+}
+
+function checkGeofence() {
+  if (!allZones.length) {
+    setGeoStatus('locating', 'No zones configured', 'Admin needs to add geofence zones', '');
+    return;
+  }
+  let minDist = Infinity; let nearest = null;
+  for (const z of allZones) {
+    const dist = haversine(currentLat, currentLng, z.location.coordinates[1], z.location.coordinates[0]);
+    if (dist < minDist) { minDist = dist; nearest = z; }
+  }
+  nearestZone = nearest;
+  distanceToZone = Math.round(minDist);
+  isInsideZone = minDist <= nearest.radiusMeters;
+
+  if (isInsideZone) {
+    setGeoStatus('inside', `Inside zone: ${nearest.name}`, `Within ${nearest.radiusMeters}m radius`, distanceToZone + 'm away');
+  } else {
+    setGeoStatus('outside', `Outside zone: ${nearest.name}`, `${distanceToZone}m from nearest zone (radius ${nearest.radiusMeters}m)`, distanceToZone + 'm');
+  }
+}
+
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371000, toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2-lat1), dLng = toRad(lng2-lng1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function setGeoStatus(state, title, sub, dist) {
+  const dot = document.getElementById('geoDot');
+  const t = document.getElementById('geoTitle');
+  const s = document.getElementById('geoSub');
+  const d = document.getElementById('geoDist');
+  dot.className = 'geo-dot ' + state;
+  t.textContent = title;
+  s.textContent = sub;
+  d.textContent = dist;
+  d.className = 'geo-dist ' + (state === 'inside' ? 'inside' : 'outside');
+}
+
+
+// ════════════════════════════════════════════════
+// REVERSE GEOCODING — OpenStreetMap Nominatim
+// Free, no API key needed, returns human-readable address
+// ════════════════════════════════════════════════
+async function reverseGeocode(lat, lng) {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
+      { headers: { 'Accept-Language': 'en', 'User-Agent': 'SalesPulseCRM/1.0' } }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    // Build a concise readable address
+    const a = data.address || {};
+    const parts = [
+      a.road || a.pedestrian || a.footway,
+      a.neighbourhood || a.suburb || a.quarter,
+      a.city || a.town || a.village || a.county,
+      a.state,
+      a.postcode,
+    ].filter(Boolean);
+    return parts.join(', ') || data.display_name || null;
+  } catch (e) {
+    console.warn('Reverse geocoding failed:', e.message);
+    return null;
+  }
+}
+
+// ════════════════════════════════════════════════
+// MAPS
+// ════════════════════════════════════════════════
+const TILE = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+const TILE_ATTR = '&copy; OpenStreetMap contributors &copy; CARTO';
+
+function initPunchMap() {
+  if (punchMap) return;
+  punchMap = L.map('attendanceMap', { zoomControl: true }).setView([currentLat, currentLng], 16);
+  L.tileLayer(TILE, { attribution: TILE_ATTR, maxZoom: 19 }).addTo(punchMap);
+  // Draw zone circles
+  for (const z of allZones) {
+    L.circle([z.location.coordinates[1], z.location.coordinates[0]], {
+      radius: z.radiusMeters, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.08, weight: 2
+    }).addTo(punchMap).bindPopup(`<b>${z.name}</b><br>Radius: ${z.radiusMeters}m`);
+  }
+}
+
+function updatePunchMapMarker(lat, lng, accuracy) {
+  if (!punchMap) return;
+  if (punchMarker) punchMarker.setLatLng([lat, lng]);
+  else {
+    const icon = L.divIcon({ className: '', html: `<div style="width:14px;height:14px;border-radius:50%;background:${isInsideZone?'#10b981':'#ef4444'};border:2px solid #fff;box-shadow:0 0 8px rgba(0,0,0,.5);"></div>`, iconAnchor: [7,7] });
+    punchMarker = L.marker([lat, lng], { icon }).addTo(punchMap).bindPopup('Your location');
+    L.circle([lat, lng], { radius: accuracy, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.05, weight: 1 }).addTo(punchMap);
+  }
+  punchMap.setView([lat, lng], 16);
+}
+
+function initAdminMap(records, zones) {
+  if (!adminMap) {
+    const centre = zones.length ? [zones[0].location.coordinates[1], zones[0].location.coordinates[0]] : [19.0607, 72.8656];
+    adminMap = L.map('adminMapFull').setView(centre, 13);
+    L.tileLayer(TILE, { attribution: TILE_ATTR }).addTo(adminMap);
+  } else {
+    adminMap.eachLayer(l => { if (!(l instanceof L.TileLayer)) adminMap.removeLayer(l); });
+  }
+  for (const z of zones) {
+    L.circle([z.location.coordinates[1], z.location.coordinates[0]], { radius: z.radiusMeters, color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1, weight: 2 }).addTo(adminMap)
+      .bindPopup(`<b>${z.name}</b><br>${z.radiusMeters}m`);
+  }
+  for (const r of records) {
+    if (r.clockIn && r.clockIn.location && r.clockIn.location.coordinates && r.clockIn.location.coordinates.length) {
+      const [lng, lat] = r.clockIn.location.coordinates;
+      const color = r.geofenceViolation ? '#ef4444' : '#10b981';
+      const icon = L.divIcon({ className:'', html:`<div style="width:10px;height:10px;border-radius:50%;background:${color};border:1.5px solid #fff;"></div>`, iconAnchor:[5,5] });
+      L.marker([lat, lng], { icon }).addTo(adminMap).bindPopup(`<b>${r.employee?.name}</b><br>In: ${fmtTime(r.clockIn.time)}<br>${r.geofenceViolation?'⚠ Violation':'✓ Inside zone'}`);
+    }
+  }
+}
+
+function initZonesMap(zones) {
+  if (!zonesMap) {
+    const c = zones.length ? [zones[0].location.coordinates[1], zones[0].location.coordinates[0]] : [20.5937, 78.9629];
+    zonesMap = L.map('zonesMap').setView(c, 5);
+    L.tileLayer(TILE, { attribution: TILE_ATTR }).addTo(zonesMap);
+  } else {
+    zonesMap.eachLayer(l => { if (!(l instanceof L.TileLayer)) zonesMap.removeLayer(l); });
+  }
+  for (const z of zones) {
+    const c = [z.location.coordinates[1], z.location.coordinates[0]];
+    L.circle(c, { radius: z.radiusMeters, color:'#3b82f6', fillColor:'#3b82f6', fillOpacity:0.12, weight:2 }).addTo(zonesMap);
+    L.marker(c, { icon: L.divIcon({ className:'', html:`<div style="padding:3px 7px;background:#1e222e;border:1px solid #3b82f6;border-radius:4px;font-size:11px;color:#dde2ee;white-space:nowrap;">${z.name}</div>`, iconAnchor:[-4,8] }) }).addTo(zonesMap);
+  }
+  if (zones.length) zonesMap.fitBounds(zones.map(z => [z.location.coordinates[1], z.location.coordinates[0]]), { padding: [40,40] });
+}
+
+function initAddZoneMap() {
+  if (addZoneMapL) { addZoneMapL.invalidateSize(); return; }
+  addZoneMapL = L.map('addZoneMap').setView([20.5937, 78.9629], 5);
+  L.tileLayer(TILE, { attribution: TILE_ATTR }).addTo(addZoneMapL);
+  addZoneMapL.on('click', function(e) {
+    document.getElementById('zn_lat').value = e.latlng.lat.toFixed(6);
+    document.getElementById('zn_lng').value = e.latlng.lng.toFixed(6);
+    if (addZoneMarker) addZoneMarker.setLatLng(e.latlng);
+    else addZoneMarker = L.marker(e.latlng).addTo(addZoneMapL);
+  });
+}
+
+// ════════════════════════════════════════════════
+// TODAY'S ATTENDANCE STATUS
+// ════════════════════════════════════════════════
+async function loadTodayStatus() {
+  try {
+    const data = await apiFetch('GET', '/attendance/today');
+    todayRecord = data.data.attendance;
+    updatePunchUI();
+  } catch(e) { todayRecord = null; updatePunchUI(); }
+}
+
+function updatePunchUI() {
+  const ring = document.getElementById('statusRing');
+  const label = document.getElementById('statusRingLabel');
+  const inBtn = document.getElementById('clockInBtn');
+  const outBtn = document.getElementById('clockOutBtn');
+  const totalRow = document.getElementById('totalHoursRow');
+  const violation = document.getElementById('violationBanner');
+
+  if (!todayRecord || !todayRecord.clockIn || !todayRecord.clockIn.time) {
+    // Not clocked in
+    ring.className = 'status-ring out'; label.textContent = 'NOT\nCLOCKED IN';
+    inBtn.style.display = ''; outBtn.style.display = 'none'; totalRow.style.display = 'none';
+    document.getElementById('punchInTime').textContent = '— : —'; document.getElementById('punchInTime').className = 'punch-box-time empty';
+    document.getElementById('punchOutTime').textContent = '— : —'; document.getElementById('punchOutTime').className = 'punch-box-time empty';
+    document.getElementById('punchInZone').textContent = '';
+    document.getElementById('punchOutZone').textContent = '';
+    violation.style.display = 'none';
+    return;
+  }
+
+  const r = todayRecord;
+
+  // ── Clock-In box ──────────────────────────────────
+  document.getElementById('punchInTime').textContent = fmtTime(r.clockIn.time);
+  document.getElementById('punchInTime').className = 'punch-box-time';
+  const lateTag = r.isLate
+    ? `<span class="badge b-amber" style="font-size:10px;margin-left:4px;">⏰ Late</span>`
+    : `<span class="badge b-green" style="font-size:10px;margin-left:4px;">✓ On time</span>`;
+  document.getElementById('punchInZone').innerHTML =
+    `<div style="margin-bottom:3px;"><span class="badge ${r.clockIn.isWithinZone?'b-green':'b-red'}" style="font-size:10px;">${r.clockIn.zoneName||'—'}</span>
+     ${r.clockIn.isWithinZone ? '✓' : ('⚠ '+r.clockIn.distanceFromZone+'m')} ${lateTag}</div>
+     ${r.clockIn.address ? `<div style="font-size:11px;color:var(--text3);line-height:1.4;margin-top:3px;">📍 ${r.clockIn.address}</div>` : ''}`;
+
+  if (!r.clockOut || !r.clockOut.time) {
+    // Clocked in, not out yet
+    ring.className = 'status-ring in';
+    label.innerHTML = r.isLate ? 'LATE<br>IN' : 'CLOCKED<br>IN';
+    inBtn.style.display = 'none'; outBtn.style.display = ''; totalRow.style.display = 'none';
+    document.getElementById('punchOutTime').textContent = '— : —';
+    document.getElementById('punchOutTime').className = 'punch-box-time empty';
+    document.getElementById('punchOutZone').textContent = '';
+  } else {
+    // Fully done
+    ring.className = 'status-ring done';
+    label.innerHTML = 'DAY<br>COMPLETE';
+    inBtn.style.display = 'none'; outBtn.style.display = 'none';
+    document.getElementById('punchOutTime').textContent = fmtTime(r.clockOut.time);
+    document.getElementById('punchOutTime').className = 'punch-box-time';
+    const earlyTag = r.isEarlyExit
+      ? `<span class="badge b-amber" style="font-size:10px;margin-left:4px;">⚡ Early Exit</span>`
+      : `<span class="badge b-green" style="font-size:10px;margin-left:4px;">✓ Full day</span>`;
+    document.getElementById('punchOutZone').innerHTML =
+      `<div style="margin-bottom:3px;"><span class="badge ${r.clockOut.isWithinZone?'b-green':'b-red'}" style="font-size:10px;">${r.clockOut.zoneName||'—'}</span> ${earlyTag}</div>
+       ${r.clockOut.address ? `<div style="font-size:11px;color:var(--text3);line-height:1.4;margin-top:3px;">📍 ${r.clockOut.address}</div>` : ''}`;
+    totalRow.style.display = '';
+    document.getElementById('totalHoursVal').textContent = r.totalHours?.toFixed(2) || '0.00';
+  }
+
+  // ── Violation / Late / Early banners ──────────────
+  const banners = [];
+  if (r.geofenceViolation) banners.push(r.violationNote || 'Geofence violation recorded');
+  if (r.isLate) banners.push('Clock-in after 9:30 AM — marked as Late');
+  if (r.isEarlyExit) banners.push('Clock-out before 6:00 PM — marked as Early Exit');
+
+  if (banners.length) {
+    violation.style.display = 'flex';
+    document.getElementById('violationText').innerHTML = banners.join('<br>');
+  } else {
+    violation.style.display = 'none';
+  }
+}
+
+// ════════════════════════════════════════════════
+// PUNCH ACTIONS
+// ════════════════════════════════════════════════
+async function doPunch(type) {
+  if (currentLat === null) { showToast('GPS location not available. Please wait…', 'warning'); return; }
+
+  if (type === 'out') {
+    // Pre-fill clock-out modal with geo status
+    const geoMsg = isInsideZone ? `✓ Inside zone: ${nearestZone?.name}` : `⚠ ${distanceToZone}m outside zone: ${nearestZone?.name}`;
+    const banner = document.getElementById('coGeoStatus');
+    banner.className = 'info-banner ' + (isInsideZone ? 'ok' : 'err');
+    banner.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">${isInsideZone?'<polyline points="20 6 9 17 4 12"/>':'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'}</svg><span>${geoMsg}</span>`;
+    document.getElementById('coNotes').value = '';
+    openModal('clockOutModal');
+    return;
+  }
+
+  // Clock In
+  const btn = document.getElementById('clockInBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Getting location…';
+
+  // Reverse geocode to get human-readable address
+  const humanAddress = await reverseGeocode(currentLat, currentLng);
+  btn.innerHTML = '<div class="spinner"></div> Clocking in…';
+
+  try {
+    const res = await apiFetch('POST', '/attendance/clock-in', {
+      latitude: currentLat, longitude: currentLng,
+      address: humanAddress || (nearestZone ? nearestZone.name : `${currentLat.toFixed(5)}, ${currentLng.toFixed(5)}`),
+    });
+    todayRecord = res.data.attendance;
+    updatePunchUI();
+    showToast(res.message, res.geofenceViolation ? 'warning' : 'success');
+  } catch(e) { showToast(e.message, 'error'); }
+  finally { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Clock In'; }
+}
+
+async function confirmClockOut() {
+  const btn = document.getElementById('confirmClockOutBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Getting location…';
+
+  // Reverse geocode to get human-readable address
+  const humanAddress = await reverseGeocode(currentLat, currentLng);
+  btn.innerHTML = '<div class="spinner"></div> Clocking out…';
+
+  try {
+    const res = await apiFetch('POST', '/attendance/clock-out', {
+      latitude: currentLat, longitude: currentLng,
+      address: humanAddress || (nearestZone ? nearestZone.name : `${currentLat.toFixed(5)}, ${currentLng.toFixed(5)}`),
+      notes: document.getElementById('coNotes').value,
+    });
+    todayRecord = res.data.attendance;
+    updatePunchUI();
+    closeModal('clockOutModal');
+    showToast('Clocked out — ' + res.totalHours + ' hours today', res.geofenceViolation ? 'warning' : 'success');
+  } catch(e) { showToast(e.message, 'error'); }
+  finally { btn.disabled = false; btn.innerHTML = 'Confirm Clock Out'; }
+}
+
+// ════════════════════════════════════════════════
+// MY HISTORY
+// ════════════════════════════════════════════════
+async function loadMyHistory() {
+  const month = document.getElementById('monthPicker').value;
+  const tb = document.getElementById('myHistoryBody');
+  tb.innerHTML = '<tr><td colspan="7" class="empty"><div class="spinner"></div></td></tr>';
+  try {
+    const data = await apiFetch('GET', `/attendance/my?month=${month}`);
+    const { records, summary } = data;
+    document.getElementById('myStatPresent').textContent = summary.present;
+    document.getElementById('myStatHours').textContent = summary.totalHours + 'h';
+    document.getElementById('myStatLate').textContent = summary.late;
+    document.getElementById('myStatEarly').textContent = records.filter(r => r.isEarlyExit).length;
+    document.getElementById('myStatViolations').textContent = summary.violations;
+
+    if (!records.length) { tb.innerHTML = '<tr><td colspan="7" class="empty">No records for this month</td></tr>'; return; }
+    tb.innerHTML = records.map(r => {
+      const dayName = new Date(r.date).toLocaleDateString('en-IN', { weekday:'short' });
+      const inZone = r.clockIn?.isWithinZone;
+      return `<tr class="${r.geofenceViolation?'violation-row':''}">
+        <td><div style="font-weight:500;">${r.date}</div><div style="font-size:11px;color:#e8935a;">${dayName}</div></td>
+        <td>
+          <div style="font-family:var(--fm);">${r.clockIn?.time ? fmtTime(r.clockIn.time) : '—'}</div>
+          <div style="font-size:11px;color:#e8935a;">${r.clockIn?.zoneName||''}</div>
+          ${r.clockIn?.address ? `<div style="font-size:10px;color:var(--text3);margin-top:2px;">📍 ${r.clockIn.address}</div>` : ''}
+        </td>
+        <td>
+          <div style="font-family:var(--fm);">${r.clockOut?.time ? fmtTime(r.clockOut.time) : '—'}</div>
+          <div style="font-size:11px;color:#e8935a;">${r.clockOut?.zoneName||''}</div>
+          ${r.clockOut?.address ? `<div style="font-size:10px;color:var(--text3);margin-top:2px;">📍 ${r.clockOut.address}</div>` : ''}
+        </td>
+        <td style="font-family:var(--fm);color:${r.totalHours>=8?'var(--green)':r.totalHours>=4?'var(--amber)':'var(--red)'};">${r.totalHours?.toFixed(2)||'—'}</td>
+        <td><div style="font-size:12px;color:var(--text3);">${r.clockIn?.zoneName||'—'}</div></td>
+        <td>${statusBadge(r)}${r.isLate?'<div style="margin-top:3px;"><span class="badge b-amber" style="font-size:10px;">⏰ Late In</span></div>':''} ${r.isEarlyExit?'<div style="margin-top:3px;"><span class="badge b-amber" style="font-size:10px;">⚡ Early Out</span></div>':''}</td>
+        <td>${r.geofenceViolation
+          ? `<span class="badge b-red">⚠ ${r.clockIn?.distanceFromZone||'?'}m outside</span>`
+          : '<span class="badge b-green">✓ OK</span>'}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) { tb.innerHTML = `<tr><td colspan="7" style="color:var(--red);text-align:center;padding:20px;">${e.message}</td></tr>`; }
+}
+
+// ════════════════════════════════════════════════
+// ADMIN DASHBOARD
+// ════════════════════════════════════════════════
+async function loadAdminDash() {
+  const date = document.getElementById('adminDatePicker').value || todayStr();
+  document.getElementById('adminDatePicker').value = date;
+  document.getElementById('adminDashSub').textContent = 'Attendance for ' + date;
+  const tb = document.getElementById('adminTableBody');
+  tb.innerHTML = '<tr><td colspan="7" class="empty"><div class="spinner"></div></td></tr>';
+  try {
+    const [summaryData, zonesData] = await Promise.all([
+      apiFetch('GET', `/attendance/summary?date=${date}`),
+      apiFetch('GET', '/attendance/zones'),
+    ]);
+    const s = summaryData.data.summary;
+    adminRecords = summaryData.data.records;
+    allZones = zonesData.data.zones;
+
+    document.getElementById('aTotal').textContent = s.totalEmployees;
+    document.getElementById('aPresent').textContent = s.present;
+    document.getElementById('aAbsent').textContent = s.absent;
+    document.getElementById('aLate').textContent = s.late;
+    document.getElementById('aEarly').textContent = s.earlyExit;
+
+    // Draw map
+    setTimeout(() => { initAdminMap(adminRecords, allZones); }, 100);
+    renderAdminTable(adminRecords);
+  } catch(e) { tb.innerHTML = `<tr><td colspan="7" style="color:var(--red);text-align:center;padding:20px;">${e.message}</td></tr>`; }
+}
+
+function renderAdminTable(records) {
+  const tb = document.getElementById('adminTableBody');
+  if (!records.length) { tb.innerHTML = '<tr><td colspan="7" class="empty">No records for this date</td></tr>'; return; }
+  tb.innerHTML = records.map(r => `
+    <tr class="${r.geofenceViolation?'violation-row':''}">
+      <td><div style="font-weight:500;">${r.employee?.name||'—'}</div><div style="font-size:11px;color:#e8935a;">${r.employee?.role||''}</div></td>
+      <td>
+        <div style="font-family:var(--fm);">${r.clockIn?.time ? fmtTime(r.clockIn.time) : '—'}</div>
+        ${r.isLate?'<span class="badge b-amber" style="font-size:10px;">Late</span>':''}
+        <div style="font-size:11px;color:#e8935a;">${r.clockIn?.zoneName||''}</div>
+        ${r.clockIn?.address ? `<div style="font-size:10px;color:var(--text3);margin-top:2px;">📍 ${r.clockIn.address}</div>` : ''}
+      </td>
+      <td>
+        <div style="font-family:var(--fm);">${r.clockOut?.time ? fmtTime(r.clockOut.time) : '<span style="color:var(--amber)">Not out</span>'}</div>
+        ${r.isEarlyExit?'<span class="badge b-amber" style="font-size:10px;">Early exit</span>':''}
+      </td>
+      <td style="font-family:var(--fm);color:${r.totalHours>=8?'var(--green)':r.totalHours>=4?'var(--amber)':'var(--text3)'};">${r.totalHours?.toFixed(2)||'—'}</td>
+      <td>${statusBadge(r)}${r.isLate?'<div style="margin-top:3px;"><span class="badge b-amber" style="font-size:10px;">⏰ Late In</span></div>':''} ${r.isEarlyExit?'<div style="margin-top:3px;"><span class="badge b-amber" style="font-size:10px;">⚡ Early Out</span></div>':''}</td>
+      <td>${r.geofenceViolation
+        ? `<span class="badge b-red">⚠ Violation</span><div style="font-size:11px;color:var(--text3);margin-top:3px;">${r.violationNote||''}</div>`
+        : '<span class="badge b-green">✓ OK</span>'}</td>
+      <td><button class="btn btn-ghost" style="font-size:11px;padding:4px 8px;" onclick="openOverride('${r._id}','${r.clockIn?.time||''}','${r.clockOut?.time||''}','${r.status}')">Override</button></td>
+    </tr>`).join('');
+}
+
+function filterAdminTable() {
+  let filtered = [...adminRecords];
+  const status = document.getElementById('adminFilterStatus').value;
+  const viol = document.getElementById('adminFilterViolation').value;
+  if (status) filtered = filtered.filter(r => r.status === status);
+  if (viol === 'true') filtered = filtered.filter(r => r.geofenceViolation);
+  renderAdminTable(filtered);
+}
+
+// ════════════════════════════════════════════════
+// GEOFENCE ZONES PAGE
+// ════════════════════════════════════════════════
+async function loadZones() {
+  document.getElementById('zonesList').innerHTML = '<div class="empty"><div class="spinner"></div></div>';
+  try {
+    const data = await apiFetch('GET', '/attendance/zones');
+    allZones = data.data.zones;
+    setTimeout(() => initZonesMap(allZones), 100);
+    if (!allZones.length) { document.getElementById('zonesList').innerHTML = '<div class="empty">No zones configured. Add your first zone.</div>'; return; }
+    document.getElementById('zonesList').innerHTML = allZones.map(z => `
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;">
+        <div style="width:40px;height:40px;border-radius:8px;background:var(--al);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" width="18" height="18"><circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 1 8 8c0 5.333-8 14-8 14S4 15.333 4 10a8 8 0 0 1 8-8z"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:500;color:#fff;">${z.name}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;">${z.address||''}</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:4px;display:flex;gap:10px;">
+            <span>📍 ${z.location.coordinates[1].toFixed(4)}, ${z.location.coordinates[0].toFixed(4)}</span>
+            <span>🔵 Radius: <strong>${z.radiusMeters}m</strong></span>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-secondary" style="font-size:12px;padding:5px 10px;" onclick="editZone('${z._id}')">Edit</button>
+          <button class="btn btn-danger" style="font-size:12px;padding:5px 10px;" onclick="deleteZone('${z._id}','${z.name}')">Delete</button>
+        </div>
+      </div>`).join('');
+  } catch(e) { document.getElementById('zonesList').innerHTML = `<div class="empty" style="color:var(--red);">${e.message}</div>`; }
+}
+
+function openAddZone() {
+  document.getElementById('zoneModalTitle').textContent = 'Add Geofence Zone';
+  document.getElementById('zn_name').value = '';
+  document.getElementById('zn_address').value = '';
+  document.getElementById('zn_lat').value = '';
+  document.getElementById('zn_lng').value = '';
+  document.getElementById('zn_radius').value = 200;
+  document.getElementById('zn_radiusVal').textContent = '200m';
+  document.getElementById('zn_editId').value = '';
+  openModal('addZoneModal');
+  setTimeout(initAddZoneMap, 200);
+}
+
+function editZone(id) {
+  const z = allZones.find(x => x._id === id);
+  if (!z) return;
+  document.getElementById('zoneModalTitle').textContent = 'Edit Zone';
+  document.getElementById('zn_name').value = z.name;
+  document.getElementById('zn_address').value = z.address || '';
+  document.getElementById('zn_lat').value = z.location.coordinates[1];
+  document.getElementById('zn_lng').value = z.location.coordinates[0];
+  document.getElementById('zn_radius').value = z.radiusMeters;
+  document.getElementById('zn_radiusVal').textContent = z.radiusMeters + 'm';
+  document.getElementById('zn_editId').value = id;
+  openModal('addZoneModal');
+  setTimeout(() => {
+    initAddZoneMap();
+    const latlng = [z.location.coordinates[1], z.location.coordinates[0]];
+    addZoneMapL.setView(latlng, 15);
+    if (addZoneMarker) addZoneMarker.setLatLng(latlng);
+    else addZoneMarker = L.marker(latlng).addTo(addZoneMapL);
+  }, 200);
+}
+
+async function saveZone() {
+  const name = document.getElementById('zn_name').value.trim();
+  const lat = parseFloat(document.getElementById('zn_lat').value);
+  const lng = parseFloat(document.getElementById('zn_lng').value);
+  const radius = parseInt(document.getElementById('zn_radius').value);
+  const editId = document.getElementById('zn_editId').value;
+  if (!name || isNaN(lat) || isNaN(lng)) { showToast('Name, latitude and longitude are required', 'warning'); return; }
+
+  const body = { name, address: document.getElementById('zn_address').value, location: { type:'Point', coordinates:[lng, lat] }, radiusMeters: radius };
+  const btn = document.getElementById('saveZoneBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div>';
+  try {
+    if (editId) await apiFetch('PATCH', `/attendance/zones/${editId}`, body);
+    else await apiFetch('POST', '/attendance/zones', body);
+    showToast('Zone saved successfully', 'success');
+    closeModal('addZoneModal');
+    loadZones();
+    loadAllZones();
+  } catch(e) { showToast(e.message, 'error'); }
+  finally { btn.disabled = false; btn.innerHTML = 'Save Zone'; }
+}
+
+async function deleteZone(id, name) {
+  if (!confirm(`Delete zone "${name}"?`)) return;
+  try { await apiFetch('DELETE', `/attendance/zones/${id}`); showToast('Zone deleted', 'success'); loadZones(); }
+  catch(e) { showToast(e.message, 'error'); }
+}
+
+// ════════════════════════════════════════════════
+// ADMIN OVERRIDE
+// ════════════════════════════════════════════════
+function openOverride(id, inTime, outTime, status) {
+  document.getElementById('or_id').value = id;
+  const toLocal = t => t ? new Date(t).toISOString().slice(0,16) : '';
+  document.getElementById('or_in').value = toLocal(inTime);
+  document.getElementById('or_out').value = toLocal(outTime);
+  document.getElementById('or_status').value = status || 'present';
+  document.getElementById('or_reason').value = '';
+  openModal('overrideModal');
+}
+
+async function saveOverride() {
+  const id = document.getElementById('or_id').value;
+  const reason = document.getElementById('or_reason').value.trim();
+  if (!reason) { showToast('Reason is required', 'warning'); return; }
+  try {
+    await apiFetch('PATCH', `/attendance/${id}/override`, {
+      clockInTime: document.getElementById('or_in').value,
+      clockOutTime: document.getElementById('or_out').value,
+      status: document.getElementById('or_status').value,
+      overrideReason: reason,
+    });
+    showToast('Record corrected', 'success');
+    closeModal('overrideModal');
+    loadAdminDash();
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+// ════════════════════════════════════════════════
+// REPORTS PAGE
+// ════════════════════════════════════════════════
+async function loadReport() {
+  const month = document.getElementById('reportMonth').value;
+  const empId = document.getElementById('reportEmployee').value;
+  const el = document.getElementById('reportContent');
+  el.innerHTML = '<div class="empty"><div class="spinner"></div></div>';
+  try {
+    let url = `/attendance?month=${month}`;
+    if (empId) url += `&employeeId=${empId}`;
+    const data = await apiFetch('GET', url);
+    const records = data.data.records;
+    if (!records.length) { el.innerHTML = '<div class="empty">No records found</div>'; return; }
+
+    // Summary cards
+    const present = records.filter(r => ['present','late'].includes(r.status)).length;
+    const violations = records.filter(r => r.geofenceViolation).length;
+    const totalHours = records.reduce((s,r) => s+(r.totalHours||0), 0);
+    const avgHours = records.length ? (totalHours/records.length).toFixed(1) : 0;
+
+    el.innerHTML = `
+      <div class="stats-grid" style="margin-bottom:16px;">
+        <div class="stat-box"><div class="stat-label">Records</div><div class="stat-val">${records.length}</div></div>
+        <div class="stat-box"><div class="stat-label">Present</div><div class="stat-val" style="color:var(--green);">${present}</div></div>
+        <div class="stat-box"><div class="stat-label">Violations</div><div class="stat-val" style="color:var(--red);">${violations}</div></div>
+        <div class="stat-box"><div class="stat-label">Avg Hours/Day</div><div class="stat-val">${avgHours}h</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Employee</th><th>Clock In</th><th>Clock Out</th><th>Hours</th><th>Status</th><th>Geofence</th><th>Override</th></tr></thead>
+          <tbody>${records.map(r=>`
+            <tr class="${r.geofenceViolation?'violation-row':''}">
+              <td style="font-family:var(--fm);">${r.date}</td>
+              <td><div style="font-weight:500;">${r.employee?.name||'—'}</div></td>
+              <td style="font-family:var(--fm);">${r.clockIn?.time?fmtTime(r.clockIn.time):'—'}</td>
+              <td style="font-family:var(--fm);">${r.clockOut?.time?fmtTime(r.clockOut.time):'—'}</td>
+              <td style="font-family:var(--fm);">${r.totalHours?.toFixed(2)||'—'}</td>
+              <td>${statusBadge(r)}${r.isLate?'<div style="margin-top:3px;"><span class="badge b-amber" style="font-size:10px;">⏰ Late In</span></div>':''} ${r.isEarlyExit?'<div style="margin-top:3px;"><span class="badge b-amber" style="font-size:10px;">⚡ Early Out</span></div>':''}</td>
+              <td>${r.geofenceViolation?'<span class="badge b-red">⚠ Violation</span>':'<span class="badge b-green">✓ OK</span>'}</td>
+              <td>${r.isManualOverride?`<span class="badge b-purple">Corrected</span><div style="font-size:11px;color:#e8935a;">${r.overrideReason||''}</div>`:''}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  } catch(e) { el.innerHTML = `<div class="empty" style="color:var(--red);">${e.message}</div>`; }
+}
+
+async function loadReportEmployees() {
+  try {
+    const data = await apiFetch('GET', '/users');
+    const sel = document.getElementById('reportEmployee');
+    data.data.users.forEach(u => {
+      const o = document.createElement('option'); o.value = u._id; o.textContent = u.name; sel.appendChild(o);
+    });
+  } catch(e) {}
+}
+
+function exportReport() {
+  showToast('Export feature — implement CSV download on backend', 'warning');
+}
+
+// ════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════
+const PAGE_META = {
+  punch:      { title:'Clock In / Out',    sub:'Mark your attendance' },
+  myHistory:  { title:'My Attendance',     sub:'Your monthly history' },
+  adminDash:  { title:'Team Dashboard',    sub:'All employees today' },
+  zones:      { title:'Geofence Zones',    sub:'Manage allowed locations' },
+  reports:    { title:'Reports',           sub:'Monthly analysis' },
+};
+
+function showPage(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  if (el) el.classList.add('active');
+  const m = PAGE_META[page] || {};
+  document.getElementById('pageTitle').textContent = m.title || page;
+  document.getElementById('pageSub').textContent = m.sub || '';
+
+  if (page === 'myHistory') loadMyHistory();
+  if (page === 'adminDash') { document.getElementById('adminDatePicker').value = todayStr(); loadAdminDash(); }
+  if (page === 'zones') loadZones();
+  if (page === 'reports') { loadReport(); loadReportEmployees(); }
+
+  // Fix map sizes after reveal
+  setTimeout(() => {
+    if (punchMap) punchMap.invalidateSize();
+    if (adminMap) adminMap.invalidateSize();
+    if (zonesMap) zonesMap.invalidateSize();
+    if (addZoneMapL) addZoneMapL.invalidateSize();
+  }, 50);
+}
+
+// ════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════
+function fmtTime(ts) {
+  if (!ts) return '—';
+  return new Date(ts).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12: true });
+}
+
+function todayStr() {
+  return new Date().toISOString().slice(0,10);
+}
+
+function statusBadge(r) {
+  const map = { present:'b-green', half_day:'b-amber', absent:'b-red', late:'b-amber', on_leave:'b-blue', holiday:'b-purple' };
+  let label = r.status ? r.status.replace('_',' ') : '—';
+  let extraBadge = '';
+  if (r.isLate && r.status === 'present') label = 'Late In';
+  if (r.isEarlyExit && !r.isLate) label = 'Early Out';
+  if (r.isLate && r.isEarlyExit) label = 'Late + Early';
+  return `<span class="badge ${map[r.status]||'b-gray'}">${label}</span>`;
+}
+
+function populateMonthPickers() {
+  const now = new Date();
+  const selectors = ['monthPicker', 'reportMonth'];
+  selectors.forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    for (let i = 0; i < 6; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const val = d.toISOString().slice(0,7);
+      const label = d.toLocaleDateString('en-IN', { year:'numeric', month:'long' });
+      const o = document.createElement('option'); o.value = val; o.textContent = label;
+      if (i === 0) o.selected = true;
+      sel.appendChild(o);
+    }
+  });
+}
+
+// ════════════════════════════════════════════════
+// API
+// ════════════════════════════════════════════════
+async function apiFetch(method, path, body) {
+  const res = await fetch(API + path, {
+    method,
+    headers: { 'Content-Type':'application/json', Authorization:`Bearer ${getToken()}` },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+  const data = await res.json();
+
+  // Token expired or invalid — redirect to login
+  if (res.status === 401) {
+    localStorage.removeItem('sp_token');
+    localStorage.removeItem('sp_user');
+    showToast('Session expired. Redirecting to login…', 'warning');
+    setTimeout(() => { window.location.href = '/'; }, 1500);
+    throw new Error(data.message || 'Session expired. Please log in again.');
+  }
+
+  if (!res.ok) throw new Error(data.message || 'API error');
+  return data;
+}
+
+// ════════════════════════════════════════════════
+// MODAL / TOAST
+// ════════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target===o) o.classList.remove('open'); }));
+
+function showToast(msg, type='info') {
+  const w = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  const icons = {
+    success:'<svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>',
+    error:'<svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    warning:'<svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" width="15" height="15"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>',
+    info:'<svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+  };
+  t.className = 'toast ' + type;
+  t.innerHTML = (icons[type]||icons.info) + msg;
+  w.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 200); }, 3500);
+}
+
+// ════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>

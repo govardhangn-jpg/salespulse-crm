@@ -7,13 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0b0d12;--bg2:#10131a;--bg3:#161922;--bg4:#1e222e;--bg5:#252a38;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);--border3:rgba(255,255,255,0.18);
-  --text:#dde2ee;--text2:#8891aa;--text3:#4d5570;
-  --accent:#3b82f6;--accent-light:rgba(59,130,246,0.15);--accent-border:rgba(59,130,246,0.35);
-  --green:#10b981;--green-bg:rgba(16,185,129,0.12);--green-border:rgba(16,185,129,0.3);
-  --amber:#f59e0b;--amber-bg:rgba(245,158,11,0.12);--amber-border:rgba(245,158,11,0.3);
-  --red:#ef4444;--red-bg:rgba(239,68,68,0.12);--red-border:rgba(239,68,68,0.3);
+  --bg:#ffffff;--bg2:#ffffff;--bg3:#fff8f3;--bg4:#fff0e6;--bg5:#ffe5cc;
+  --border:rgba(220,100,0,0.12);--border2:rgba(220,100,0,0.22);--border3:rgba(220,100,0,0.38);
+  --text:#c44e00;--text2:#d06020;--text3:#e8935a;
+  --accent:#e8590c;--accent-light:rgba(232,89,12,0.10);--accent-border:rgba(232,89,12,0.35);
+  --green:#2a7a3c;--green-bg:rgba(42,122,60,0.10);--green-border:rgba(42,122,60,0.28);
+  --amber:#c47000;--amber-bg:rgba(196,112,0,0.10);--amber-border:rgba(196,112,0,0.28);
+  --red:#d42020;--red-bg:rgba(212,32,32,0.09);--red-border:rgba(212,32,32,0.28);
   --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.12);
   --teal:#14b8a6;--teal-bg:rgba(20,184,166,0.12);
   --radius:10px;--radius-sm:6px;--radius-lg:14px;
@@ -25,12 +25,12 @@ html,body{height:100%;overflow:hidden;}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);display:flex;font-size:13.5px;line-height:1.5;}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:4px;}
+::-webkit-scrollbar-thumb{background:rgba(220,100,0,0.25);border-radius:4px;}
 
 /* ── LOGIN SCREEN ─────────────────────────────────── */
 #loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;}
 #loginScreen.hidden{display:none;}
-.login-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:36px 40px;width:380px;box-shadow:0 24px 60px rgba(0,0,0,0.5);}
+.login-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:36px 40px;width:380px;box-shadow:0 4px 24px rgba(220,100,0,0.10);}
 .login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
 .login-logo-badge{width:38px;height:38px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;}
 .login-logo-badge svg{width:20px;height:20px;}
@@ -38,12 +38,12 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);display
 .login-title{font-family:var(--font-head);font-size:20px;font-weight:600;color:#fff;margin-bottom:6px;}
 .login-sub{font-size:13px;color:var(--text3);margin-bottom:24px;}
 .login-hint{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.7;}
-.login-hint strong{color:var(--accent);}
+.login-hint strong{color:var(--accent);font-weight:600;}
 .login-error{background:var(--red-bg);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:9px 12px;font-size:12.5px;color:var(--red);margin-bottom:14px;display:none;}
 
 /* ── SIDEBAR ──────────────────────────────────────── */
-.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:10;}
-.sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:#ffffff;border-right:1px solid rgba(220,100,0,0.18);display:flex;flex-direction:column;z-index:10;}
+.sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(220,100,0,0.15);}
 .logo-wrap{display:flex;align-items:center;gap:10px;}
 .logo-badge{width:34px;height:34px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .logo-badge svg{width:18px;height:18px;}
@@ -51,28 +51,28 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);display
 .logo-tag{font-size:10px;color:var(--text3);letter-spacing:0.5px;margin-top:1px;}
 .nav{flex:1;padding:10px 8px;overflow-y:auto;}
 .nav-group{margin-bottom:18px;}
-.nav-group-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.8px;padding:0 8px;margin-bottom:5px;font-weight:500;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--tr);color:var(--text2);font-size:13px;position:relative;}
-.nav-item:hover{background:var(--bg4);color:var(--text);}
-.nav-item.active{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-border);}
+.nav-group-label{font-size:10px;color:#e8935a;text-transform:uppercase;letter-spacing:0.8px;padding:0 8px;margin-bottom:5px;font-weight:500;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--tr);color:#d06020;font-size:13px;position:relative;}
+.nav-item:hover{background:rgba(232,89,12,0.08);color:#e8590c;}
+.nav-item.active{background:rgba(232,89,12,0.12);color:#e8590c;border:1px solid rgba(232,89,12,0.35);}
 .nav-item svg{width:15px;height:15px;flex-shrink:0;}
 .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-family:var(--font-mono);}
 .nav-badge.amber{background:var(--amber);color:#000;}
-.sidebar-footer{padding:12px 8px;border-top:1px solid var(--border);}
+.sidebar-footer{padding:12px 8px;border-top:1px solid rgba(220,100,0,0.15);}
 .user-card{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;}
 .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:12px;font-weight:700;flex-shrink:0;}
-.avatar.admin{background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;}
-.avatar.sales{background:linear-gradient(135deg,#10b981,#14b8a6);color:#fff;}
+.avatar.admin{background:linear-gradient(135deg,#e8590c,#c44800);color:#fff;}
+.avatar.sales{background:linear-gradient(135deg,#2a8c4a,#1a7c3a);color:#fff;}
 .user-info{flex:1;min-width:0;}
-.user-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.user-role{font-size:10.5px;color:var(--text3);}
-.logout-btn{width:28px;height:28px;border-radius:6px;background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);transition:all var(--tr);flex-shrink:0;}
+.user-name{font-size:13px;font-weight:500;color:#c44e00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:10.5px;color:#e8935a;}
+.logout-btn{width:28px;height:28px;border-radius:6px;background:rgba(232,89,12,0.08);border:1px solid rgba(232,89,12,0.25);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#d06020;transition:all var(--tr);flex-shrink:0;}
 .logout-btn:hover{background:var(--red-bg);color:var(--red);border-color:var(--red-border);}
 
 /* ── MAIN ─────────────────────────────────────────── */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.topbar{height:52px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;background:var(--bg2);}
-.topbar-title{font-family:var(--font-head);font-size:15px;font-weight:600;color:#fff;letter-spacing:-0.2px;}
+.topbar{height:52px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;background:#ffffff;}
+.topbar-title{font-family:var(--font-head);font-size:15px;font-weight:700;color:#e8590c;letter-spacing:-0.2px;}
 .topbar-breadcrumb{font-size:12px;color:var(--text3);}
 .spacer{flex:1;}
 .topbar-actions{display:flex;align-items:center;gap:8px;}
@@ -86,8 +86,8 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);display
 
 /* ── BUTTONS ──────────────────────────────────────── */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all var(--tr);white-space:nowrap;}
-.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);}
-.btn-primary:hover{background:#2563eb;}
+.btn-primary{background:#e8590c;color:#fff;border-color:#e8590c;}
+.btn-primary:hover{background:#c44800;}
 .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
 .btn-secondary{background:var(--bg4);color:var(--text);border-color:var(--border2);}
 .btn-secondary:hover{background:var(--bg5);}
@@ -106,7 +106,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);display
 input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],input[type=datetime-local],input[type=password],select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 11px;color:var(--text);font-family:var(--font-body);font-size:13px;transition:border-color var(--tr),box-shadow var(--tr);outline:none;-webkit-appearance:none;}
 input:focus,select:focus,textarea:focus{border-color:var(--accent-border);box-shadow:0 0 0 3px var(--accent-light);}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238891aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;cursor:pointer;}
-select option{background:var(--bg3);}
+select option{background:var(--bg2);color:var(--text);}
 textarea{resize:vertical;min-height:80px;line-height:1.5;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
@@ -135,7 +135,7 @@ th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--
 td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
 tbody tr{transition:background var(--tr);cursor:pointer;}
-tbody tr:hover{background:var(--bg3);}
+tbody tr:hover{background:var(--accent-light);}
 tbody tr.low-stock{background:rgba(239,68,68,0.04);}
 tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 
@@ -148,6 +148,11 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 .badge-purple{background:var(--purple-bg);color:var(--purple);}
 .badge-teal{background:var(--teal-bg);color:var(--teal);}
 .badge-gray{background:var(--bg4);color:var(--text2);border:1px solid var(--border2);}
+.chip{display:inline-flex;align-items:center;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg4);color:var(--text2);transition:all .15s;user-select:none;}
+.chip:hover{border-color:var(--accent-border);color:var(--accent);background:var(--accent-light);}
+.chip.selected{background:rgba(232,89,12,0.10);border-color:rgba(232,89,12,0.35);color:#e8590c;}
+.chip.outcome.selected{background:var(--green-bg);border-color:var(--green-border);color:var(--green);}
+.chip.outcome:hover{border-color:var(--green-border);color:var(--green);background:var(--green-bg);}
 
 /* ── SEARCH / FILTER ──────────────────────────────── */
 .search-bar{display:flex;align-items:center;gap:10px;padding:0 0 16px;flex-wrap:wrap;}
@@ -166,7 +171,7 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 /* ── MODAL ────────────────────────────────────────── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:100;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:560px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,0.5);}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:560px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 4px 24px rgba(220,100,0,0.12);}
 .modal-lg{width:720px;}
 .modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .modal-title{font-family:var(--font-head);font-size:15px;font-weight:600;color:#fff;}
@@ -259,7 +264,7 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 .empty-state{text-align:center;padding:40px 20px;color:var(--text3);}
 .empty-state svg{width:40px;height:40px;margin-bottom:12px;opacity:0.3;}
 .toast-wrap{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;}
-.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 15px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;min-width:260px;box-shadow:0 8px 24px rgba(0,0,0,0.3);animation:slideIn 0.2s ease;}
+.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 15px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;min-width:260px;box-shadow:0 4px 16px rgba(220,100,0,0.10);animation:slideIn 0.2s ease;}
 .toast.success{border-color:var(--green-border);}
 .toast.warning{border-color:var(--amber-border);}
 .toast.error{border-color:var(--red-border);}
@@ -314,9 +319,20 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
       <div class="nav-item" onclick="navigate('interactions',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Interactions
       </div>
-      <div class="nav-item" onclick="navigate('inventory',this)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Inventory
-        <span class="nav-badge amber" id="navLowStock" style="display:none">0</span>
+
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Workforce</div>
+      <div class="nav-item" onclick="window.location.href='/attendance.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Attendance
+        <span style="font-size:9px;background:var(--green-bg);color:var(--green);padding:1px 5px;border-radius:4px;margin-left:auto;border:1px solid var(--green-border);">GPS</span>
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Analytics</div>
+      <div class="nav-item" onclick="navigate('reports',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports
       </div>
     </div>
     <div class="nav-group admin-only" style="display:none">
@@ -372,7 +388,6 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
         <div class="stat-card"><div class="stat-label">Total Customers</div><div class="stat-value" id="statCustomers">—</div><div class="stat-badge up" id="statCustomersBadge"></div></div>
         <div class="stat-card"><div class="stat-label">Active Leads</div><div class="stat-value" id="statLeads">—</div></div>
         <div class="stat-card"><div class="stat-label">Pending Approvals</div><div class="stat-value" id="statPending">—</div><div class="stat-sub admin-only" style="display:none">Requires admin action</div></div>
-        <div class="stat-card"><div class="stat-label">Low Stock Alerts</div><div class="stat-value" id="statLowStock">—</div><div class="stat-sub">Below threshold</div></div>
       </div>
       <div class="two-col">
         <div class="card">
@@ -445,28 +460,13 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
       </div>
       <div class="search-bar">
         <div class="filter-bar">
-          <select id="filterCallType" onchange="loadInteractions()"><option value="">All Call Types</option><option>Cold Call</option><option>Follow-up</option><option>Technical Support</option><option>Demo</option><option>Closing</option></select>
+          <select id="filterCallType" onchange="loadInteractions()"><option value="">All Activity Types</option><option>Cold Call</option><option>Follow-up</option><option>Negotiation</option><option>Demo</option><option>Service</option><option>Calibration</option><option>PO Collection</option><option>Payment Collection</option><option>Installation</option><option>Courtesy</option></select>
         </div>
       </div>
       <div id="interactionsList"><div class="empty-state"><div class="spinner"></div></div></div>
     </div>
 
-    <!-- INVENTORY -->
-    <div class="page" id="page-inventory">
-      <div class="section-header">
-        <div><div class="section-title">Inventory Tracking</div><div class="section-sub">Stock levels at customer/dealer sites</div></div>
-        <button class="btn btn-secondary btn-sm" id="filterLowStockBtn" onclick="toggleLowStockFilter()">Show Low Stock Only</button>
-      </div>
-      <div id="lowStockAlert" style="display:none" class="pending-flag" style="border-color:var(--red-border);background:var(--red-bg);color:var(--red);">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <span id="lowStockAlertText"></span>
-      </div>
-      <div class="table-wrap" style="margin-top:12px;">
-        <table><thead><tr><th>Customer</th><th>Product</th><th>Group</th><th>Current Stock</th><th>Threshold</th><th>Level</th><th>Updated</th><th>Actions</th></tr></thead>
-        <tbody id="inventoryTableBody"><tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr></tbody>
-        </table>
-      </div>
-    </div>
+
 
     <!-- APPROVALS (admin) -->
     <div class="page" id="page-approvals">
@@ -493,6 +493,94 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
       </div>
     </div>
 
+
+    <!-- REPORTS -->
+    <div class="page" id="page-reports">
+      <!-- ── Filter Bar ───────────────────────────────── -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div style="flex:0 0 auto;">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">From</div>
+            <input type="date" id="rpt_from" style="width:140px;padding:7px 10px;">
+          </div>
+          <div style="flex:0 0 auto;">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">To</div>
+            <input type="date" id="rpt_to" style="width:140px;padding:7px 10px;">
+          </div>
+          <div style="flex:0 0 auto;" class="admin-only" style="display:none">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Salesperson</div>
+            <select id="rpt_salesperson" style="width:160px;padding:7px 28px 7px 10px;"><option value="">All</option></select>
+          </div>
+          <div style="flex:0 0 auto;">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">State</div>
+            <select id="rpt_state" style="width:160px;padding:7px 28px 7px 10px;"><option value="">All States</option></select>
+          </div>
+          <div style="flex:0 0 auto;">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Customer</div>
+            <select id="rpt_customer" style="width:180px;padding:7px 28px 7px 10px;"><option value="">All Customers</option></select>
+          </div>
+          <div style="flex:0 0 auto;">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Product Type</div>
+            <select id="rpt_productType" style="width:180px;padding:7px 28px 7px 10px;">
+              <option value="">All Product Types</option>
+              <option>MPI Machine</option>
+              <option>FPI Machine</option>
+              <option>EDDY Current Machine</option>
+              <option>Consumables</option>
+              <option>Spares</option>
+              <option>Accessories</option>
+              <option>Service</option>
+              <option>Others</option>
+            </select>
+          </div>
+          <div style="flex:0 0 auto;margin-top:16px;">
+            <button class="btn btn-primary" onclick="runReports()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Run Report
+            </button>
+          </div>
+          <div style="flex:0 0 auto;margin-top:16px;">
+            <button class="btn btn-secondary" onclick="exportReportCSV()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+          </div>
+          <div style="margin-left:auto;margin-top:16px;">
+            <span style="font-size:12px;color:var(--text3);" id="rpt_periodLabel"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── KPI Summary Cards ─────────────────────────── -->
+      <div id="rpt_summaryCards" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;"></div>
+
+      <!-- ── Tabs ──────────────────────────────────────── -->
+      <div class="tab-bar" id="rptTabBar">
+        <div class="tab active" onclick="switchRptTab('salesperson',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" style="margin-right:5px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Salesperson-wise
+        </div>
+        <div class="tab" onclick="switchRptTab('state',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" style="margin-right:5px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          State-wise
+        </div>
+        <div class="tab" onclick="switchRptTab('customer',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" style="margin-right:5px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Customer-wise
+        </div>
+        <div class="tab" onclick="switchRptTab('product',this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" style="margin-right:5px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          Product Type-wise
+        </div>
+      </div>
+
+      <!-- ── Tab Content ───────────────────────────────── -->
+      <div id="rpt_content"><div class="empty-state" style="padding:60px;color:var(--text3);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40" style="margin-bottom:12px;opacity:.3;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <div>Select a date range and click <strong>Run Report</strong></div>
+      </div></div>
+    </div>
+
     <!-- NOTIFICATION PANEL -->
     <div class="notif-panel" id="notifPanel">
       <div class="notif-panel-header">
@@ -511,7 +599,8 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
   <div class="modal modal-lg">
     <div class="modal-header"><div class="modal-title">New Customer Request</div><div class="modal-close" onclick="closeModal('newCustomerModal')">✕</div></div>
     <div class="modal-body">
-      <div class="pending-flag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>This submission will remain <strong style="margin:0 3px;">Pending</strong> until approved by an Admin.</div>
+      <div class="pending-flag" id="ncPendingBanner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>This submission will be <strong style="margin:0 3px;">reviewed and approved</strong> by an Admin before it becomes active.</div>
+      <div class="pending-flag" id="ncAdminBanner" style="display:none;background:var(--green-bg);border-color:var(--green-border);color:var(--green);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>As an Admin, this customer will be <strong style="margin:0 3px;">added directly</strong> as Active — no review needed.</div>
       <div class="form-row">
         <div class="form-group"><label class="form-label required">Company Name</label><input type="text" id="nc_name" placeholder="e.g. Apex Manufacturing Pvt Ltd"></div>
         <div class="form-group"><label class="form-label required">Segment</label>
@@ -582,7 +671,7 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
       <div class="form-row">
         <div class="form-group"><label class="form-label">Product Group</label>
           <select id="li_productGroup" onchange="loadProductsForGroup(this.value)">
-            <option value="">Select group…</option><option>Hardware</option><option>Software</option><option>Consumables</option><option>Services</option>
+            <option value="">Select group…</option><option>MPI Machine</option><option>FPI Machine</option><option>EDDY Current Machine</option><option>Consumables</option><option>Spares</option><option>Accessories</option><option>Service</option><option>Others</option>
           </select>
         </div>
         <div class="form-group"><label class="form-label">Product</label>
@@ -594,15 +683,15 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Stock at Site (consumables)</label>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <input type="number" id="li_stock" placeholder="Units" style="max-width:110px;" oninput="checkStockAlert()">
-            <input type="number" id="li_threshold" placeholder="Threshold" style="max-width:110px;">
-            <span id="li_stockBadge"></span>
-          </div>
+
+        <div class="form-group">
+          <label class="form-label required">Activity Types <span style="color:var(--text3);font-weight:400;">(select one or more)</span></label>
+          <div id="li_activityChips" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);"></div>
+          <input type="hidden" id="li_callType">
         </div>
-        <div class="form-group"><label class="form-label required">Call Type</label>
-          <select id="li_callType"><option value="">Select…</option><option>Cold Call</option><option>Follow-up</option><option>Technical Support</option><option>Demo</option><option>Closing</option><option>Site Visit</option></select>
+        <div class="form-group">
+          <label class="form-label">Visit Outcomes <span style="color:var(--text3);font-weight:400;">(select one or more)</span></label>
+          <div id="li_outcomeChips" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);"></div>
         </div>
       </div>
       <div class="form-group">
@@ -701,6 +790,19 @@ async function apiCall(method, path, body) {
   };
   const res = await fetch(API + path, opts);
   const data = await res.json();
+
+  // Token expired or invalid — clear storage and redirect to login
+  if (res.status === 401) {
+    localStorage.removeItem('sp_token');
+    localStorage.removeItem('sp_user');
+    authToken = null; currentUser = null;
+    showToast('Session expired. Please log in again.', 'warning');
+    setTimeout(() => {
+      document.getElementById('loginScreen').classList.remove('hidden');
+    }, 1000);
+    throw new Error(data.message || 'Session expired');
+  }
+
   if (!res.ok) throw new Error(data.message || 'API error');
   return data;
 }
@@ -757,6 +859,13 @@ function initApp() {
   document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? '' : 'none');
   if (isAdmin) document.getElementById('deleteCustomerBtn').style.display = '';
 
+  // New Customer modal — admin sees "Add directly" banner; others see "pending review" banner
+  if (document.getElementById('ncPendingBanner')) {
+    document.getElementById('ncPendingBanner').style.display = isAdmin ? 'none' : 'flex';
+    document.getElementById('ncAdminBanner').style.display  = isAdmin ? 'flex' : 'none';
+    document.getElementById('submitCustomerBtn').textContent = isAdmin ? 'Add Customer' : 'Submit for Review';
+  }
+
   // Seed states in new user modal
   const states = ['Maharashtra','Gujarat','Karnataka','Tamil Nadu','Delhi','Rajasthan','Uttar Pradesh','Telangana','Goa'];
   document.getElementById('nu_statesGrid').innerHTML = states.map(s =>
@@ -768,10 +877,47 @@ function initApp() {
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   document.getElementById('li_date').value = now.toISOString().slice(0,16);
 
+  buildChips();
   loadDashboard();
   loadNotifications();
   // Poll notifications every 60s
   setInterval(loadNotifications, 60000);
+}
+
+
+// ══════════════════════════════════════════════
+// CHIP BUILDERS — Activity Types & Visit Outcomes
+// ══════════════════════════════════════════════
+const ACTIVITY_TYPES = [
+  'Cold Call','Follow-up','Negotiation','Demo','Service',
+  'Calibration','PO Collection','Payment Collection','Installation','Courtesy'
+];
+const VISIT_OUTCOMES = [
+  'Relationship Management','PO Collected','Service Done','Calibration Done',
+  'Installation Completed','Payment Collected','Demo Done','Demo Planned',
+  'Contact Person Not Available','Catalogue/Business Card Given'
+];
+
+function buildChips() {
+  const actWrap = document.getElementById('li_activityChips');
+  const outWrap = document.getElementById('li_outcomeChips');
+  if (!actWrap || !outWrap) return;
+
+  actWrap.innerHTML = ACTIVITY_TYPES.map(a =>
+    `<span class="chip" data-val="${a}" onclick="toggleChip(this,'activity')">${a}</span>`
+  ).join('');
+
+  outWrap.innerHTML = VISIT_OUTCOMES.map(o =>
+    `<span class="chip outcome" data-val="${o}" onclick="toggleChip(this,'outcome')">${o}</span>`
+  ).join('');
+}
+
+function toggleChip(el, type) {
+  el.classList.toggle('selected');
+}
+
+function resetChips() {
+  document.querySelectorAll('#li_activityChips .chip, #li_outcomeChips .chip').forEach(c => c.classList.remove('selected'));
 }
 
 // ══════════════════════════════════════════════
@@ -781,9 +927,9 @@ const PAGE_META = {
   dashboard:    { title:'Dashboard', sub:'Overview' },
   customers:    { title:'Customers', sub:'Manage accounts' },
   interactions: { title:'Interaction Log', sub:'All calls & follow-ups' },
-  inventory:    { title:'Inventory Tracking', sub:'Stock at edge' },
   approvals:    { title:'Approval Queue', sub:'Pending items' },
   users:        { title:'User Management', sub:'Access control' },
+  reports:      { title:'Reports & Analytics', sub:'Activity logs by salesperson, state and customer' },
 };
 
 function navigate(page, el) {
@@ -800,9 +946,9 @@ function navigate(page, el) {
   if (page === 'dashboard')    loadDashboard();
   if (page === 'customers')    loadCustomers();
   if (page === 'interactions') loadInteractions();
-  if (page === 'inventory')    loadInventory();
   if (page === 'approvals')    { loadApprovals('customers'); loadApprovals('products',null,true); }
   if (page === 'users')        loadUsers();
+  if (page === 'reports')      initReportsPage();
 }
 
 // ══════════════════════════════════════════════
@@ -822,7 +968,6 @@ async function loadDashboard() {
 
     // Update nav badges
     if (s.pendingApprovals > 0) { const nb = document.getElementById('navPending'); nb.textContent = s.pendingApprovals; nb.style.display = ''; }
-    if (s.lowStockCount > 0) { const lb = document.getElementById('navLowStock'); lb.textContent = s.lowStockCount; lb.style.display = ''; }
 
     // Upcoming actions
     const ul = document.getElementById('upcomingList');
@@ -997,7 +1142,7 @@ async function submitNewCustomer() {
   btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Submitting…';
   try {
     await apiCall('POST', '/customers', body);
-    showToast('Customer submitted for approval. Admin has been notified.', 'success');
+    showToast(currentUser.role === 'admin' ? 'Customer added successfully.' : 'Customer submitted for review. Admin has been notified.', 'success');
     closeModal('newCustomerModal');
     if (document.getElementById('page-customers').classList.contains('active')) loadCustomers();
   } catch(e) { showToast(e.message, 'error'); }
@@ -1017,17 +1162,41 @@ async function loadInteractions() {
     const data = await apiCall('GET', '/interactions?' + params);
     const items = data.data.interactions;
     if (!items.length) { el.innerHTML = '<div class="empty-state">No interactions logged yet.</div>'; return; }
-    const callColors = { 'Cold Call':'var(--accent)', 'Follow-up':'var(--teal)', 'Demo':'var(--purple)', 'Technical Support':'var(--amber)', 'Closing':'var(--green)', 'Site Visit':'var(--text2)' };
+    const callColors = {
+        'Cold Call':         'var(--accent)',
+        'Follow-up':         'var(--teal)',
+        'Negotiation':       'var(--purple)',
+        'Demo':              '#a78bfa',
+        'Service':           'var(--green)',
+        'Calibration':       '#06b6d4',
+        'PO Collection':     'var(--amber)',
+        'Payment Collection':'#f97316',
+        'Installation':      '#84cc16',
+        'Courtesy':          'var(--text2)',
+      };
+      const outcomeColors = {
+        'PO Collected':'var(--amber)','Payment Collected':'#f97316',
+        'Service Done':'var(--green)','Calibration Done':'#06b6d4',
+        'Installation Completed':'#84cc16','Demo Done':'#a78bfa',
+        'Demo Planned':'var(--purple)','Relationship Management':'var(--teal)',
+        'Contact Person Not Available':'var(--red)','Catalogue/Business Card Given':'var(--text2)',
+      };
     el.innerHTML = items.map(i => `
       <div class="interaction-item">
         <div class="interaction-header">
           <div class="call-icon" style="background:${callColors[i.callType]||'var(--accent)'}22">
             <svg viewBox="0 0 24 24" fill="none" stroke="${callColors[i.callType]||'var(--accent)'}" stroke-width="2" width="15" height="15"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
-          <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text);">${i.customer?.name||'—'} — ${i.callType}</div><div style="font-size:11.5px;color:var(--text3);">${new Date(i.interactionDate).toLocaleString()} · ${i.salesperson?.name||''} · ${i.productName||''}</div></div>
-          <span class="badge" style="background:${callColors[i.callType]||'var(--accent)'}22;color:${callColors[i.callType]||'var(--accent)'};">${i.callType}</span>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;">${i.customer?.name||'—'}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:3px;">
+              ${(i.activityTypes||[i.callType]).filter(Boolean).map(a=>`<span class="badge" style="background:${callColors[a]||'var(--accent)'}22;color:${callColors[a]||'var(--accent)'};font-size:10px;">${a}</span>`).join('')}
+            </div>
+            <div style="font-size:11.5px;color:var(--text3);">${new Date(i.interactionDate).toLocaleString()} · ${i.salesperson?.name||''} · ${i.productName||''}</div>
+          </div>
         </div>
         <div class="interaction-body">${i.notes||'<em style="color:var(--text3);">No notes</em>'}</div>
+        ${(i.visitOutcomes||[]).length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;"><span style="font-size:11px;color:var(--text3);margin-right:2px;">Outcomes:</span>${(i.visitOutcomes||[]).map(o=>`<span class="badge" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);font-size:10px;">${o}</span>`).join('')}</div>` : ''}
         ${i.nextAction?.type ? `<div class="next-action-bar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           <div class="next-action-text">Next: <strong>${i.nextAction.type}</strong></div>
@@ -1085,15 +1254,7 @@ function handleProductSelect(val) {
   document.getElementById('li_newProductWrap').style.display = val === '__new__' ? '' : 'none';
 }
 
-function checkStockAlert() {
-  const stock = parseInt(document.getElementById('li_stock').value);
-  const threshold = parseInt(document.getElementById('li_threshold').value) || 10;
-  const badge = document.getElementById('li_stockBadge');
-  if (isNaN(stock)) { badge.innerHTML = ''; return; }
-  badge.innerHTML = stock <= threshold
-    ? '<span class="badge badge-red">⚠ Below threshold</span>'
-    : '<span class="badge badge-green">✓ OK</span>';
-}
+
 
 const QUICK_NOTES = {
   'Customer not available': 'Customer was not available at the time of call. Left message with receptionist. Will attempt contact again.',
@@ -1115,7 +1276,7 @@ async function previewEmail() {
   const group = document.getElementById('li_productGroup').value;
   if (!customerId) { showToast('Please select a customer first', 'warning'); return; }
   try {
-    const data = await apiCall('POST', '/interactions/email-preview', { customerId, productGroup: group || 'Products' });
+    const data = await apiCall('POST', '/interactions/email-preview', { customerId, productGroup: group || 'Product Portfolio' });
     const t = data.data.template;
     document.getElementById('emailPreviewContent').innerHTML = `<div style="font-weight:600;color:var(--text);margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border);">Subject: ${t.subject}</div>${t.html}`;
     sendEmailOnSave = true;
@@ -1126,9 +1287,10 @@ function sendEmailIntro() { closeModal('emailPreviewModal'); showToast('Email wi
 
 async function saveInteraction() {
   const customerId = document.getElementById('li_customerId').value;
-  const callType = document.getElementById('li_callType').value;
+  const activityTypes = [...document.querySelectorAll('#li_activityChips .chip.selected')].map(c => c.dataset.val);
+  const visitOutcomes  = [...document.querySelectorAll('#li_outcomeChips .chip.selected')].map(c => c.dataset.val);
   if (!customerId) { showToast('Please select a customer', 'warning'); return; }
-  if (!callType) { showToast('Please select a call type', 'warning'); return; }
+  if (!activityTypes.length) { showToast('Please select at least one activity type', 'warning'); return; }
 
   const productSel = document.getElementById('li_product');
   let productId = productSel.value === '__new__' ? null : productSel.value;
@@ -1147,21 +1309,20 @@ async function saveInteraction() {
     } catch(e) { showToast('Failed to create product: '+e.message, 'error'); return; }
   }
 
-  const stock = document.getElementById('li_stock').value;
-  const threshold = document.getElementById('li_threshold').value;
+
   const nextType = document.getElementById('li_nextActionType').value;
   const nextDate = document.getElementById('li_nextActionDate').value;
 
   const body = {
     customer: customerId,
-    callType,
+    activityTypes,
+    visitOutcomes,
     interactionDate: document.getElementById('li_date').value,
     productGroup: document.getElementById('li_productGroup').value || undefined,
     product: productId || undefined,
     productName: productName || undefined,
     notes: document.getElementById('li_notes').value,
     sendEmail: sendEmailOnSave,
-    ...(stock ? { stockSnapshot: { unitsAtSite: parseInt(stock), threshold: parseInt(threshold)||10 } } : {}),
     ...(nextType ? { nextAction: { type: nextType, dueDate: nextDate || undefined, assignedTo: currentUser.id } } : {}),
   };
 
@@ -1175,12 +1336,11 @@ async function saveInteraction() {
     if (document.getElementById('page-interactions').classList.contains('active')) loadInteractions();
     if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
     // Reset form
-    ['li_customerSearch','li_customerId','li_notes','li_stock','li_threshold','li_newProductName'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    ['li_customerSearch','li_customerId','li_notes','li_newProductName'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); resetChips();
     document.getElementById('li_productGroup').value='';
     document.getElementById('li_product').innerHTML='<option value="">Select group first…</option>';
     document.getElementById('li_nextActionType').value='';
     document.getElementById('li_nextActionDate').value='';
-    document.getElementById('li_stockBadge').innerHTML='';
   } catch(e) { showToast(e.message, 'error'); }
   finally { btn.disabled=false; btn.innerHTML='Save Interaction'; }
 }
@@ -1192,7 +1352,6 @@ let showLowStockOnly = false;
 function toggleLowStockFilter() {
   showLowStockOnly = !showLowStockOnly;
   document.getElementById('filterLowStockBtn').textContent = showLowStockOnly ? 'Show All' : 'Show Low Stock Only';
-  loadInventory();
 }
 
 async function loadInventory() {
@@ -1236,8 +1395,7 @@ async function updateStock(id, productName, current, threshold) {
   try {
     await apiCall('PATCH', '/inventory/'+id, { currentStock: parseInt(newStock), threshold: parseInt(newThreshold)||threshold, notes:'Manual update via CRM' });
     showToast('Stock updated', 'success');
-    loadInventory();
-  } catch(e) { showToast(e.message,'error'); }
+    } catch(e) { showToast(e.message,'error'); }
 }
 
 // ══════════════════════════════════════════════
@@ -1279,7 +1437,7 @@ async function loadApprovals(type, el, silent=false) {
             <div class="approval-content">
               <div class="approval-title">${p.name} <span class="badge badge-amber" style="margin-left:8px;">Needs Categorization</span></div>
               <div class="approval-meta">Submitted by ${p.submittedBy?.name||''} · ${new Date(p.createdAt).toLocaleDateString()}</div>
-              <div style="margin-top:8px;"><select id="prodGroup_${p._id}" style="width:auto;padding:5px 28px 5px 8px;font-size:12px;"><option value="">Assign to group…</option><option>Hardware</option><option>Software</option><option>Consumables</option><option>Services</option></select></div>
+              <div style="margin-top:8px;"><select id="prodGroup_${p._id}" style="width:auto;padding:5px 28px 5px 8px;font-size:12px;"><option value="">Assign to group…</option><option>MPI Machine</option><option>FPI Machine</option><option>EDDY Current Machine</option><option>Consumables</option><option>Spares</option><option>Accessories</option><option>Service</option><option>Others</option></select></div>
             </div>
             <div style="display:flex;gap:6px;flex-shrink:0;">
               <button class="btn btn-success btn-sm" onclick="approveProduct('${p._id}','${p.name}',this)">Approve</button>
@@ -1371,6 +1529,486 @@ async function deactivateUser(id, name) {
   if(!confirm(`Deactivate ${name}?`))return;
   try{await apiCall('DELETE','/users/'+id);showToast(name+' deactivated','success');loadUsers();}
   catch(e){showToast(e.message,'error');}
+}
+
+
+// ══════════════════════════════════════════════
+// REPORTS & ANALYTICS
+// ══════════════════════════════════════════════
+const ACTIVITY_COLORS = {
+  'Cold Call':'#3b82f6','Follow-up':'#14b8a6','Negotiation':'#8b5cf6',
+  'Demo':'#a78bfa','Service':'#10b981','Calibration':'#06b6d4',
+  'PO Collection':'#f59e0b','Payment Collection':'#f97316',
+  'Installation':'#84cc16','Courtesy':'#8891aa',
+};
+const OUTCOME_COLORS = {
+  'PO Collected':'#f59e0b','Payment Collected':'#f97316',
+  'Service Done':'#10b981','Calibration Done':'#06b6d4',
+  'Installation Completed':'#84cc16','Demo Done':'#a78bfa',
+  'Demo Planned':'#8b5cf6','Relationship Management':'#14b8a6',
+  'Contact Person Not Available':'#ef4444','Catalogue/Business Card Given':'#8891aa',
+};
+
+
+const PRODUCT_TYPE_COLORS = {
+  'MPI Machine':          '#3b82f6',
+  'FPI Machine':          '#8b5cf6',
+  'EDDY Current Machine': '#14b8a6',
+  'Consumables':          '#f59e0b',
+  'Spares':               '#f97316',
+  'Accessories':          '#84cc16',
+  'Service':              '#10b981',
+  'Others':               '#8891aa',
+};
+let rptCurrentTab = 'salesperson';
+let rptLastData = { salesperson: null, state: null, customer: null, product: null };
+let rptFilters = {};
+
+async function initReportsPage() {
+  // Load filter dropdowns
+  try {
+    const data = await apiCall('GET', '/reports/filters');
+    const { salespersons, states, customers } = data.data;
+
+    const spSel = document.getElementById('rpt_salesperson');
+    if (spSel) {
+      spSel.innerHTML = '<option value="">All Salespersons</option>' +
+        salespersons.map(u => `<option value="${u._id}">${u.name}</option>`).join('');
+    }
+    const stSel = document.getElementById('rpt_state');
+    if (stSel) {
+      stSel.innerHTML = '<option value="">All States</option>' +
+        states.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+    const cuSel = document.getElementById('rpt_customer');
+    if (cuSel) {
+      cuSel.innerHTML = '<option value="">All Customers</option>' +
+        customers.map(c => `<option value="${c._id}">${c.name} — ${c.address?.state||''}</option>`).join('');
+    }
+  } catch(e) { console.warn('Filter load failed:', e.message); }
+
+  // Default date range = current month (set every time page opens)
+  const now = new Date();
+  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0,10);
+  const today    = now.toISOString().slice(0,10);
+  if (!document.getElementById('rpt_from').value) {
+    document.getElementById('rpt_from').value = firstDay;
+  }
+  if (!document.getElementById('rpt_to').value) {
+    document.getElementById('rpt_to').value = today;
+  }
+  updatePeriodLabel();
+}
+
+function updatePeriodLabel() {
+  const from = document.getElementById('rpt_from').value;
+  const to   = document.getElementById('rpt_to').value;
+  const el   = document.getElementById('rpt_periodLabel');
+  if (!el) return;
+  if (from && to) {
+    const fmt = d => new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    el.textContent = `Period: ${fmt(from)} — ${fmt(to)}`;
+  }
+}
+
+async function runReports() {
+  const from = document.getElementById('rpt_from').value;
+  const to   = document.getElementById('rpt_to').value;
+  if (!from || !to) { showToast('Please select both From and To dates', 'warning'); return; }
+
+  updatePeriodLabel();
+  rptFilters = {
+    from,
+    to,
+    salespersonId: document.getElementById('rpt_salesperson')?.value || '',
+    state:         document.getElementById('rpt_state').value,
+    customerId:    document.getElementById('rpt_customer').value,
+    productType:   document.getElementById('rpt_productType')?.value || '',
+  };
+
+  // Show loading in content area immediately
+  document.getElementById('rpt_content').innerHTML =
+    '<div class="empty-state" style="padding:40px;"><div class="spinner"></div><div style="margin-top:12px;color:var(--text3);">Loading report…</div></div>';
+  document.getElementById('rpt_summaryCards').innerHTML = '';
+
+  try {
+    await loadRptSummary();
+    await loadRptTab(rptCurrentTab);
+  } catch(e) {
+    document.getElementById('rpt_content').innerHTML =
+      `<div class="empty-state" style="color:var(--red);padding:40px;">Failed to load report: ${e.message}</div>`;
+    showToast('Report error: ' + e.message, 'error');
+  }
+}
+
+async function loadRptSummary() {
+  const p = new URLSearchParams({ from: rptFilters.from, to: rptFilters.to });
+  const data = await apiCall('GET', '/reports/summary?' + p);
+  const d = data.data;
+  const cards = [
+    { label:'Total Visits',        val: d.totalVisits,        color:'var(--accent)' },
+    { label:'Unique Customers',     val: d.uniqueCustomers,    color:'var(--green)'  },
+    { label:'Salespersons Active',  val: d.uniqueSalespersons, color:'var(--purple)' },
+    { label:'Distinct Activities',  val: Object.keys(d.activityBreakdown||{}).length, color:'var(--amber)' },
+  ];
+  document.getElementById('rpt_summaryCards').innerHTML = cards.map(card => `
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">${card.label}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:${card.color};">${card.val}</div>
+    </div>`).join('');
+}
+
+function switchRptTab(tab, el) {
+  document.querySelectorAll('#rptTabBar .tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  rptCurrentTab = tab;
+  if (rptFilters.from) loadRptTab(tab);
+}
+
+async function loadRptTab(tab) {
+  const el = document.getElementById('rpt_content');
+  el.innerHTML = '<div class="empty-state" style="padding:40px;"><div class="spinner"></div></div>';
+  try {
+    const p = new URLSearchParams();
+    if (rptFilters.from)          p.set('from', rptFilters.from);
+    if (rptFilters.to)            p.set('to',   rptFilters.to);
+    if (rptFilters.salespersonId) p.set('salespersonId', rptFilters.salespersonId);
+    if (rptFilters.state)         p.set('state', rptFilters.state);
+    if (rptFilters.customerId)    p.set('customerId', rptFilters.customerId);
+    if (rptFilters.productType)   p.set('productGroup', rptFilters.productType);
+
+    const data = await apiCall('GET', `/reports/by-${tab}?${p}`);
+    rptLastData[tab] = data.data.report;
+
+    if (tab === 'salesperson')  renderSpReport(data.data.report);
+    else if (tab === 'state')   renderStateReport(data.data.report);
+    else if (tab === 'customer') renderCustReport(data.data.report);
+    else if (tab === 'product') renderProductReport(data.data.report);
+  } catch(e) {
+    el.innerHTML = `<div class="empty-state" style="color:var(--red);padding:40px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="36" height="36" style="margin-bottom:10px;opacity:.5;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div style="font-weight:600;margin-bottom:6px;">Report failed to load</div>
+      <div style="font-size:12px;opacity:.7;">${e.message}</div>
+      <div style="margin-top:14px;"><button class="btn btn-secondary btn-sm" onclick="loadRptTab(rptCurrentTab)">Retry</button></div>
+    </div>`;
+    console.error('Report error:', e);
+  }
+}
+
+// ── Shared helpers ─────────────────────────────────────
+function actBadges(breakdown, max=5) {
+  return Object.entries(breakdown||{})
+    .sort((a,b)=>b[1]-a[1]).slice(0,max)
+    .map(([k,v]) => `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:500;background:${ACTIVITY_COLORS[k]||'#666'}22;color:${ACTIVITY_COLORS[k]||'#aaa'};border:1px solid ${ACTIVITY_COLORS[k]||'#aaa'}44;margin:1px;">${k} <strong>(${v})</strong></span>`)
+    .join('');
+}
+function outBadges(breakdown, max=5) {
+  return Object.entries(breakdown||{})
+    .sort((a,b)=>b[1]-a[1]).slice(0,max)
+    .map(([k,v]) => `<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:500;background:${OUTCOME_COLORS[k]||'#666'}22;color:${OUTCOME_COLORS[k]||'#aaa'};border:1px solid ${OUTCOME_COLORS[k]||'#aaa'}44;margin:1px;">${k} <strong>(${v})</strong></span>`)
+    .join('');
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+}
+function drillBtn(tab, id) {
+  return `<button class="btn btn-ghost btn-sm" onclick="toggleDrill('${tab}_${id}')" style="font-size:11px;padding:3px 8px;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="9 18 15 12 9 6"/></svg>
+    Details
+  </button>`;
+}
+function toggleDrill(id) {
+  const el = document.getElementById('drill_'+id);
+  if (!el) return;
+  const open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'block';
+}
+function drillTable(records) {
+  if (!records || !records.length) return '<div style="padding:10px;color:var(--text3);font-size:12px;">No records</div>';
+  return `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;">
+    <thead style="background:var(--bg4);"><tr>
+      <th style="padding:7px 10px;text-align:left;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;">Date</th>
+      <th style="padding:7px 10px;text-align:left;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.5px;">Customer</th>
+      <th style="padding:7px 10px;text-align:left;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.5px;">Activities</th>
+      <th style="padding:7px 10px;text-align:left;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.5px;">Outcomes</th>
+      <th style="padding:7px 10px;text-align:left;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:.5px;">Notes</th>
+    </tr></thead>
+    <tbody>
+      ${records.sort((a,b)=>new Date(b.interactionDate)-new Date(a.interactionDate)).map(r => `
+        <tr style="border-bottom:1px solid var(--border);">
+          <td style="padding:7px 10px;color:var(--text3);font-family:'DM Mono',monospace;white-space:nowrap;">${fmtDate(r.interactionDate)}</td>
+          <td style="padding:7px 10px;font-weight:500;">${r.customerName||r.salespersonName||'—'}<br><span style="font-size:11px;color:var(--text3);">${r.customerState||r.customerCity||''}</span></td>
+          <td style="padding:7px 10px;">${(r.activityTypes||[]).map(a=>`<span style="display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;background:${ACTIVITY_COLORS[a]||'#333'}22;color:${ACTIVITY_COLORS[a]||'#aaa'};margin:1px;">${a}</span>`).join('')}</td>
+          <td style="padding:7px 10px;">${(r.visitOutcomes||[]).map(o=>`<span style="display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;background:${OUTCOME_COLORS[o]||'#333'}22;color:${OUTCOME_COLORS[o]||'#aaa'};margin:1px;">${o}</span>`).join('')||'—'}</td>
+          <td style="padding:7px 10px;color:var(--text2);font-size:12px;max-width:200px;">${r.notes||'—'}</td>
+        </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+// ── Salesperson-wise ────────────────────────────────────
+function renderSpReport(report) {
+  const el = document.getElementById('rpt_content');
+  if (!report.length) { el.innerHTML = '<div class="empty-state" style="padding:40px;">No interactions found for this period</div>'; return; }
+
+  el.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Salesperson</th>
+          <th>Total Visits</th>
+          <th>Unique Customers</th>
+          <th>States Covered</th>
+          <th>Last Visit</th>
+          <th>Activity Breakdown</th>
+          <th>Visit Outcomes</th>
+          <th>Details</th>
+        </tr></thead>
+        <tbody>
+          ${report.map((r,i) => `
+            <tr style="border-bottom:1px solid var(--border);">
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">${(r.salespersonName||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)}</div>
+                  <div><div style="font-weight:500;color:#fff;">${r.salespersonName||'—'}</div><div style="font-size:11px;color:var(--text3);">${r.salespersonEmail||''}</div></div>
+                </div>
+              </td>
+              <td><span style="font-family:'DM Mono',monospace;font-size:18px;font-weight:600;color:var(--accent);">${r.totalVisits}</span></td>
+              <td><span style="font-family:'DM Mono',monospace;font-size:16px;color:var(--green);">${r.uniqueCustomers}</span></td>
+              <td>${(r.statesVisited||[]).filter(Boolean).map(s=>`<span class="badge badge-gray" style="margin:1px;font-size:10px;">${s}</span>`).join('')||'—'}</td>
+              <td style="color:var(--text3);font-size:12px;">${fmtDate(r.lastVisit)}</td>
+              <td>${actBadges(r.activityBreakdown)}</td>
+              <td>${outBadges(r.outcomeBreakdown)}</td>
+              <td>${drillBtn('sp', i)}</td>
+            </tr>
+            <tr id="drill_sp_${i}" style="display:none;background:var(--bg3);">
+              <td colspan="8" style="padding:0 0 0 40px;border-bottom:2px solid var(--accent-border);">
+                ${drillTable(r.records)}
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── State-wise ──────────────────────────────────────────
+function renderStateReport(report) {
+  const el = document.getElementById('rpt_content');
+  if (!report.length) { el.innerHTML = '<div class="empty-state" style="padding:40px;">No interactions found for this period</div>'; return; }
+
+  el.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>State</th>
+          <th>Total Visits</th>
+          <th>Unique Customers</th>
+          <th>Salespersons</th>
+          <th>Last Visit</th>
+          <th>Activity Breakdown</th>
+          <th>Visit Outcomes</th>
+          <th>Details</th>
+        </tr></thead>
+        <tbody>
+          ${report.map((r,i) => `
+            <tr style="border-bottom:1px solid var(--border);">
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:28px;height:28px;border-radius:6px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  </div>
+                  <span style="font-weight:500;color:#fff;">${r.state||'Unknown'}</span>
+                </div>
+              </td>
+              <td><span style="font-family:'DM Mono',monospace;font-size:18px;font-weight:600;color:var(--accent);">${r.totalVisits}</span></td>
+              <td><span style="font-family:'DM Mono',monospace;font-size:16px;color:var(--green);">${r.uniqueCustomers}</span></td>
+              <td><span style="font-family:'DM Mono',monospace;color:var(--purple);">${r.uniqueSalespersons}</span></td>
+              <td style="color:var(--text3);font-size:12px;">${fmtDate(r.lastVisit)}</td>
+              <td>${actBadges(r.activityBreakdown)}</td>
+              <td>${outBadges(r.outcomeBreakdown)}</td>
+              <td>${drillBtn('st', i)}</td>
+            </tr>
+            <tr id="drill_st_${i}" style="display:none;background:var(--bg3);">
+              <td colspan="8" style="padding:0 0 0 40px;border-bottom:2px solid var(--accent-border);">
+                ${drillTable(r.records)}
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── Customer-wise ───────────────────────────────────────
+function renderCustReport(report) {
+  const el = document.getElementById('rpt_content');
+  if (!report.length) { el.innerHTML = '<div class="empty-state" style="padding:40px;">No interactions found for this period</div>'; return; }
+
+  el.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Customer</th>
+          <th>State / City</th>
+          <th>Total Visits</th>
+          <th>First Visit</th>
+          <th>Last Visit</th>
+          <th>Salesperson(s)</th>
+          <th>Activity Breakdown</th>
+          <th>Visit Outcomes</th>
+          <th>Details</th>
+        </tr></thead>
+        <tbody>
+          ${report.map((r,i) => `
+            <tr style="border-bottom:1px solid var(--border);">
+              <td>
+                <div style="font-weight:500;color:#fff;">${r.customerName||'—'}</div>
+                <span class="badge badge-gray" style="font-size:10px;margin-top:3px;">${r.customerSegment||''}</span>
+              </td>
+              <td><div style="font-size:13px;">${r.customerState||'—'}</div><div style="font-size:11px;color:var(--text3);">${r.customerCity||''}</div></td>
+              <td><span style="font-family:'DM Mono',monospace;font-size:18px;font-weight:600;color:var(--accent);">${r.totalVisits}</span></td>
+              <td style="color:var(--text3);font-size:12px;">${fmtDate(r.firstVisit)}</td>
+              <td style="color:var(--text3);font-size:12px;">${fmtDate(r.lastVisit)}</td>
+              <td>${(r.salespersons||[]).map(s=>`<div style="font-size:12px;color:var(--text2);">${s}</div>`).join('')}</td>
+              <td>${actBadges(r.activityBreakdown)}</td>
+              <td>${outBadges(r.outcomeBreakdown)}</td>
+              <td>${drillBtn('cu', i)}</td>
+            </tr>
+            <tr id="drill_cu_${i}" style="display:none;background:var(--bg3);">
+              <td colspan="9" style="padding:0 0 0 40px;border-bottom:2px solid var(--accent-border);">
+                ${drillTable((r.records||[]).map(rec=>({...rec,customerName:rec.salespersonName||'—',customerState:''})))}
+              </td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+
+// ── Product Type-wise ────────────────────────────────────
+function renderProductReport(report) {
+  const el = document.getElementById('rpt_content');
+  if (!report.length) {
+    el.innerHTML = '<div class="empty-state" style="padding:40px;">No interactions with a product type logged for this period.<br><span style="font-size:12px;color:var(--text3);">Make sure to select a Product Type when logging interactions.</span></div>';
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Product Type</th>
+          <th>Total Interactions</th>
+          <th>Unique Customers</th>
+          <th>Salespersons</th>
+          <th>States Covered</th>
+          <th>Last Interaction</th>
+          <th>Activity Breakdown</th>
+          <th>Visit Outcomes</th>
+          <th>Details</th>
+        </tr></thead>
+        <tbody>
+          ${report.map((r,i) => {
+            const ptColor = PRODUCT_TYPE_COLORS[r.productType] || '#8891aa';
+            return `
+            <tr style="border-bottom:1px solid var(--border);">
+              <td>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <div style="width:10px;height:38px;border-radius:3px;background:${ptColor};flex-shrink:0;"></div>
+                  <div>
+                    <div style="font-weight:600;color:#fff;font-size:14px;">${r.productType||'—'}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:${ptColor};">${r.totalVisits}</span>
+              </td>
+              <td>
+                <span style="font-family:'DM Mono',monospace;font-size:16px;color:var(--green);">${r.uniqueCustomers}</span>
+              </td>
+              <td>
+                <span style="font-family:'DM Mono',monospace;color:var(--purple);">${r.uniqueSalespersons}</span>
+                <div style="margin-top:3px;">${(r.salespersonNames||[]).filter(Boolean).map(s=>`<div style="font-size:11px;color:var(--text3);">${s}</div>`).join('')}</div>
+              </td>
+              <td>
+                <div style="display:flex;flex-wrap:wrap;gap:3px;">
+                  ${(r.statesCovered||[]).filter(Boolean).map(s=>`<span class="badge badge-gray" style="font-size:10px;">${s}</span>`).join('')||'—'}
+                </div>
+              </td>
+              <td style="color:var(--text3);font-size:12px;">${fmtDate(r.lastVisit)}</td>
+              <td>${actBadges(r.activityBreakdown)}</td>
+              <td>${outBadges(r.outcomeBreakdown)}</td>
+              <td>${drillBtn('pt', i)}</td>
+            </tr>
+            <tr id="drill_pt_${i}" style="display:none;background:var(--bg3);">
+              <td colspan="9" style="padding:0;border-bottom:2px solid ${ptColor}44;">
+                <div style="padding:0 0 0 40px;">
+                  ${drillTable(r.records||[])}
+                </div>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+// ── CSV Export ──────────────────────────────────────────
+function exportReportCSV() {
+  const tab  = rptCurrentTab;
+  const data = rptLastData[tab];
+  if (!data || !data.length) { showToast('Run a report first', 'warning'); return; }
+
+  let rows = [], headers = [];
+  if (tab === 'salesperson') {
+    headers = ['Salesperson','Email','Total Visits','Unique Customers','States','Last Visit','Top Activities','Top Outcomes'];
+    rows = data.map(r => [
+      r.salespersonName, r.salespersonEmail, r.totalVisits, r.uniqueCustomers,
+      (r.statesVisited||[]).filter(Boolean).join('; '),
+      fmtDate(r.lastVisit),
+      Object.entries(r.activityBreakdown||{}).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k+':'+v).join('; '),
+      Object.entries(r.outcomeBreakdown||{}).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k+':'+v).join('; '),
+    ]);
+  } else if (tab === 'state') {
+    headers = ['State','Total Visits','Unique Customers','Salespersons','Last Visit','Top Activities','Top Outcomes'];
+    rows = data.map(r => [
+      r.state, r.totalVisits, r.uniqueCustomers, r.uniqueSalespersons,
+      fmtDate(r.lastVisit),
+      Object.entries(r.activityBreakdown||{}).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k+':'+v).join('; '),
+      Object.entries(r.outcomeBreakdown||{}).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k+':'+v).join('; '),
+    ]);
+  } else if (tab === 'customer') {
+    headers = ['Customer','State','City','Segment','Total Visits','First Visit','Last Visit','Salespersons','Top Activities','Top Outcomes'];
+    rows = data.map(r => [
+      r.customerName, r.customerState, r.customerCity, r.customerSegment,
+      r.totalVisits, fmtDate(r.firstVisit), fmtDate(r.lastVisit),
+      (r.salespersons||[]).join('; '),
+      Object.entries(r.activityBreakdown||{}).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k+':'+v).join('; '),
+      Object.entries(r.outcomeBreakdown||{}).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k+':'+v).join('; '),
+    ]);
+  } else if (tab === 'product') {
+    headers = ['Product Type','Total Interactions','Unique Customers','Salespersons','States Covered','Last Interaction','Top Activities','Top Outcomes'];
+    rows = data.map(r => [
+      r.productType, r.totalVisits, r.uniqueCustomers, r.uniqueSalespersons,
+      (r.statesCovered||[]).filter(Boolean).join('; '),
+      fmtDate(r.lastVisit),
+      Object.entries(r.activityBreakdown||{}).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k+':'+v).join('; '),
+      Object.entries(r.outcomeBreakdown||{}).sort((a,b)=>b[1]-a[1]).map(([k,v])=>k+':'+v).join('; '),
+    ]);
+  }
+
+  const csv = [headers, ...rows].map(r =>
+    r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')
+  ).join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `salespulse_${tab}_report_${rptFilters.from||'all'}_to_${rptFilters.to||'all'}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV exported', 'success');
 }
 
 // ══════════════════════════════════════════════
