@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema(
     },
     group: {
       type: String,
-      enum: ['Hardware', 'Software', 'Consumables', 'Services'],
+      enum: ['MPI Machine', 'FPI Machine', 'EDDY Current Machine', 'Consumables', 'Spares', 'Accessories', 'Service', 'Others'],
       required: function () {
         return !this.isPending; // Only required after approval
       },

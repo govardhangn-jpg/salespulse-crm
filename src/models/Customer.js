@@ -17,7 +17,7 @@ const productInterestSchema = new mongoose.Schema(
   {
     productGroup: {
       type: String,
-      enum: ['Hardware', 'Software', 'Consumables', 'Services'],
+      enum: ['MPI Machine', 'FPI Machine', 'EDDY Current Machine', 'Consumables', 'Spares', 'Accessories', 'Service', 'Others'],
       required: true,
     },
     productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
