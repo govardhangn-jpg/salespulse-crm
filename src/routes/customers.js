@@ -196,6 +196,12 @@ router.patch(
     // Prevent overriding approval fields
     const forbidden = ['isPending', 'status', 'approvedBy', 'approvedAt', 'submittedBy'];
     forbidden.forEach((f) => delete req.body[f]);
+    // Only admin can change assignedTo (salesperson)
+    if (req.user.role !== 'admin') delete req.body.assignedTo;
+    // Auto-uppercase name if provided
+    if (req.body.name) req.body.name = req.body.name.toUpperCase();
+    // Auto-lowercase email if provided
+    if (req.body.email) req.body.email = req.body.email.toLowerCase();
 
     const updated = await Customer.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
