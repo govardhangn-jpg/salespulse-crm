@@ -1311,10 +1311,44 @@ async function submitNewCustomer() {
   try {
     await apiCall('POST', '/customers', body);
     showToast(currentUser.role === 'admin' ? 'Customer added successfully.' : 'Customer submitted for review. Admin has been notified.', 'success');
+    resetNewCustomerForm();
     closeModal('newCustomerModal');
     if (document.getElementById('page-customers').classList.contains('active')) loadCustomers();
   } catch(e) { showToast(e.message, 'error'); }
-  finally { btn.disabled = false; btn.innerHTML = 'Submit for Approval'; }
+  finally { btn.disabled = false; btn.innerHTML = document.getElementById('submitCustomerBtn').dataset.label || 'Submit for Approval'; }
+}
+
+function resetNewCustomerForm() {
+  // Clear all text/select inputs
+  const ids = ['nc_name','nc_email','nc_phone','nc_segment','nc_unit',
+                'nc_competition','nc_street','nc_pin','nc_city','nc_state'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = '';
+  });
+
+  // Reset contact slots to a single blank row
+  document.getElementById('nc_contactSlots').innerHTML = `
+    <div class="slot-row">
+      <input type="text" placeholder="Name" style="flex:1.2">
+      <input type="tel" placeholder="Phone" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9+ -]/g,'')">
+      <input type="text" placeholder="Designation">
+      <div class="slot-remove" onclick="removeSlot(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>`;
+
+  // Reset competitor slots to a single blank row
+  document.getElementById('nc_competitorSlots').innerHTML = `
+    <div class="slot-row">
+      <input type="text" placeholder="Competitor name">
+      <input type="text" placeholder="Notes">
+      <div class="slot-remove" onclick="removeSlot(this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>`;
 }
 
 // ══════════════════════════════════════════════
@@ -2328,7 +2362,11 @@ function removeSlot(btn) {
 // ══════════════════════════════════════════════
 // MODAL & TOAST
 // ══════════════════════════════════════════════
-function openModal(id){document.getElementById(id).classList.add('open');}
+function openModal(id) {
+  // Reset new customer form every time it opens so old data never persists
+  if (id === 'newCustomerModal') resetNewCustomerForm();
+  document.getElementById(id).classList.add('open');
+}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
 
