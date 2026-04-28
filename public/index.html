@@ -443,6 +443,10 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
         </div>
         <div style="padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;">
           <button class="btn btn-primary btn-sm" style="flex:1;" onclick="openInteractionForCustomer()">Log Interaction</button>
+          <button class="btn btn-secondary btn-sm admin-only" id="editCustomerBtn" style="display:none" onclick="openEditCustomer()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </button>
           <button class="btn btn-danger btn-sm admin-only" id="deleteCustomerBtn" style="display:none" onclick="deleteCurrentCustomer()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
           </button>
@@ -601,46 +605,109 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
     <div class="modal-body">
       <div class="pending-flag" id="ncPendingBanner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>This submission will be <strong style="margin:0 3px;">reviewed and approved</strong> by an Admin before it becomes active.</div>
       <div class="pending-flag" id="ncAdminBanner" style="display:none;background:var(--green-bg);border-color:var(--green-border);color:var(--green);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>As an Admin, this customer will be <strong style="margin:0 3px;">added directly</strong> as Active — no review needed.</div>
+
       <div class="form-row">
-        <div class="form-group"><label class="form-label required">Company Name</label><input type="text" id="nc_name" placeholder="e.g. Apex Manufacturing Pvt Ltd"></div>
+        <div class="form-group">
+          <label class="form-label required">Company Name</label>
+          <input type="text" id="nc_name" placeholder="e.g. APEX MANUFACTURING PVT LTD"
+            oninput="this.value=this.value.toUpperCase()"
+            style="text-transform:uppercase;font-weight:600;">
+          <div style="font-size:11px;color:var(--text3);margin-top:3px;">Auto-converted to UPPERCASE</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Email</label>
+          <input type="email" id="nc_email" placeholder="company@example.com"
+            oninput="this.value=this.value.toLowerCase()"
+            style="text-transform:lowercase;">
+        </div>
+      </div>
+
+      <div class="form-row">
         <div class="form-group"><label class="form-label required">Segment</label>
           <select id="nc_segment">
             <option value="">Select segment…</option>
-            <optgroup label="Industry"><option value="Industry:Manufacturing">Manufacturing</option><option value="Industry:Pharma">Pharma</option><option value="Industry:Automotive">Automotive</option><option value="Industry:Textiles">Textiles</option></optgroup>
+            <optgroup label="Industry"><option value="Industry:Manufacturing">Manufacturing</option><option value="Industry:Pharma">Pharma</option><option value="Industry:Automotive">Automotive</option><option value="Industry:Textiles">Textiles</option><option value="Industry:NDT">NDT</option><option value="Industry:Oil &amp; Gas">Oil &amp; Gas</option><option value="Industry:Defence">Defence</option><option value="Industry:Aerospace">Aerospace</option></optgroup>
             <optgroup label="Size"><option value="Size:Enterprise">Enterprise</option><option value="Size:Mid-Market">Mid-Market</option><option value="Size:SME">SME</option></optgroup>
-            <optgroup label="Services"><option value="Services:IT Services">IT Services</option><option value="Services:Retail">Retail</option></optgroup>
+            <optgroup label="Services"><option value="Services:IT Services">IT Services</option><option value="Services:Retail">Retail</option><option value="Services:Healthcare">Healthcare</option></optgroup>
           </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Unit / Plant</label>
-          <select id="nc_unit"><option>Unit 1</option><option>Unit 2</option><option>Unit 3</option><option>Plant - Pune</option><option>Plant - Nashik</option><option>Plant - Ahmedabad</option><option>Plant - Chennai</option><option>Plant - Bengaluru</option></select>
         </div>
         <div class="form-group"><label class="form-label required">Competition Type</label>
           <select id="nc_competition"><option value="">Select…</option><option>New Account</option><option>Existing Account</option><option>Competitor Account</option></select>
         </div>
       </div>
+
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Unit / Plant</label>
+          <select id="nc_unit"><option>Unit 1</option><option>Unit 2</option><option>Unit 3</option><option>Plant - Pune</option><option>Plant - Nashik</option><option>Plant - Ahmedabad</option><option>Plant - Chennai</option><option>Plant - Bengaluru</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Phone</label>
+          <input type="tel" id="nc_phone" placeholder="Phone number" inputmode="numeric"
+            oninput="this.value=this.value.replace(/[^0-9+\-\s]/g,'')">
+        </div>
+      </div>
+
       <div class="form-row-3">
         <div class="form-group" style="grid-column:span 2"><label class="form-label required">Address</label><input type="text" id="nc_street" placeholder="Street address"></div>
-        <div class="form-group"><label class="form-label required">PIN Code</label><input type="text" id="nc_pin" placeholder="400001" maxlength="6"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label required">State</label>
-          <select id="nc_state"><option value="">Select state…</option><option>Maharashtra</option><option>Gujarat</option><option>Karnataka</option><option>Tamil Nadu</option><option>Delhi</option><option>Rajasthan</option><option>Uttar Pradesh</option><option>Telangana</option><option>Goa</option></select>
+        <div class="form-group"><label class="form-label required">PIN Code</label>
+          <input type="text" id="nc_pin" placeholder="400001" maxlength="6"
+            inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
         </div>
-        <div class="form-group"><label class="form-label">City</label><input type="text" id="nc_city" placeholder="City"></div>
       </div>
+
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">City</label>
+          <input type="text" id="nc_city" placeholder="City">
+        </div>
+        <div class="form-group"><label class="form-label required">State / UT</label>
+          <select id="nc_state">
+            <option value="">Select state / UT…</option>
+            <optgroup label="States">
+              <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
+              <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option>
+              <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
+              <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
+              <option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option>
+              <option>Meghalaya</option><option>Mizoram</option><option>Nagaland</option>
+              <option>Odisha</option><option>Punjab</option><option>Rajasthan</option>
+              <option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option>
+              <option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
+              <option>West Bengal</option>
+            </optgroup>
+            <optgroup label="Union Territories">
+              <option>Andaman &amp; Nicobar Islands</option>
+              <option>Chandigarh</option>
+              <option>Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
+              <option>Delhi</option>
+              <option>Jammu &amp; Kashmir</option>
+              <option>Ladakh</option>
+              <option>Lakshadweep</option>
+              <option>Puducherry</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+
       <div class="form-group">
         <label class="form-label">Contacts <span style="color:var(--text3);font-weight:400">(up to 10)</span></label>
         <div class="slots-container" id="nc_contactSlots">
-          <div class="slot-row"><input type="text" placeholder="Name" style="flex:1.2"><input type="tel" placeholder="Phone"><input type="text" placeholder="Designation"><div class="slot-remove" onclick="removeSlot(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+          <div class="slot-row">
+            <input type="text" placeholder="Name" style="flex:1.2">
+            <input type="tel" placeholder="Phone" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9+\-\s]/g,'')">
+            <input type="text" placeholder="Designation">
+            <div class="slot-remove" onclick="removeSlot(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+          </div>
         </div>
         <button type="button" class="add-slot-btn" onclick="addContactSlot('nc_contactSlots')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Contact</button>
       </div>
+
       <div class="form-group">
         <label class="form-label">Competitors <span style="color:var(--text3);font-weight:400">(up to 5)</span></label>
         <div class="slots-container" id="nc_competitorSlots">
-          <div class="slot-row"><input type="text" placeholder="Competitor name"><input type="text" placeholder="Notes"><div class="slot-remove" onclick="removeSlot(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+          <div class="slot-row">
+            <input type="text" placeholder="Competitor name">
+            <input type="text" placeholder="Notes">
+            <div class="slot-remove" onclick="removeSlot(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+          </div>
         </div>
         <button type="button" class="add-slot-btn" onclick="addCompetitorSlot('nc_competitorSlots')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Competitor</button>
       </div>
@@ -769,6 +836,104 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
   </div>
 </div>
 
+
+<!-- EDIT CUSTOMER (Admin only) -->
+<div class="modal-overlay" id="editCustomerModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title">Edit Customer</div>
+      <div class="modal-close" onclick="closeModal('editCustomerModal')">✕</div>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ec_id">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required">Company Name</label>
+          <input type="text" id="ec_name" placeholder="COMPANY NAME"
+            oninput="this.value=this.value.toUpperCase()"
+            style="text-transform:uppercase;font-weight:600;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="ec_email" placeholder="company@example.com"
+            oninput="this.value=this.value.toLowerCase()"
+            style="text-transform:lowercase;">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label required">Segment</label>
+          <select id="ec_segment">
+            <option value="">Select segment…</option>
+            <optgroup label="Industry"><option value="Industry:Manufacturing">Manufacturing</option><option value="Industry:Pharma">Pharma</option><option value="Industry:Automotive">Automotive</option><option value="Industry:Textiles">Textiles</option><option value="Industry:NDT">NDT</option><option value="Industry:Oil &amp; Gas">Oil &amp; Gas</option><option value="Industry:Defence">Defence</option><option value="Industry:Aerospace">Aerospace</option></optgroup>
+            <optgroup label="Size"><option value="Size:Enterprise">Enterprise</option><option value="Size:Mid-Market">Mid-Market</option><option value="Size:SME">SME</option></optgroup>
+            <optgroup label="Services"><option value="Services:IT Services">IT Services</option><option value="Services:Retail">Retail</option></optgroup>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label required">Competition Type</label>
+          <select id="ec_competition"><option value="">Select…</option><option>New Account</option><option>Existing Account</option><option>Competitor Account</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Unit / Plant</label>
+          <select id="ec_unit"><option>Unit 1</option><option>Unit 2</option><option>Unit 3</option><option>Plant - Pune</option><option>Plant - Nashik</option><option>Plant - Ahmedabad</option><option>Plant - Chennai</option><option>Plant - Bengaluru</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Phone</label>
+          <input type="tel" id="ec_phone" placeholder="Phone number" inputmode="numeric"
+            oninput="this.value=this.value.replace(/[^0-9+ -]/g,'')">
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group" style="grid-column:span 2"><label class="form-label">Address</label>
+          <input type="text" id="ec_street" placeholder="Street address">
+        </div>
+        <div class="form-group"><label class="form-label required">PIN Code</label>
+          <input type="text" id="ec_pin" placeholder="400001" maxlength="6"
+            inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">City</label>
+          <input type="text" id="ec_city" placeholder="City">
+        </div>
+        <div class="form-group"><label class="form-label required">State / UT</label>
+          <select id="ec_state">
+            <option value="">Select state / UT…</option>
+            <optgroup label="States">
+              <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
+              <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option>
+              <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
+              <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
+              <option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option>
+              <option>Meghalaya</option><option>Mizoram</option><option>Nagaland</option>
+              <option>Odisha</option><option>Punjab</option><option>Rajasthan</option>
+              <option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option>
+              <option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
+              <option>West Bengal</option>
+            </optgroup>
+            <optgroup label="Union Territories">
+              <option>Andaman &amp; Nicobar Islands</option><option>Chandigarh</option>
+              <option>Dadra &amp; Nagar Haveli and Daman &amp; Diu</option><option>Delhi</option>
+              <option>Jammu &amp; Kashmir</option><option>Ladakh</option>
+              <option>Lakshadweep</option><option>Puducherry</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;">
+        <label class="form-label">Assigned Salesperson</label>
+        <select id="ec_salesperson" style="max-width:320px;">
+          <option value="">Loading salespersons…</option>
+        </select>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">Admin can reassign this customer to any salesperson</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('editCustomerModal')">Cancel</button>
+      <button class="btn btn-primary" id="saveEditCustomerBtn" onclick="saveEditCustomer()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
@@ -857,7 +1022,7 @@ function initApp() {
 
   // Show admin sections
   document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? '' : 'none');
-  if (isAdmin) document.getElementById('deleteCustomerBtn').style.display = '';
+  if (isAdmin) { document.getElementById('deleteCustomerBtn').style.display = ''; document.getElementById('editCustomerBtn').style.display = ''; }
 
   // New Customer modal — admin sees "Add directly" banner; others see "pending review" banner
   if (document.getElementById('ncPendingBanner')) {
@@ -1130,7 +1295,9 @@ async function submitNewCustomer() {
   }).filter(c => c.name);
 
   const body = {
-    name: document.getElementById('nc_name').value.trim(),
+    name: document.getElementById('nc_name').value.trim().toUpperCase(),
+    email: (document.getElementById('nc_email')?.value || '').trim().toLowerCase(),
+    phone: document.getElementById('nc_phone')?.value || '',
     segment: { category: segCat, value: segValue },
     unit: document.getElementById('nc_unit').value,
     competition: document.getElementById('nc_competition').value,
@@ -1138,6 +1305,7 @@ async function submitNewCustomer() {
     contacts, competitors,
   };
   if (!body.name || !body.segment.value || !body.competition || !body.address.state || !body.address.pinCode) { showToast('Please fill all required fields', 'warning'); return; }
+  if (body.address.pinCode && !/^\d{6}$/.test(body.address.pinCode)) { showToast('PIN code must be 6 digits', 'warning'); return; }
 
   btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Submitting…';
   try {
@@ -2011,6 +2179,97 @@ function exportReportCSV() {
   showToast('CSV exported', 'success');
 }
 
+
+// ══════════════════════════════════════════════
+// EDIT CUSTOMER (Admin only)
+// ══════════════════════════════════════════════
+async function openEditCustomer() {
+  if (!selectedCustomerData) return;
+  const cust = selectedCustomerData;
+  const id = cust._id;
+
+  // Populate all fields
+  document.getElementById('ec_id').value = id;
+  document.getElementById('ec_name').value = (cust.name || '').toUpperCase();
+  document.getElementById('ec_email').value = (cust.email || '').toLowerCase();
+  document.getElementById('ec_phone').value = cust.phone || '';
+  document.getElementById('ec_street').value = cust.address?.street || '';
+  document.getElementById('ec_city').value = cust.address?.city || '';
+  document.getElementById('ec_pin').value = cust.address?.pinCode || '';
+  document.getElementById('ec_competition').value = cust.competition || '';
+  document.getElementById('ec_unit').value = cust.unit || 'Unit 1';
+
+  // State dropdown
+  const stateSel = document.getElementById('ec_state');
+  stateSel.value = cust.address?.state || '';
+
+  // Segment dropdown
+  const segSel = document.getElementById('ec_segment');
+  const segVal = cust.segment ? `${cust.segment.category}:${cust.segment.value}` : '';
+  segSel.value = segVal;
+
+  // Load salespersons for reassignment
+  const spSel = document.getElementById('ec_salesperson');
+  spSel.innerHTML = '<option value="">Loading…</option>';
+  try {
+    const data = await apiCall('GET', '/users');
+    spSel.innerHTML = '<option value="">Select salesperson…</option>' +
+      data.data.users.map(u =>
+        `<option value="${u._id}" ${cust.assignedTo?._id === u._id || cust.assignedTo === u._id ? 'selected' : ''}>${u.name} (${u.role === 'admin' ? 'Admin' : 'Sales Rep'})</option>`
+      ).join('');
+  } catch(e) {
+    spSel.innerHTML = '<option value="">Failed to load</option>';
+  }
+
+  openModal('editCustomerModal');
+}
+
+async function saveEditCustomer() {
+  const id = document.getElementById('ec_id').value;
+  if (!id) return;
+
+  const segVal = document.getElementById('ec_segment').value;
+  const [segCat, segValue] = segVal ? segVal.split(':') : ['', ''];
+  const salespersonId = document.getElementById('ec_salesperson').value;
+
+  const pin = document.getElementById('ec_pin').value;
+  if (pin && !/^\d{6}$/.test(pin)) { showToast('PIN code must be exactly 6 digits', 'warning'); return; }
+
+  const body = {
+    name:        document.getElementById('ec_name').value.trim().toUpperCase(),
+    email:       document.getElementById('ec_email').value.trim().toLowerCase(),
+    phone:       document.getElementById('ec_phone').value.trim(),
+    segment:     segCat ? { category: segCat, value: segValue } : undefined,
+    unit:        document.getElementById('ec_unit').value,
+    competition: document.getElementById('ec_competition').value,
+    address: {
+      street:  document.getElementById('ec_street').value.trim(),
+      city:    document.getElementById('ec_city').value.trim(),
+      state:   document.getElementById('ec_state').value,
+      pinCode: pin,
+    },
+    ...(salespersonId ? { assignedTo: salespersonId } : {}),
+  };
+
+  if (!body.name || !body.competition || !body.address.state) {
+    showToast('Company name, competition type and state are required', 'warning'); return;
+  }
+
+  const btn = document.getElementById('saveEditCustomerBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Saving…';
+  try {
+    await apiCall('PATCH', '/customers/' + id, body);
+    showToast('Customer updated successfully', 'success');
+    closeModal('editCustomerModal');
+    // Refresh detail panel and list
+    await openCustomerDetail(id);
+    loadCustomers();
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.innerHTML = 'Save Changes';
+  }
+}
 // ══════════════════════════════════════════════
 // NOTIFICATIONS
 // ══════════════════════════════════════════════
