@@ -42,7 +42,18 @@ const customerSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Company name is required'],
       trim: true,
+      uppercase: true,                            // Auto uppercase in DB
       maxlength: [200, 'Name cannot exceed 200 characters'],
+    },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,                            // Auto lowercase in DB
+      match: [/^$|^\S+@\S+\.\S+$/, 'Please enter a valid email'],
+    },
+    phone: {
+      type: String,
+      trim: true,
     },
 
     // ─── Segment (categorized dropdown) ───────────────
