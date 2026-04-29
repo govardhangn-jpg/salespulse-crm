@@ -29,7 +29,7 @@ const VISIT_OUTCOMES = [
 ];
 
 const ACTION_TYPES = [
-  'Schedule Demo', 'Send Quote', 'Trial Follow-up',
+  'Schedule Demo', 'Send Quote', 'Follow-up', 'Trial Follow-up',
   'Cold Call', 'Site Visit', 'Close Deal', 'Send Proposal', 'Escalate',
 ];
 
