@@ -197,7 +197,7 @@ const seed = async () => {
       visitOutcomes: ['Contact Person Not Available'],
       interactionDate: daysAgo(2),
       notes: 'Contact person was not available. Will follow up Thursday.',
-      nextAction: { type: 'Follow-up', dueDate: new Date(now.getTime() + 2*86400000), assignedTo: priya._id, isCompleted: false },
+      nextAction: { type: 'Trial Follow-up', dueDate: new Date(now.getTime() + 2*86400000), assignedTo: priya._id, isCompleted: false },
     },
     {
       customer: techparts._id, salesperson: rahul._id,
