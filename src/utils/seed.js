@@ -27,7 +27,7 @@ const seed = async () => {
   const [admin, priya, rahul] = await User.insertMany([
     {
       name: 'Arjun Kumar',
-      email: 'admin@salespulse.com',
+      email: 'admin@magmaticndt.com',
       password: passwordHash,
       role: 'admin',
       assignedStates: ['Maharashtra','Gujarat','Karnataka','Tamil Nadu','Delhi'],
@@ -251,7 +251,7 @@ const seed = async () => {
   console.log('\n✅ Seed complete!\n');
   console.log('─────────────────────────────────────────');
   console.log('  Login credentials (password: Password@123)');
-  console.log('  Admin:    admin@salespulse.com');
+  console.log('  Admin:    admin@magmaticndt.com');
   console.log('  Sales 1:  priya@salespulse.com  (Maharashtra, Karnataka)');
   console.log('  Sales 2:  rahul@salespulse.com  (Gujarat)');
   console.log('─────────────────────────────────────────\n');
