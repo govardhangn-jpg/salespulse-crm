@@ -184,6 +184,77 @@ select option{background:var(--bg3);}
 .info-banner.err{border-color:var(--rb);background:var(--rl);color:var(--red);}
 .filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
 .filter-row select,.filter-row input{width:auto;padding:7px 28px 7px 10px;}
+
+/* ═══════════════════════════════════════════════
+   ATTENDANCE — MOBILE RESPONSIVE
+   ═══════════════════════════════════════════════ */
+.att-hamburger{display:none;width:36px;height:36px;border-radius:var(--rs);background:transparent;border:1px solid rgba(220,100,0,0.22);align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.att-hamburger svg{width:18px;height:18px;color:var(--accent);}
+.att-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:99;}
+.att-overlay.show{display:block;}
+
+@media (max-width: 768px) {
+  html,body{overflow:auto;}
+
+  .sidebar{
+    position:fixed;left:0;top:0;bottom:0;
+    transform:translateX(-100%);
+    transition:transform 0.25s ease;
+    z-index:100;width:260px;min-width:260px;
+  }
+  .sidebar.mobile-open{transform:translateX(0);}
+  .att-hamburger{display:flex;}
+  .app{flex-direction:column;}
+  .main{width:100%;}
+  .topbar{padding:0 12px;gap:8px;}
+  .topbar-title{font-size:14px;}
+  .topbar-sub{display:none;}
+  .page{padding:14px 12px;}
+  .content{height:auto;}
+
+  /* Clock hero */
+  .clock-hero{padding:16px 0 12px;}
+  .clock-time{font-size:38px;}
+  .status-ring{width:90px;height:90px;}
+
+  /* Punch card 2 col stacks */
+  .punch-card{grid-template-columns:1fr !important;}
+
+  /* Stats */
+  .stats-grid{grid-template-columns:repeat(2,1fr) !important;}
+  .three-col{grid-template-columns:1fr 1fr !important;}
+
+  /* Map height */
+  #attendanceMap{height:180px;}
+  #adminMapFull{height:240px;}
+
+  /* Tables */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:520px;}
+
+  /* Modal full screen */
+  .overlay{align-items:flex-end !important;}
+  .modal{width:100% !important;max-width:100% !important;max-height:92vh !important;border-radius:var(--rl2) var(--rl2) 0 0 !important;}
+
+  /* Tab bar scroll */
+  .tab-bar{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px;}
+  .tab{white-space:nowrap;font-size:12px;padding:8px 12px;}
+
+  /* Form */
+  .form-row{grid-template-columns:1fr !important;}
+
+  /* Stat value */
+  .stat-val{font-size:clamp(18px,5vw,26px) !important;}
+
+  /* Toast */
+  .toast-wrap{left:10px;right:10px;bottom:10px;}
+  .toast{min-width:0;width:100%;}
+
+  /* Zone cards stack */
+  #zonesList > div{flex-direction:column !important;}
+  #zonesList > div > div:last-child{display:flex;gap:6px;width:100%;}
+  #zonesList > div > div:last-child .btn{flex:1;justify-content:center;}
+}
 </style>
 </head>
 <body>
@@ -236,7 +307,11 @@ select option{background:var(--bg3);}
 
 <!-- ── MAIN ─────────────────────────────────── -->
 <div class="main">
+  <div class="att-overlay" id="attOverlay" onclick="closeAttSidebar()"></div>
   <div class="topbar">
+    <button class="att-hamburger" onclick="toggleAttSidebar()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div>
       <div class="topbar-title" id="pageTitle">Clock In / Out</div>
       <div class="topbar-sub" id="pageSub">Mark your attendance</div>
@@ -1295,6 +1370,21 @@ function showToast(msg, type='info') {
   setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 200); }, 3500);
 }
 
+
+// Attendance mobile sidebar
+function toggleAttSidebar(){
+  const s=document.querySelector('.sidebar'),o=document.getElementById('attOverlay');
+  const open=s.classList.contains('mobile-open');
+  if(open){s.classList.remove('mobile-open');o.classList.remove('show');}
+  else{s.classList.add('mobile-open');o.classList.add('show');}
+}
+function closeAttSidebar(){
+  document.querySelector('.sidebar').classList.remove('mobile-open');
+  document.getElementById('attOverlay').classList.remove('show');
+}
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>{ if(window.innerWidth<=768) closeAttSidebar(); });
+});
 // ════════════════════════════════════════════════
 // BOOT
 // ════════════════════════════════════════════════

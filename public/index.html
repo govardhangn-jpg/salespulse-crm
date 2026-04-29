@@ -121,7 +121,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.5;}
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
 .stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
 .stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;font-weight:500;}
-.stat-value{font-family:var(--font-head);font-size:26px;font-weight:700;color:var(--text);line-height:1;}
+.stat-value{font-family:var(--font-head);font-size:clamp(18px,4vw,26px);font-weight:700;color:var(--text);line-height:1;}
 .stat-sub{font-size:11px;color:var(--text2);margin-top:5px;}
 .stat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:2px 7px;border-radius:10px;margin-top:4px;}
 .stat-badge.up{background:var(--green-bg);color:var(--green);}
@@ -271,6 +271,142 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 @keyframes slideIn{from{transform:translateX(40px);opacity:0;}to{transform:translateX(0);opacity:1;}}
 @keyframes fadeOut{to{transform:translateX(40px);opacity:0;}}
 .toast.out{animation:fadeOut 0.2s ease forwards;}
+
+/* ═══════════════════════════════════════════════
+   MOBILE RESPONSIVE — breakpoint 768px
+   ═══════════════════════════════════════════════ */
+
+/* Hamburger button — hidden on desktop */
+.hamburger{display:none;width:36px;height:36px;border-radius:var(--radius-sm);background:transparent;border:1px solid var(--border2);align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.hamburger svg{width:18px;height:18px;color:var(--accent);}
+
+/* Mobile overlay behind open sidebar */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:99;}
+.sidebar-overlay.show{display:block;}
+
+@media (max-width: 768px) {
+
+  /* ── Body layout ──────────────────────────────── */
+  body{font-size:13px;}
+  html,body{overflow:auto;}
+
+  /* ── Sidebar slides in from left ─────────────── */
+  .sidebar{
+    position:fixed;left:0;top:0;bottom:0;
+    transform:translateX(-100%);
+    transition:transform 0.25s ease;
+    z-index:100;
+    width:260px;min-width:260px;
+  }
+  .sidebar.mobile-open{transform:translateX(0);}
+
+  /* ── Main takes full width ─────────────────────── */
+  .main{width:100%;min-width:0;}
+
+  /* ── Topbar ────────────────────────────────────── */
+  .topbar{padding:0 12px;gap:8px;}
+  .topbar-title{font-size:14px;}
+  .topbar-breadcrumb{display:none;}
+  .hamburger{display:flex;}
+
+  /* Hide Log Interaction button on very small screens */
+  @media (max-width:480px){
+    .topbar-actions .btn-secondary{display:none;}
+  }
+
+  /* ── Pages ─────────────────────────────────────── */
+  .page{padding:14px 12px;}
+
+  /* ── Stats grid: 2 cols on mobile ─────────────── */
+  .stats-grid{grid-template-columns:repeat(2,1fr) !important;gap:8px;}
+
+  /* ── Two-col becomes single col ───────────────── */
+  .two-col{grid-template-columns:1fr !important;}
+  .three-col{grid-template-columns:1fr 1fr !important;}
+
+  /* ── Form rows stack on mobile ─────────────────── */
+  .form-row{grid-template-columns:1fr !important;}
+  .form-row-3{grid-template-columns:1fr !important;}
+  .form-row-3 .form-group[style*="grid-column:span 2"],
+  .form-row-3 .form-group[style*="grid-column: span 2"]{grid-column:span 1 !important;}
+
+  /* ── Customers page: hide detail panel on mobile,
+       show as full-screen overlay instead ─────────── */
+  #page-customers{flex-direction:column !important;}
+  .detail-panel{
+    position:fixed !important;
+    inset:0 !important;
+    width:100% !important;
+    z-index:90;
+    transform:translateX(100%);
+    transition:transform 0.25s ease;
+    border-left:none !important;
+  }
+  .detail-panel.open{
+    transform:translateX(0) !important;
+    width:100% !important;
+  }
+
+  /* ── Tables: horizontal scroll ──────────────────── */
+  .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:560px;}
+
+  /* ── Section header wraps ───────────────────────── */
+  .section-header{flex-wrap:wrap;gap:8px;}
+
+  /* ── Search bar wraps ───────────────────────────── */
+  .search-bar{flex-wrap:wrap;}
+  .filter-bar{flex-wrap:wrap;gap:6px;}
+  .filter-bar select{font-size:12px;padding:6px 24px 6px 8px;}
+
+  /* ── Modal full-screen on mobile ───────────────── */
+  .modal-overlay{align-items:flex-end !important;}
+  .modal,.modal-lg{
+    width:100% !important;
+    max-width:100% !important;
+    max-height:92vh !important;
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0 !important;
+  }
+
+  /* ── Notif panel full width ──────────────────────── */
+  .notif-panel{width:100% !important;}
+
+  /* ── Tab bar scrolls horizontally ─────────────── */
+  .tab-bar{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:2px;}
+  .tab{white-space:nowrap;font-size:12px;padding:8px 12px;}
+
+  /* ── Approval items stack ───────────────────────── */
+  .approval-item{flex-direction:column;gap:10px;}
+  .approval-item > div:last-child{width:100%;display:flex;gap:6px;}
+  .approval-item > div:last-child .btn{flex:1;justify-content:center;}
+
+  /* ── Interaction items ──────────────────────────── */
+  .interaction-header{flex-wrap:wrap;}
+
+  /* ── Report filter bar ──────────────────────────── */
+  #page-reports .topbar-actions,
+  #page-reports > div:first-child{flex-wrap:wrap;}
+
+  /* ── Slot rows stack ────────────────────────────── */
+  .slot-row{flex-wrap:wrap;}
+  .slot-row input,.slot-row select{min-width:0;flex:1 1 100%;}
+
+  /* ── Chip wrapping ──────────────────────────────── */
+  #li_activityChips,#li_outcomeChips{gap:5px !important;}
+  .chip{font-size:11px;padding:4px 9px;}
+
+  /* ── Toast full width ───────────────────────────── */
+  .toast-wrap{left:10px;right:10px;bottom:10px;}
+  .toast{min-width:0;width:100%;}
+
+  /* ── Back button in detail panel ───────────────── */
+  .detail-close-mobile{display:flex !important;}
+}
+
+@media (min-width:769px){
+  .detail-close-mobile{display:none;}
+  .hamburger{display:none;}
+}
 </style>
 </head>
 <body>
@@ -300,6 +436,7 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 </div>
 
 <!-- ══════════════════ APP SHELL ══════════════════ -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
 <aside class="sidebar" id="appSidebar">
   <div class="sidebar-logo">
     <div class="logo-wrap">
@@ -362,6 +499,9 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 
 <div class="main" id="appMain">
   <div class="topbar">
+    <button class="hamburger" onclick="toggleMobileSidebar()" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div>
       <div class="topbar-title" id="pageTitle">Dashboard</div>
       <div class="topbar-breadcrumb" id="pageBreadcrumb">Overview</div>
@@ -425,6 +565,9 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
       </div>
       <div class="detail-panel" id="customerDetailPanel">
         <div class="detail-panel-header">
+          <button class="detail-close-mobile btn btn-ghost btn-sm" onclick="closeDetailPanel()" style="display:none;padding:4px 8px;gap:4px;font-size:12px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>Back
+          </button>
           <div class="avatar admin" id="detailAvatar">AP</div>
           <div style="flex:1;min-width:0;">
             <div style="font-family:var(--font-head);font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="detailName"></div>
@@ -501,8 +644,8 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
     <!-- REPORTS -->
     <div class="page" id="page-reports">
       <!-- ── Filter Bar ───────────────────────────────── -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:18px;">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:18px;">
+        <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;">
           <div style="flex:0 0 auto;">
             <div style="font-size:11px;color:var(--text3);margin-bottom:4px;">From</div>
             <input type="date" id="rpt_from" style="width:140px;padding:7px 10px;">
@@ -1239,7 +1382,7 @@ function navigate(page, el) {
   document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = ''; });
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const pg = document.getElementById('page-' + page);
-  if (pg) { pg.classList.add('active'); pg.style.display = page === 'customers' ? 'flex' : 'block'; }
+  if (pg) { pg.classList.add('active'); const isMobile = window.innerWidth <= 768; pg.style.display = page === 'customers' && !isMobile ? 'flex' : 'block'; }
   if (el) el.classList.add('active');
   const m = PAGE_META[page] || {};
   document.getElementById('pageTitle').textContent = m.title || page;
@@ -2606,6 +2749,34 @@ function showToast(msg, type='info') {
   wrap.appendChild(t);
   setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),200);},3500);
 }
+
+
+// ══════════════════════════════════════════════
+// MOBILE NAVIGATION
+// ══════════════════════════════════════════════
+function toggleMobileSidebar() {
+  const sidebar  = document.getElementById('appSidebar');
+  const overlay  = document.getElementById('sidebarOverlay');
+  const isOpen   = sidebar.classList.contains('mobile-open');
+  if (isOpen) {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('show');
+  } else {
+    sidebar.classList.add('mobile-open');
+    overlay.classList.add('show');
+  }
+}
+function closeMobileSidebar() {
+  document.getElementById('appSidebar').classList.remove('mobile-open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+// Close sidebar when a nav item is tapped on mobile
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if (window.innerWidth <= 768) closeMobileSidebar();
+  });
+});
 
 // ══════════════════════════════════════════════
 // BOOT
