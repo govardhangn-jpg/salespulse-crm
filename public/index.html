@@ -1401,40 +1401,94 @@ function navigate(page, el) {
 // DASHBOARD
 // ══════════════════════════════════════════════
 async function loadDashboard() {
+  // Reset stat cards to loading state
+  ['statCustomers','statLeads','statPending'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.textContent = '…';
+  });
+
   try {
-    const [statsData, upcomingData] = await Promise.all([
-      apiCall('GET', '/dashboard/stats'),
-      apiCall('GET', '/interactions/upcoming?days=7'),
-    ]);
-    const s = statsData.data.stats;
-    document.getElementById('statCustomers').textContent = s.totalCustomers;
-    document.getElementById('statLeads').textContent = s.activeLeads;
-    document.getElementById('statPending').textContent = s.pendingApprovals;
-    document.getElementById('statLowStock').textContent = s.lowStockCount;
+    // Load stats and upcoming separately so one failure doesn't block the other
+    let statsData = null, upcomingData = null;
 
-    // Update nav badges
-    if (s.pendingApprovals > 0) { const nb = document.getElementById('navPending'); nb.textContent = s.pendingApprovals; nb.style.display = ''; }
+    try {
+      statsData = await apiCall('GET', '/dashboard/stats');
+    } catch(e) {
+      console.warn('Stats load failed:', e.message);
+    }
 
-    // Upcoming actions
+    try {
+      upcomingData = await apiCall('GET', '/interactions/upcoming?days=7');
+    } catch(e) {
+      console.warn('Upcoming load failed:', e.message);
+    }
+
+    // ── Stat cards ──────────────────────────────────────
+    if (statsData) {
+      const s = statsData.data.stats;
+      const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val ?? 0; };
+      set('statCustomers', s.totalCustomers);
+      set('statLeads',     s.activeLeads);
+      set('statPending',   s.pendingApprovals);
+      // Update nav badge
+      if ((s.pendingApprovals || 0) > 0) {
+        const nb = document.getElementById('navPending');
+        if (nb) { nb.textContent = s.pendingApprovals; nb.style.display = ''; }
+      }
+    } else {
+      ['statCustomers','statLeads','statPending'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.textContent = '—';
+      });
+    }
+
+    // ── Upcoming actions ────────────────────────────────
     const ul = document.getElementById('upcomingList');
-    const items = upcomingData.data.interactions;
-    if (!items.length) { ul.innerHTML = '<div class="empty-state" style="padding:20px 0;">No upcoming actions</div>'; }
-    else ul.innerHTML = items.map(i => {
-      const d = new Date(i.nextAction.dueDate);
-      const dateStr = isToday(d) ? 'Today ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : d.toLocaleDateString('en-IN', {day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-      return `<div class="upcoming-item"><div class="upcoming-date">${dateStr}</div><div class="upcoming-content"><div class="upcoming-title">${i.nextAction.type} — ${i.customer?.name}</div><div class="upcoming-sub">${i.salesperson?.name || ''}</div></div></div>`;
-    }).join('');
+    if (ul) {
+      if (!upcomingData) {
+        ul.innerHTML = '<div class="empty-state" style="padding:20px 0;color:var(--text3);">Could not load upcoming actions</div>';
+      } else {
+        const items = upcomingData.data.interactions || [];
+        if (!items.length) {
+          ul.innerHTML = '<div class="empty-state" style="padding:20px 0;">No upcoming actions</div>';
+        } else {
+          ul.innerHTML = items.map(i => {
+            const d = new Date(i.nextAction.dueDate);
+            const dateStr = isToday(d)
+              ? 'Today ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+              : d.toLocaleDateString('en-IN', {day:'numeric',month:'short'}) + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+            return `<div class="upcoming-item">
+              <div class="upcoming-date">${dateStr}</div>
+              <div class="upcoming-content">
+                <div class="upcoming-title">${i.nextAction?.type || '—'} — ${i.customer?.name || '—'}</div>
+                <div class="upcoming-sub">${i.salesperson?.name || ''}</div>
+              </div>
+            </div>`;
+          }).join('');
+        }
+      }
+    }
 
-    // Activity feed
+    // ── Activity feed ───────────────────────────────────
     const af = document.getElementById('activityFeed');
-    const recent = statsData.data.recentInteractions;
-    if (!recent.length) { af.innerHTML = '<div class="empty-state" style="padding:20px 0;">No recent activity</div>'; }
-    else af.innerHTML = recent.map(i => `
-      <div class="activity-item">
-        <div class="activity-dot" style="background:var(--accent)"></div>
-        <div style="flex:1"><div class="activity-text">${i.callType} logged for <strong>${i.customer?.name || 'Customer'}</strong></div><div class="activity-time">${timeAgo(i.createdAt)}</div></div>
-      </div>`).join('');
-  } catch(e) { showToast('Failed to load dashboard: ' + e.message, 'error'); }
+    if (af && statsData) {
+      const recent = statsData.data.recentInteractions || [];
+      if (!recent.length) {
+        af.innerHTML = '<div class="empty-state" style="padding:20px 0;">No recent activity</div>';
+      } else {
+        af.innerHTML = recent.map(i => `
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--accent)"></div>
+            <div style="flex:1">
+              <div class="activity-text">${(i.activityTypes||[i.callType]).filter(Boolean).join(', ')} logged for <strong>${i.customer?.name || 'Customer'}</strong></div>
+              <div class="activity-time">${timeAgo(i.createdAt)}</div>
+            </div>
+          </div>`).join('');
+      }
+    }
+
+  } catch(e) {
+    console.error('Dashboard error:', e);
+    showToast('Dashboard error: ' + e.message, 'error');
+  }
 }
 
 function isToday(d) { const n = new Date(); return d.getDate()===n.getDate()&&d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear(); }
