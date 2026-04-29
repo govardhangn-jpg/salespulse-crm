@@ -822,17 +822,80 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 
 <!-- NEW USER -->
 <div class="modal-overlay" id="newUserModal">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Add New User</div><div class="modal-close" onclick="closeModal('newUserModal')">✕</div></div>
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title">Add New User</div>
+      <div class="modal-close" onclick="closeModal('newUserModal')">✕</div>
+    </div>
     <div class="modal-body">
-      <div class="form-row"><div class="form-group"><label class="form-label required">Full Name</label><input type="text" id="nu_name" placeholder="Full name"></div><div class="form-group"><label class="form-label required">Email</label><input type="email" id="nu_email" placeholder="email@company.com"></div></div>
-      <div class="form-row"><div class="form-group"><label class="form-label required">Password</label><input type="password" id="nu_password" placeholder="Min 8 chars"></div><div class="form-group"><label class="form-label">Phone</label><input type="tel" id="nu_phone" placeholder="+91 98765 43210"></div></div>
-      <div class="form-row"><div class="form-group"><label class="form-label required">Role</label><select id="nu_role"><option value="sales_rep">Sales Rep</option><option value="admin">Admin</option></select></div></div>
-      <div class="form-group"><label class="form-label">Assigned States</label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border);" id="nu_statesGrid"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required">Full Name</label>
+          <input type="text" id="nu_name" placeholder="Full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Email</label>
+          <input type="email" id="nu_email" placeholder="email@company.com"
+            oninput="this.value=this.value.toLowerCase()"
+            style="text-transform:lowercase;">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required">Password</label>
+          <input type="password" id="nu_password" placeholder="Min 8 characters">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input type="tel" id="nu_phone" placeholder="9876543210"
+            inputmode="numeric"
+            oninput="this.value=this.value.replace(/[^0-9+\- ]/g,'')">
+          <div style="font-size:11px;color:var(--text3);margin-top:3px;">Numbers only</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required">Role</label>
+          <select id="nu_role">
+            <option value="sales_rep">Sales Rep</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assigned States &amp; Union Territories</label>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">Select all applicable states/UTs for this user</div>
+        <select id="nu_stateSelect" onchange="addStateToUser(this)"
+          style="margin-bottom:10px;max-width:320px;">
+          <option value="">— Add a state or UT —</option>
+            <optgroup label="States">
+              <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
+              <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option>
+              <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
+              <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
+              <option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option>
+              <option>Meghalaya</option><option>Mizoram</option><option>Nagaland</option>
+              <option>Odisha</option><option>Punjab</option><option>Rajasthan</option>
+              <option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option>
+              <option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
+              <option>West Bengal</option>
+            </optgroup>
+            <optgroup label="Union Territories">
+              <option>Andaman &amp; Nicobar Islands</option><option>Chandigarh</option>
+              <option>Dadra &amp; Nagar Haveli and Daman &amp; Diu</option><option>Delhi</option>
+              <option>Jammu &amp; Kashmir</option><option>Ladakh</option>
+              <option>Lakshadweep</option><option>Puducherry</option>
+            </optgroup>
+        </select>
+        <div id="nu_selectedStates" style="display:flex;flex-wrap:wrap;gap:6px;min-height:32px;padding:8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);">
+          <span style="color:var(--text3);font-size:12px;" id="nu_noStatesMsg">No states selected yet</span>
+        </div>
       </div>
     </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('newUserModal')">Cancel</button><button class="btn btn-primary" id="saveUserBtn" onclick="saveNewUser()">Create User</button></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('newUserModal')">Cancel</button>
+      <button class="btn btn-primary" id="saveUserBtn" onclick="saveNewUser()">Create User</button>
+    </div>
   </div>
 </div>
 
@@ -934,6 +997,85 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
   </div>
 </div>
 
+
+<!-- EDIT USER (Admin only) -->
+<div class="modal-overlay" id="editUserModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title">Edit User</div>
+      <div class="modal-close" onclick="closeModal('editUserModal')">✕</div>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="eu_id">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required">Full Name</label>
+          <input type="text" id="eu_name" placeholder="Full name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="eu_email" placeholder="email@company.com"
+            oninput="this.value=this.value.toLowerCase()"
+            style="text-transform:lowercase;" readonly
+            style="background:var(--bg4);cursor:not-allowed;">
+          <div style="font-size:11px;color:var(--text3);margin-top:3px;">Email cannot be changed</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input type="tel" id="eu_phone" placeholder="9876543210"
+            inputmode="numeric"
+            oninput="this.value=this.value.replace(/[^0-9+\- ]/g,'')">
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Role</label>
+          <select id="eu_role">
+            <option value="sales_rep">Sales Rep</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">New Password <span style="color:var(--text3);font-weight:400;">(leave blank to keep current)</span></label>
+        <input type="password" id="eu_password" placeholder="Enter new password (min 8 chars)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assigned States &amp; Union Territories</label>
+        <select id="eu_stateSelect" onchange="addStateToUserEdit(this)"
+          style="margin-bottom:10px;max-width:320px;">
+          <option value="">— Add a state or UT —</option>
+            <optgroup label="States">
+              <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
+              <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option>
+              <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
+              <option>Jharkhand</option><option>Karnataka</option><option>Kerala</option>
+              <option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option>
+              <option>Meghalaya</option><option>Mizoram</option><option>Nagaland</option>
+              <option>Odisha</option><option>Punjab</option><option>Rajasthan</option>
+              <option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option>
+              <option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
+              <option>West Bengal</option>
+            </optgroup>
+            <optgroup label="Union Territories">
+              <option>Andaman &amp; Nicobar Islands</option><option>Chandigarh</option>
+              <option>Dadra &amp; Nagar Haveli and Daman &amp; Diu</option><option>Delhi</option>
+              <option>Jammu &amp; Kashmir</option><option>Ladakh</option>
+              <option>Lakshadweep</option><option>Puducherry</option>
+            </optgroup>
+        </select>
+        <div id="eu_selectedStates" style="display:flex;flex-wrap:wrap;gap:6px;min-height:32px;padding:8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);">
+          <span style="color:var(--text3);font-size:12px;" id="eu_noStatesMsg">No states selected</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('editUserModal')">Cancel</button>
+      <button class="btn btn-primary" id="saveEditUserBtn" onclick="saveEditUser()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
@@ -1031,11 +1173,7 @@ function initApp() {
     document.getElementById('submitCustomerBtn').textContent = isAdmin ? 'Add Customer' : 'Submit for Review';
   }
 
-  // Seed states in new user modal
-  const states = ['Maharashtra','Gujarat','Karnataka','Tamil Nadu','Delhi','Rajasthan','Uttar Pradesh','Telangana','Goa'];
-  document.getElementById('nu_statesGrid').innerHTML = states.map(s =>
-    `<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" data-state="${s}" style="width:auto;"> ${s}</label>`
-  ).join('');
+  // User modal state management handled by addStateToUser() helper below
 
   // Set default datetime
   const now = new Date();
@@ -1692,7 +1830,7 @@ async function loadUsers() {
       <td><div style="display:flex;gap:4px;flex-wrap:wrap;">${(u.assignedStates||[]).map(s=>`<span class="badge badge-gray">${s}</span>`).join('')||'<span style="color:var(--text3)">None</span>'}</div></td>
       <td style="color:var(--text3);font-size:12px;">${u.lastLogin?new Date(u.lastLogin).toLocaleDateString():'Never'}</td>
       <td>
-        <button class="btn btn-ghost btn-sm" onclick="editUserStates('${u._id}','${u.name}','${(u.assignedStates||[]).join(',')}')">Edit States</button>
+        <button class="btn btn-secondary btn-sm" onclick="openEditUser('${u._id}','${u.name}','${u.email}','${u.phone||''}','${u.role}','${(u.assignedStates||[]).join('||')}')"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' width='12' height='12'><path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/><path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/></svg> Edit</button>
         ${u._id!==currentUser.id?`<button class="btn btn-danger btn-sm" onclick="deactivateUser('${u._id}','${u.name}')">Remove</button>`:''}
       </td>
     </tr>`).join('');
@@ -1700,31 +1838,120 @@ async function loadUsers() {
 }
 
 async function saveNewUser() {
-  const name=document.getElementById('nu_name').value.trim();
-  const email=document.getElementById('nu_email').value.trim();
-  const password=document.getElementById('nu_password').value;
-  const role=document.getElementById('nu_role').value;
-  const phone=document.getElementById('nu_phone').value;
-  const assignedStates=[...document.querySelectorAll('#nu_statesGrid input:checked')].map(i=>i.dataset.state);
-  if(!name||!email||!password){showToast('Name, email and password are required','warning');return;}
-  const btn=document.getElementById('saveUserBtn');
-  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Creating…';
-  try{
-    await apiCall('POST','/auth/register',{name,email,password,role,phone,assignedStates});
-    showToast('User created successfully','success');closeModal('newUserModal');loadUsers();
-    document.getElementById('nu_name').value='';document.getElementById('nu_email').value='';document.getElementById('nu_password').value='';
-  }catch(e){showToast(e.message,'error');}
-  finally{btn.disabled=false;btn.innerHTML='Create User';}
+  const name     = document.getElementById('nu_name').value.trim();
+  const email    = document.getElementById('nu_email').value.trim().toLowerCase();
+  const password = document.getElementById('nu_password').value;
+  const role     = document.getElementById('nu_role').value;
+  const phone    = document.getElementById('nu_phone').value.trim();
+  const assignedStates = [...document.querySelectorAll('#nu_selectedStates .state-tag')].map(t => t.dataset.state);
+
+  if (!name || !email || !password) { showToast('Name, email and password are required', 'warning'); return; }
+  if (password.length < 8) { showToast('Password must be at least 8 characters', 'warning'); return; }
+
+  const btn = document.getElementById('saveUserBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Creating…';
+  try {
+    await apiCall('POST', '/auth/register', { name, email, password, role, phone, assignedStates });
+    showToast('User created successfully', 'success');
+    closeModal('newUserModal');
+    loadUsers();
+    // Reset form
+    ['nu_name','nu_email','nu_password','nu_phone'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('nu_role').selectedIndex = 0;
+    document.getElementById('nu_selectedStates').innerHTML = '<span style="color:var(--text3);font-size:12px;" id="nu_noStatesMsg">No states selected yet</span>';
+  } catch(e) { showToast(e.message, 'error'); }
+  finally { btn.disabled = false; btn.innerHTML = 'Create User'; }
+}
+
+// ── State tag helpers (shared by Add and Edit user modals) ────────────────
+function makeStateTag(state, removeId) {
+  return `<span class="state-tag" data-state="${state}" style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;background:var(--accent-light);border:1px solid var(--accent-border);color:var(--accent);font-size:12px;font-weight:500;">
+    ${state}
+    <span onclick="removeStateTag(this,'${removeId}')" style="cursor:pointer;margin-left:2px;opacity:.7;font-size:14px;line-height:1;">&times;</span>
+  </span>`;
+}
+function removeStateTag(el, containerId) {
+  el.closest('.state-tag').remove();
+  const container = document.getElementById(containerId);
+  if (!container.querySelector('.state-tag')) {
+    container.innerHTML = `<span style="color:var(--text3);font-size:12px;" id="${containerId.replace('_selectedStates','_noStatesMsg')}">No states selected</span>`;
+  }
+}
+function addStateToUser(sel) {
+  if (!sel.value) return;
+  const state = sel.value;
+  const container = document.getElementById('nu_selectedStates');
+  // Don't add duplicates
+  if ([...container.querySelectorAll('.state-tag')].some(t => t.dataset.state === state)) {
+    sel.value = ''; return;
+  }
+  const msg = document.getElementById('nu_noStatesMsg');
+  if (msg) msg.remove();
+  container.insertAdjacentHTML('beforeend', makeStateTag(state, 'nu_selectedStates'));
+  sel.value = '';
+}
+function addStateToUserEdit(sel) {
+  if (!sel.value) return;
+  const state = sel.value;
+  const container = document.getElementById('eu_selectedStates');
+  if ([...container.querySelectorAll('.state-tag')].some(t => t.dataset.state === state)) {
+    sel.value = ''; return;
+  }
+  const msg = document.getElementById('eu_noStatesMsg');
+  if (msg) msg.remove();
+  container.insertAdjacentHTML('beforeend', makeStateTag(state, 'eu_selectedStates'));
+  sel.value = '';
+}
+
+// ── Open Edit User modal ──────────────────────────────────────────────────
+function openEditUser(id, name, email, phone, role, statesStr) {
+  document.getElementById('eu_id').value    = id;
+  document.getElementById('eu_name').value  = name;
+  document.getElementById('eu_email').value = email;
+  document.getElementById('eu_phone').value = phone || '';
+  document.getElementById('eu_role').value  = role;
+  document.getElementById('eu_password').value = '';
+
+  // Populate state tags
+  const container = document.getElementById('eu_selectedStates');
+  const states = statesStr ? statesStr.split('||').filter(Boolean) : [];
+  if (states.length) {
+    container.innerHTML = states.map(s => makeStateTag(s, 'eu_selectedStates')).join('');
+  } else {
+    container.innerHTML = '<span style="color:var(--text3);font-size:12px;" id="eu_noStatesMsg">No states selected</span>';
+  }
+  openModal('editUserModal');
+}
+
+async function saveEditUser() {
+  const id       = document.getElementById('eu_id').value;
+  const name     = document.getElementById('eu_name').value.trim();
+  const phone    = document.getElementById('eu_phone').value.trim();
+  const role     = document.getElementById('eu_role').value;
+  const password = document.getElementById('eu_password').value;
+  const assignedStates = [...document.querySelectorAll('#eu_selectedStates .state-tag')].map(t => t.dataset.state);
+
+  if (!name) { showToast('Name is required', 'warning'); return; }
+  if (password && password.length < 8) { showToast('Password must be at least 8 characters', 'warning'); return; }
+
+  const body = { name, phone, role, assignedStates };
+  if (password) body.password = password;
+
+  const btn = document.getElementById('saveEditUserBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Saving…';
+  try {
+    await apiCall('PATCH', '/users/' + id, body);
+    // If password changed, update via separate call
+    showToast('User updated successfully', 'success');
+    closeModal('editUserModal');
+    loadUsers();
+  } catch(e) { showToast(e.message, 'error'); }
+  finally { btn.disabled = false; btn.innerHTML = 'Save Changes'; }
 }
 
 async function editUserStates(id, name, currentStates) {
-  const states=['Maharashtra','Gujarat','Karnataka','Tamil Nadu','Delhi','Rajasthan','Uttar Pradesh','Telangana','Goa'];
-  const current=currentStates.split(',').filter(Boolean);
-  const chosen=prompt(`Edit states for ${name}\nCurrent: ${current.join(', ')||'None'}\n\nAvailable:\n${states.join(', ')}\n\nEnter comma-separated state names:`,'');
-  if(chosen===null)return;
-  const assignedStates=chosen.split(',').map(s=>s.trim()).filter(s=>states.includes(s));
-  try{await apiCall('PATCH','/users/'+id+'/states',{assignedStates});showToast('States updated for '+name,'success');loadUsers();}
-  catch(e){showToast(e.message,'error');}
+  // Legacy — now redirects to openEditUser (kept for backward compat)
+  console.log('editUserStates called — use openEditUser instead');
 }
 
 async function deactivateUser(id, name) {
