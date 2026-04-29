@@ -108,17 +108,28 @@ const dashRouter = express.Router();
 dashRouter.use(protect);
 
 dashRouter.get('/stats', asyncHandler(async (req, res) => {
-  const Customer = require('../models/Customer');
+  const Customer    = require('../models/Customer');
   const Interaction = require('../models/Interaction');
-  const Inventory = require('../models/Inventory');
 
-  const stateFilter = req.user.role === 'admin' ? {} : { 'address.state': { $in: req.user.assignedStates } };
+  const stateFilter = req.user.role === 'admin'
+    ? {}
+    : { 'address.state': { $in: req.user.assignedStates } };
 
-  const [totalCustomers, pendingApprovals, activeLeads, lowStockCount, recentInteractions] = await Promise.all([
-    Customer.countDocuments({ ...stateFilter, status: 'active' }),
+  // Sales rep sees only their own customers
+  const customerFilter = req.user.role === 'admin'
+    ? { ...stateFilter, status: 'active' }
+    : {
+        status: 'active',
+        $or: [
+          { assignedTo: req.user._id },
+          { submittedBy: req.user._id },
+        ],
+      };
+
+  const [totalCustomers, pendingApprovals, activeLeads, recentInteractions] = await Promise.all([
+    Customer.countDocuments(customerFilter),
     Customer.countDocuments({ status: 'pending' }),
-    Customer.countDocuments({ ...stateFilter, status: 'active', competition: 'New Account' }),
-    Inventory.countDocuments({ isBelowThreshold: true }),
+    Customer.countDocuments({ ...customerFilter, competition: 'New Account' }),
     Interaction.find(req.user.role !== 'admin' ? { salesperson: req.user._id } : {})
       .populate('customer', 'name')
       .sort({ createdAt: -1 })
@@ -129,7 +140,7 @@ dashRouter.get('/stats', asyncHandler(async (req, res) => {
   res.json({
     status: 'success',
     data: {
-      stats: { totalCustomers, pendingApprovals, activeLeads, lowStockCount },
+      stats: { totalCustomers, pendingApprovals, activeLeads, lowStockCount: 0 },
       recentInteractions,
     },
   });
