@@ -23,12 +23,27 @@ userRouter.get('/:id', asyncHandler(async (req, res) => {
   res.json({ status: 'success', data: { user } });
 }));
 
-// PATCH /api/users/:id — Update user or state assignments
+// PATCH /api/users/:id — Update user details (admin only)
 userRouter.patch('/:id', asyncHandler(async (req, res) => {
-  const forbidden = ['password', 'email'];
-  forbidden.forEach((f) => delete req.body[f]);
-  const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+  // Email cannot be changed
+  delete req.body.email;
+
+  const user = await User.findById(req.params.id);
   if (!user) return res.status(404).json({ status: 'fail', message: 'User not found' });
+
+  // Apply allowed fields
+  if (req.body.name)           user.name           = req.body.name;
+  if (req.body.phone)          user.phone          = req.body.phone;
+  if (req.body.role)           user.role           = req.body.role;
+  if (req.body.assignedStates) user.assignedStates = req.body.assignedStates;
+  if (req.body.isActive !== undefined) user.isActive = req.body.isActive;
+
+  // Allow password update if provided (model pre-save will hash it)
+  if (req.body.password && req.body.password.length >= 8) {
+    user.password = req.body.password;
+  }
+
+  await user.save();
   res.json({ status: 'success', data: { user } });
 }));
 
