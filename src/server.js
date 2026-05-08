@@ -20,7 +20,7 @@ const inventoryRoutes = require('./routes/inventory');
 const { userRouter, notifRouter, dashRouter } = require('./routes/misc');
 const attendanceRoutes = require('./routes/attendance');
 const reportsRoutes    = require('./routes/reports');
-const bulkImportRoutes = require('./routes/bulkImport');
+
 
 const app = express();
 
@@ -73,7 +73,7 @@ app.use('/api/notifications', notifRouter);
 app.use('/api/dashboard',     dashRouter);
 app.use('/api/attendance',    attendanceRoutes);
 app.use('/api/reports',       reportsRoutes);
-app.use('/api/bulk-import',    bulkImportRoutes);
+
 
 // ─── Health check ─────────────────────────────────────
 app.get('/api/health', (req, res) => {
