@@ -46,13 +46,17 @@ router.get(
       else filter['segment.value'] = category;
     }
 
-    // Sales reps only see their own customers (assigned to them or submitted by them)
-    // Admins see all customers across all states
+    // Admins see ALL customers (no restriction)
+    // Sales reps see: customers assigned to them OR submitted by them (any status except rejected)
     if (req.user.role !== 'admin') {
-      filter.$or = [
-        { status: 'active',   assignedTo: req.user._id },
-        { status: 'active',   submittedBy: req.user._id },
-        { status: 'pending',  submittedBy: req.user._id },
+      filter.$and = [
+        { status: { $ne: 'rejected' } },
+        {
+          $or: [
+            { assignedTo: req.user._id },
+            { submittedBy: req.user._id },
+          ],
+        },
       ];
     }
 
@@ -91,11 +95,15 @@ router.post(
   '/',
   [
     body('name').trim().notEmpty().withMessage('Company name is required'),
-    body('segment.category').notEmpty().withMessage('Segment category is required'),
-    body('segment.value').notEmpty().withMessage('Segment value is required'),
-    body('competition').isIn(['New Account', 'Existing Account', 'Competitor Account']).withMessage('Invalid competition type'),
-    body('address.state').notEmpty().withMessage('State is required'),
-    body('address.pinCode').matches(/^\d{6}$/).withMessage('PIN code must be 6 digits'),
+    body('segment.category').trim().notEmpty().withMessage('Segment category is required'),
+    body('segment.value').trim().notEmpty().withMessage('Segment value is required'),
+    body('competition')
+      .isIn(['New Account', 'Existing Account', 'Competitor Account'])
+      .withMessage('Invalid competition type'),
+    body('address.state').trim().notEmpty().withMessage('State is required'),
+    body('address.pinCode')
+      .trim().notEmpty().withMessage('PIN code is required')
+      .matches(/^\d{6}$/).withMessage('PIN code must be exactly 6 digits'),
     body('contacts').optional().isArray({ max: 10 }).withMessage('Max 10 contacts'),
     body('productInterests').optional().isArray({ max: 10 }).withMessage('Max 10 products'),
     body('competitors').optional().isArray({ max: 5 }).withMessage('Max 5 competitors'),
@@ -103,7 +111,12 @@ router.post(
   asyncHandler(async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(422).json({ status: 'fail', errors: errors.array() });
+      const messages = errors.array().map(e => e.msg).join(', ');
+      return res.status(422).json({
+        status: 'fail',
+        message: messages,
+        errors: errors.array()
+      });
     }
 
     const isAdmin = req.user.role === 'admin';
@@ -156,10 +169,10 @@ router.get(
   asyncHandler(async (req, res) => {
     const filter = { _id: req.params.id, ...req.stateFilter };
     if (req.user.role !== 'admin') {
+      filter.status = { $ne: 'rejected' };
       filter.$or = [
-        { status: 'active',  assignedTo: req.user._id },
-        { status: 'active',  submittedBy: req.user._id },
-        { status: 'pending', submittedBy: req.user._id },
+        { assignedTo: req.user._id },
+        { submittedBy: req.user._id },
       ];
     }
 
