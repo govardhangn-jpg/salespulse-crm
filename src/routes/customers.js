@@ -31,7 +31,7 @@ router.get(
   '/',
   applyStateFilter,
   asyncHandler(async (req, res) => {
-    const { search, segment, status, competition, state, page = 1, limit = 50 } = req.query;
+    const { search, segment, status, competition, state, page = 1, limit = 500 } = req.query;
 
     // Build filter — always merge with state filter
     const filter = { ...req.stateFilter };
