@@ -1621,37 +1621,67 @@ async function approveCustomer(id, name) {
 
 async function submitNewCustomer() {
   const btn = document.getElementById('submitCustomerBtn');
-  const segVal = document.getElementById('nc_segment').value;
+
+  // ── Read & validate all fields ────────────────────────
+  const name       = document.getElementById('nc_name').value.trim().toUpperCase();
+  const email      = (document.getElementById('nc_email')?.value || '').trim().toLowerCase();
+  const phone      = (document.getElementById('nc_phone')?.value || '').trim();
+  const segVal     = document.getElementById('nc_segment').value;
+  const unit       = document.getElementById('nc_unit').value;
+  const competition= document.getElementById('nc_competition').value;
+  const street     = document.getElementById('nc_street').value.trim();
+  const city       = document.getElementById('nc_city').value.trim();
+  const state      = document.getElementById('nc_state').value;
+  const pinCode    = document.getElementById('nc_pin').value.trim();
+
+  // Field-level validation with clear messages
+  if (!name)        { showToast('Company Name is required', 'warning'); return; }
+  if (!segVal)      { showToast('Please select a Segment', 'warning'); return; }
+  if (!competition) { showToast('Please select Competition Type', 'warning'); return; }
+  if (!state)       { showToast('Please select State / UT', 'warning'); return; }
+  if (!pinCode)     { showToast('PIN Code is required', 'warning'); return; }
+  if (!/^\d{6}$/.test(pinCode)) { showToast('PIN Code must be exactly 6 digits', 'warning'); return; }
+
   const [segCat, segValue] = segVal.split(':');
+  if (!segCat || !segValue) { showToast('Please select a valid Segment', 'warning'); return; }
+
   const contacts = [...document.querySelectorAll('#nc_contactSlots .slot-row')].map(r => {
-    const inputs = r.querySelectorAll('input'); return { name:inputs[0].value, phone:inputs[1].value, designation:inputs[2].value };
-  }).filter(c => c.name);
+    const inputs = r.querySelectorAll('input');
+    return { name: inputs[0]?.value || '', phone: inputs[1]?.value || '', designation: inputs[2]?.value || '' };
+  }).filter(ct => ct.name.trim());
+
   const competitors = [...document.querySelectorAll('#nc_competitorSlots .slot-row')].map(r => {
-    const inputs = r.querySelectorAll('input'); return { name:inputs[0].value, notes:inputs[1].value };
-  }).filter(c => c.name);
+    const inputs = r.querySelectorAll('input');
+    return { name: inputs[0]?.value || '', notes: inputs[1]?.value || '' };
+  }).filter(cp => cp.name.trim());
 
   const body = {
-    name: document.getElementById('nc_name').value.trim().toUpperCase(),
-    email: (document.getElementById('nc_email')?.value || '').trim().toLowerCase(),
-    phone: document.getElementById('nc_phone')?.value || '',
+    name, email, phone,
     segment: { category: segCat, value: segValue },
-    unit: document.getElementById('nc_unit').value,
-    competition: document.getElementById('nc_competition').value,
-    address: { street: document.getElementById('nc_street').value, city: document.getElementById('nc_city').value, state: document.getElementById('nc_state').value, pinCode: document.getElementById('nc_pin').value },
+    unit, competition,
+    address: { street, city, state, pinCode },
     contacts, competitors,
   };
-  if (!body.name || !body.segment.value || !body.competition || !body.address.state || !body.address.pinCode) { showToast('Please fill all required fields', 'warning'); return; }
-  if (body.address.pinCode && !/^\d{6}$/.test(body.address.pinCode)) { showToast('PIN code must be 6 digits', 'warning'); return; }
 
-  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Submitting…';
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Saving…';
   try {
-    await apiCall('POST', '/customers', body);
-    showToast(currentUser.role === 'admin' ? 'Customer added successfully.' : 'Customer submitted for review. Admin has been notified.', 'success');
+    const result = await apiCall('POST', '/customers', body);
+    const msg = currentUser.role === 'admin'
+      ? `✅ ${name} added successfully.`
+      : `✅ ${name} submitted for review. Admin has been notified.`;
+    showToast(msg, 'success');
     resetNewCustomerForm();
     closeModal('newCustomerModal');
-    if (document.getElementById('page-customers').classList.contains('active')) loadCustomers();
-  } catch(e) { showToast(e.message, 'error'); }
-  finally { btn.disabled = false; btn.innerHTML = document.getElementById('submitCustomerBtn').dataset.label || 'Submit for Approval'; }
+    // Always reload customer list after adding
+    loadCustomers();
+  } catch(e) {
+    // Show detailed server error
+    showToast('Failed to save: ' + e.message, 'error');
+    console.error('Customer save error:', e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = currentUser.role === 'admin' ? 'Add Customer' : 'Submit for Review';
+  }
 }
 
 function resetNewCustomerForm() {
