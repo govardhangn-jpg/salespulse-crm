@@ -1510,6 +1510,7 @@ async function loadCustomers() {
   tb.innerHTML = '<tr class="loading-row"><td colspan="7"><div class="spinner"></div></td></tr>';
 
   const params = new URLSearchParams();
+  params.set('limit', '500'); // load all customers at once
   const search = document.getElementById('customerSearch').value.trim();
   const state = document.getElementById('filterState').value;
   const status = document.getElementById('filterStatus').value;
