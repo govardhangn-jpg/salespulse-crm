@@ -83,12 +83,25 @@ const customerSchema = new mongoose.Schema(
         type: String,
         required: [true, 'State is required'],
         enum: [
-          'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar',
-          'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh',
-          'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra',
-          'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
-          'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
-          'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi',
+          // ── 28 Indian States ──────────────────────────
+          'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh',
+          'Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka',
+          'Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram',
+          'Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana',
+          'Tripura','Uttar Pradesh','Uttarakhand','West Bengal',
+          // ── 8 Union Territories ──────────────────────
+          'Andaman & Nicobar Islands','Chandigarh',
+          'Dadra & Nagar Haveli and Daman & Diu',
+          'Delhi','Jammu & Kashmir','Ladakh','Lakshadweep','Puducherry',
+          // ── Middle East ───────────────────────────────
+          'UAE','Saudi Arabia','Qatar','Kuwait','Bahrain','Oman',
+          'Jordan','Iraq','Iran','Egypt','Lebanon','Yemen',
+          // ── South East Asia ───────────────────────────
+          'Singapore','Malaysia','Thailand','Indonesia','Vietnam',
+          'Philippines','Myanmar','Cambodia','Laos','Brunei',
+          'Timor-Leste',
+          // ── Other ─────────────────────────────────────
+          'Others',
         ],
       },
       pinCode: {
