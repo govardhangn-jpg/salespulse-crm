@@ -137,8 +137,6 @@ td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);ver
 tr:last-child td{border-bottom:none;}
 tbody tr{transition:background var(--tr);cursor:pointer;}
 tbody tr:hover{background:var(--accent-light);}
-tbody tr.low-stock{background:rgba(239,68,68,0.04);}
-tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 
 /* ── BADGES ───────────────────────────────────────── */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;}
@@ -1967,50 +1965,7 @@ async function saveInteraction() {
   finally { btn.disabled=false; btn.innerHTML='Save Interaction'; }
 }
 
-// ══════════════════════════════════════════════
-// INVENTORY
-// ══════════════════════════════════════════════
-let showLowStockOnly = false;
-function toggleLowStockFilter() {
-  showLowStockOnly = !showLowStockOnly;
-  document.getElementById('filterLowStockBtn').textContent = showLowStockOnly ? 'Show All' : 'Show Low Stock Only';
-}
-
-// loadInventory removed (inventory feature removed)
-    else alertEl.style.display='none';
-
-    if (!items.length) { tb.innerHTML='<tr><td colspan="8"><div class="empty-state">No inventory records</div></td></tr>'; return; }
-    tb.innerHTML = items.map(item => {
-      const pct = Math.min(Math.round((item.currentStock/Math.max(item.threshold*2,item.currentStock+1))*100),100);
-      const low = item.isBelowThreshold;
-      const mid = !low && item.currentStock <= item.threshold*1.5;
-      const color = low?'var(--red)':mid?'var(--amber)':'var(--green)';
-      return `<tr class="${low?'low-stock':''}">
-        <td><div style="font-weight:500;">${item.customer?.name||'—'}</div><div style="font-size:11px;color:var(--text3);">${item.customer?.address?.state||''}</div></td>
-        <td>${item.productName||item.product?.name||'—'}</td>
-        <td><span class="badge badge-gray">${item.productGroup||item.product?.group||'—'}</span></td>
-        <td><span style="font-family:var(--font-mono);font-weight:500;color:${color};">${item.currentStock} ${item.unit}</span></td>
-        <td style="color:var(--text3);font-family:var(--font-mono);font-size:12px;">${item.threshold}</td>
-        <td><div style="display:flex;align-items:center;gap:6px;"><div class="stock-bar"><div class="stock-fill" style="width:${pct}%;background:${color};"></div></div><span style="font-size:11px;color:${color};">${low?'⚠ Reorder':mid?'Low':'OK'}</span></div></td>
-        <td style="color:var(--text3);font-size:12px;">${new Date(item.updatedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</td>
-        <td>
-          <button class="btn btn-ghost btn-sm" onclick="updateStock('${item._id}','${item.productName||item.product?.name}',${item.currentStock},${item.threshold})">Update</button>
-          ${low?`<button class="btn btn-danger btn-sm" onclick="showToast('Reorder request sent','success')">Reorder</button>`:''}
-        </td>
-      </tr>`;
-    }).join('');
-  } catch(e) { tb.innerHTML='<tr><td colspan="8" style="color:var(--red);text-align:center;padding:20px;">'+e.message+'</td></tr>'; }
-}
-
-async function updateStock(id, productName, current, threshold) {
-  const newStock = prompt(`Update stock for "${productName}"\nCurrent: ${current} units\nEnter new quantity:`);
-  if (newStock === null) return;
-  const newThreshold = prompt(`Current threshold: ${threshold}\nEnter new threshold (or leave same):`);
-  try {
-    await apiCall('PATCH', '/inventory/'+id, { currentStock: parseInt(newStock), threshold: parseInt(newThreshold)||threshold, notes:'Manual update via CRM' });
-    showToast('Stock updated', 'success');
-    } catch(e) { showToast(e.message,'error'); }
-}
+// Inventory feature removed
 
 // ══════════════════════════════════════════════
 // APPROVALS
