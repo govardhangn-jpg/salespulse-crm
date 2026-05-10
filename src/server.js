@@ -21,10 +21,9 @@ const { userRouter, notifRouter, dashRouter } = require('./routes/misc');
 const attendanceRoutes = require('./routes/attendance');
 const reportsRoutes    = require('./routes/reports');
 
-
 const app = express();
 
-// Trust Render/proxy headers (fixes rate-limit warning on Render)
+// Trust Render/proxy headers (fixes rate-limit warning)
 app.set('trust proxy', 1);
 
 // ─── Security middleware ───────────────────────────────
@@ -73,7 +72,6 @@ app.use('/api/notifications', notifRouter);
 app.use('/api/dashboard',     dashRouter);
 app.use('/api/attendance',    attendanceRoutes);
 app.use('/api/reports',       reportsRoutes);
-
 
 // ─── Health check ─────────────────────────────────────
 app.get('/api/health', (req, res) => {
