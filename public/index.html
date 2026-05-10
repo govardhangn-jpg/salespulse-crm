@@ -1976,15 +1976,7 @@ function toggleLowStockFilter() {
   document.getElementById('filterLowStockBtn').textContent = showLowStockOnly ? 'Show All' : 'Show Low Stock Only';
 }
 
-async function loadInventory() {
-  const tb = document.getElementById('inventoryTableBody');
-  tb.innerHTML = '<tr class="loading-row"><td colspan="8"><div class="spinner"></td></tr>';
-  try {
-    const data = await apiCall('GET', '/inventory' + (showLowStockOnly ? '?lowStock=true' : ''));
-    const items = data.data.inventory;
-    const lowCount = items.filter(i=>i.isBelowThreshold).length;
-    const alertEl = document.getElementById('lowStockAlert');
-    if (lowCount > 0) { alertEl.style.display='flex'; document.getElementById('lowStockAlertText').textContent = lowCount + ' item(s) are below the reorder threshold'; }
+// loadInventory removed (inventory feature removed)
     else alertEl.style.display='none';
 
     if (!items.length) { tb.innerHTML='<tr><td colspan="8"><div class="empty-state">No inventory records</div></td></tr>'; return; }
