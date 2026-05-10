@@ -254,19 +254,23 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
 
 /* Footer */
 .doc-footer {
-  margin-top: 30px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 20px;
-  align-items: end;
+  margin-top: 40px;
+  padding-top: 0;
 }
-.doc-closing { font-size: 13px; color: var(--text2); line-height: 2; }
+.doc-closing {
+  font-size: 13px; color: var(--text); line-height: 2;
+  margin-bottom: 40px;
+}
+.doc-sign-wrap {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
 .doc-sign { text-align: right; }
-.doc-sign-name { font-family: var(--fh); font-size: 18px; font-weight: 700; color: var(--mg); }
-.doc-sign-title { font-size: 12px; color: var(--text3); margin-top: 2px; }
-.doc-sign-co { font-size: 11px; color: var(--text2); margin-top: 8px; font-style: italic; }
+.doc-sign-name { font-family: var(--fh); font-size: 22px; font-weight: 700; color: var(--mg); margin: 4px 0; }
+.doc-sign-title { font-size: 12px; color: var(--text3); }
+.doc-sign-co { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 600; }
 
 /* ── PRINT STYLES ──────────────────────────── */
 @media print {
@@ -552,10 +556,12 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
           We trust the offer suits your requirements and look forward to getting associated with your esteemed company.<br><br>
           Thanking you and assuring you of our best services at all times.
         </div>
-        <div class="doc-sign">
-          <div class="doc-sign-co">For Magmatic NDT Systems Pvt Limited</div>
-          <div class="doc-sign-name">K P Bopanna</div>
-          <div class="doc-sign-title">Director</div>
+        <div class="doc-sign-wrap">
+          <div class="doc-sign">
+            <div class="doc-sign-co">For Magmatic NDT Systems Pvt Limited</div>
+            <div class="doc-sign-name">K P Bopanna</div>
+            <div class="doc-sign-title">Director</div>
+          </div>
         </div>
       </div>
     </div>
@@ -593,11 +599,7 @@ We thank you for the enquiry and are pleased to submit our offer as below.
 
 1. Scope of Supply
 2. Price Schedule
-3. Terms and Conditions
-
-We trust the offer suits your requirements and look forward to getting associated with your esteemed company.
-
-Thanking you and assuring you of our best services at all times.`;
+3. Terms and Conditions`;
 
   // Default HSN
   document.getElementById('f_hsn').value = '998719';
@@ -760,23 +762,37 @@ function renderPreview() {
   const delivery= get('f_delivery');
   const warranty= get('f_warranty');
 
-  const itemRows = items.map(i => `
+  // Only show items that have a description or non-zero amount
+  const visibleItems = items.filter(i => i.desc.trim() || (i.rate > 0));
+  const itemRows = visibleItems.map(i => `
     <tr>
       <td>${esc2(i.desc)}</td>
-      <td>${i.qty}</td>
-      <td>${esc2(i.unit)}</td>
-      <td>${fmt(i.rate)}</td>
-      <td>${fmt(i.qty * i.rate)}</td>
+      <td style="text-align:right;">${i.qty}</td>
+      <td style="text-align:right;">${esc2(i.unit)}</td>
+      <td style="text-align:right;">${fmt(i.rate)}</td>
+      <td style="text-align:right;">${fmt(i.qty * i.rate)}</td>
     </tr>`).join('');
 
   document.getElementById('d_items').innerHTML = itemRows || '<tr><td colspan="5" style="text-align:center;color:#999;padding:12px;">No items added</td></tr>';
 
   document.getElementById('d_totals_foot').innerHTML = `
-    ${hsn ? `<tr class="hsn-row"><td colspan="3">HSN Code: ${esc2(hsn)}</td><td colspan="2"></td></tr>` : ''}
-    ${note ? `<tr class="note-row"><td colspan="5">${esc2(note)}</td></tr>` : ''}
-    <tr class="subtotal-row"><td colspan="4" style="text-align:right;">Sub Total</td><td>${fmt(subtotal)}</td></tr>
-    ${gstRate > 0 ? `<tr class="gst-row"><td colspan="4" style="text-align:right;">GST @ ${gstRate}%</td><td>${fmt(gstAmt)}</td></tr>` : ''}
-    <tr class="total-row"><td colspan="4" style="text-align:right;">GRAND TOTAL</td><td>₹ ${fmt(grand)}</td></tr>`;
+    ${hsn ? `<tr class="hsn-row"><td colspan="4" style="font-size:11px;color:var(--text3);font-style:italic;padding:6px 10px;">HSN Code: ${esc2(hsn)}</td><td></td></tr>` : ''}
+    ${note ? `<tr class="note-row"><td colspan="5" style="font-size:11px;color:var(--text2);font-style:italic;padding:4px 10px;">${esc2(note)}</td></tr>` : ''}
+    <tr class="subtotal-row">
+      <td colspan="3"></td>
+      <td style="text-align:right;font-weight:600;">Sub Total</td>
+      <td style="text-align:right;font-weight:600;">${fmt(subtotal)}</td>
+    </tr>
+    ${gstRate > 0 ? `<tr class="gst-row">
+      <td colspan="3"></td>
+      <td style="text-align:right;">GST @ ${gstRate}%</td>
+      <td style="text-align:right;">${fmt(gstAmt)}</td>
+    </tr>` : ''}
+    <tr class="total-row">
+      <td colspan="3"></td>
+      <td style="text-align:right;">GRAND TOTAL</td>
+      <td style="text-align:right;">₹ ${fmt(grand)}</td>
+    </tr>`;
 
   // Terms
   document.getElementById('d_terms').innerHTML = `
