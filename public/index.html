@@ -2818,8 +2818,17 @@ async function saveEditCustomer() {
 // CUSTOMER TABLE SORTING
 // ══════════════════════════════════════════════
 let sortField = 'name';
-let sortDir   = 1; // 1=asc, -1=desc
+let sortDir   = 1; // 1=asc -1=desc
 let allCustomersCache = [];
+
+// Show default sort indicator as soon as customers page is visible
+function initSortIndicators() {
+  document.querySelectorAll('th span[id^="sort_"]').forEach(el => {
+    el.textContent = '⇅'; el.style.opacity = '.5'; el.style.color = '';
+  });
+  const el = document.getElementById('sort_' + sortField);
+  if (el) { el.textContent = '↑'; el.style.opacity = '1'; el.style.color = 'var(--accent)'; }
+}
 
 function sortCustomers(field) {
   if (sortField === field) {
@@ -2866,6 +2875,7 @@ function renderCustomerTable(customers) {
     return av < bv ? -sortDir : av > bv ? sortDir : 0;
   });
 
+  initSortIndicators();
   if (!sorted.length) {
     tb.innerHTML = '<tr><td colspan="7"><div class="empty-state">No customers found</div></td></tr>';
     return;
