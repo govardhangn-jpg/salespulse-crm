@@ -1587,30 +1587,8 @@ async function loadCustomers() {
       ? `All customers — ${data.total} total`
       : `My Customers — ${data.total} assigned to you`;
 
-    if (!customers.length) {
-      tb.innerHTML = '<tr><td colspan="7"><div class="empty-state">No customers found</div></td></tr>';
-      return;
-    }
-    tb.innerHTML = customers.map(c => {
-      const seg = c.segment ? `${c.segment.value}` : '—';
-      const state = c.address?.state || '—';
-      const sp = c.assignedTo?.name || c.submittedBy?.name || '—';
-      const statusBadge = c.status === 'active' ? 'badge-green' : c.status === 'pending' ? 'badge-amber' : 'badge-gray';
-      const compBadge = c.competition === 'New Account' ? 'badge-green' : c.competition === 'Competitor Account' ? 'badge-red' : 'badge-blue';
-      return `<tr onclick="openCustomerDetail('${c._id}')">
-        <td><div style="font-weight:500;color:var(--text);">${c.name}</div><div style="font-size:11px;color:var(--text3);">${c.address?.city || ''}</div></td>
-        <td><span class="badge badge-gray">${seg}</span></td>
-        <td>${state}</td>
-        <td><span class="badge ${compBadge}">${c.competition}</span></td>
-        <td>${sp}</td>
-        <td><span class="badge ${statusBadge}">${c.status}</span></td>
-        <td>
-          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openInteractionForCustomer('${c._id}','${c.name}')">Log</button>
-          ${isAdmin && c.status==='pending' ? `<button class="btn btn-success btn-sm" onclick="event.stopPropagation();approveCustomer('${c._id}','${c.name}')">Approve</button>` : ''}
-          ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteCustomer('${c._id}','${c.name}')">Del</button>` : ''}
-        </td>
-      </tr>`;
-    }).join('');
+    // Always go through renderCustomerTable so A→Z sort is applied on every load
+    renderCustomerTable(customers);
   } catch(e) {
     tb.innerHTML = '<tr><td colspan="7" style="color:var(--red);text-align:center;padding:20px;">Error: ' + e.message + '</td></tr>';
   }
