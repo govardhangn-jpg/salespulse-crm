@@ -345,6 +345,47 @@ select option{background:var(--bg3);}
           <div class="geo-dist" id="geoDist"></div>
         </div>
 
+        <!-- GPS Denied Fallback Panel -->
+        <div id="gpsFallbackPanel" style="display:none;background:#fff8f3;border:2px solid #e8590c;border-radius:10px;padding:16px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#e8590c" stroke-width="2" width="20" height="20"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <strong style="color:#e8590c;">GPS Access Issue</strong>
+          </div>
+          <div id="gpsFallbackReason" style="font-size:13px;color:#c44e00;margin-bottom:12px;"></div>
+
+          <div style="font-size:12px;color:#6b4c1e;font-weight:600;margin-bottom:6px;">How to enable location in Chrome:</div>
+          <div style="font-size:12px;color:#6b4c1e;line-height:1.8;">
+            1. Click the 🔒 lock icon in the address bar<br>
+            2. Click <strong>Site settings</strong><br>
+            3. Set <strong>Location</strong> to <strong>Allow</strong><br>
+            4. Refresh this page
+          </div>
+
+          <div style="font-size:12px;color:#6b4c1e;font-weight:600;margin-bottom:6px;margin-top:10px;">On mobile (Android Chrome):</div>
+          <div style="font-size:12px;color:#6b4c1e;line-height:1.8;">
+            1. Go to <strong>Settings → Apps → Chrome → Permissions</strong><br>
+            2. Enable <strong>Location</strong><br>
+            3. Return here and tap Retry
+          </div>
+
+          <div style="font-size:12px;color:#6b4c1e;font-weight:600;margin-bottom:6px;margin-top:10px;">On iPhone (Safari):</div>
+          <div style="font-size:12px;color:#6b4c1e;line-height:1.8;">
+            1. Go to <strong>Settings → Safari → Location</strong><br>
+            2. Set to <strong>Allow</strong><br>
+            3. Return here and tap Retry
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:14px;">
+            <button class="btn btn-primary" onclick="retryGPS()" style="font-size:13px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Retry GPS
+            </button>
+            <button class="btn btn-secondary" onclick="clockInWithoutGPS()" style="font-size:13px;">
+              Clock In Anyway (No GPS)
+            </button>
+          </div>
+        </div>
+
         <!-- Live map -->
         <div class="map-wrap">
           <div id="attendanceMap"></div>
@@ -637,10 +678,50 @@ function updateClock() {
 function startGPS() {
   if (!navigator.geolocation) {
     setGeoStatus('error', 'GPS Not Supported', 'Your browser does not support geolocation', '');
+    showGPSFallback('Your browser does not support GPS. You can still clock in manually.');
     return;
   }
-  setGeoStatus('locating', 'Acquiring GPS…', 'Please allow location access', '');
-  watchId = navigator.geolocation.watchPosition(onGPSSuccess, onGPSError, { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 });
+  setGeoStatus('locating', 'Acquiring GPS…', 'Please allow location access when prompted', '');
+
+  // Try high accuracy first, fall back to low accuracy on failure
+  watchId = navigator.geolocation.watchPosition(
+    onGPSSuccess,
+    (err) => {
+      if (err.code === 1) {
+        // Permission denied — try low accuracy as fallback
+        navigator.geolocation.getCurrentPosition(
+          onGPSSuccess,
+          onGPSError,
+          { enableHighAccuracy: false, timeout: 10000, maximumAge: 30000 }
+        );
+      } else {
+        onGPSError(err);
+      }
+    },
+    { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
+  );
+}
+
+function retryGPS() {
+  if (watchId) navigator.geolocation.clearWatch(watchId);
+  watchId = null;
+  currentLat = null;
+  currentLng = null;
+  document.getElementById('gpsFallbackPanel').style.display = 'none';
+  startGPS();
+}
+
+function showGPSFallback(reason) {
+  // Show manual clock-in panel when GPS is unavailable
+  const panel = document.getElementById('gpsFallbackPanel');
+  if (panel) {
+    panel.style.display = 'block';
+    document.getElementById('gpsFallbackReason').textContent = reason;
+  }
+  // Still allow clock-in without GPS
+  document.getElementById('clockInBtn').disabled = false;
+  document.getElementById('clockInBtn').innerHTML =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Clock In (No GPS)';
 }
 
 async function onGPSSuccess(pos) {
@@ -658,8 +739,18 @@ async function onGPSSuccess(pos) {
 }
 
 function onGPSError(err) {
-  const msgs = { 1:'Location access denied — please enable in browser settings', 2:'Location unavailable', 3:'Location request timed out' };
-  setGeoStatus('error', 'GPS Error', msgs[err.code] || 'Unknown error', '');
+  const titles = {
+    1: 'Location Access Denied',
+    2: 'Location Unavailable',
+    3: 'Location Timed Out'
+  };
+  const msgs = {
+    1: 'You blocked location access. See instructions below to re-enable.',
+    2: 'GPS signal not available. Check your device location settings.',
+    3: 'GPS took too long to respond. You can still clock in manually.'
+  };
+  setGeoStatus('error', titles[err.code] || 'GPS Error', msgs[err.code] || 'Unknown GPS error', '');
+  showGPSFallback(msgs[err.code] || 'GPS unavailable');
 }
 
 async function loadAllZones() {
@@ -919,6 +1010,13 @@ async function doPunch(type) {
 
   // Clock In
   const btn = document.getElementById('clockInBtn');
+
+  // If no GPS available, use fallback
+  if (currentLat === null) {
+    clockInWithoutGPS();
+    return;
+  }
+
   btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Getting location…';
 
   // Reverse geocode to get human-readable address
@@ -1385,6 +1483,28 @@ function closeAttSidebar(){
 document.querySelectorAll('.nav-item').forEach(item=>{
   item.addEventListener('click',()=>{ if(window.innerWidth<=768) closeAttSidebar(); });
 });
+
+// ── Clock In without GPS ──────────────────────────────
+async function clockInWithoutGPS() {
+  const btn = document.getElementById('clockInBtn');
+  btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Clocking in…';
+  try {
+    const res = await apiFetch('POST', '/attendance/clock-in', {
+      latitude: 0,
+      longitude: 0,
+      address: 'Location not available (GPS denied)',
+    });
+    todayRecord = res.data.attendance;
+    updatePunchUI();
+    document.getElementById('gpsFallbackPanel').style.display = 'none';
+    showToast('Clocked in — no GPS location recorded', 'warning');
+  } catch(e) {
+    showToast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Clock In';
+  }
+}
 // ════════════════════════════════════════════════
 // BOOT
 // ════════════════════════════════════════════════
