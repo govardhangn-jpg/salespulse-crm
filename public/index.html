@@ -149,10 +149,10 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
 .badge-purple{background:var(--purple-bg);color:var(--purple);}
 .badge-teal{background:var(--teal-bg);color:var(--teal);}
 .badge-gray{background:var(--bg4);color:var(--text2);border:1px solid var(--border2);}
-.chip{display:inline-flex;align-items:center;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--border2);background:var(--bg4);color:var(--text2);transition:all .15s;user-select:none;}
+.chip{display:inline-flex;align-items:center;padding:6px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid rgba(220,100,0,0.25);background:#fff8f3;color:#c44e00;transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
 .chip:hover{border-color:var(--accent-border);color:var(--accent);background:var(--accent-light);}
-.chip.selected{background:rgba(232,89,12,0.10);border-color:rgba(232,89,12,0.35);color:#e8590c;}
-.chip.outcome.selected{background:var(--green-bg);border-color:var(--green-border);color:var(--green);}
+.chip.selected{background:#e8590c !important;border-color:#e8590c !important;color:#fff !important;font-weight:600;box-shadow:0 2px 6px rgba(232,89,12,0.30);}
+.chip.outcome.selected{background:#1e7a3c !important;border-color:#1e7a3c !important;color:#fff !important;font-weight:600;box-shadow:0 2px 6px rgba(30,122,60,0.25);}
 .chip.outcome:hover{border-color:var(--green-border);color:var(--green);background:var(--green-bg);}
 
 /* ── SEARCH / FILTER ──────────────────────────────── */
@@ -554,13 +554,27 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
         <div class="search-bar">
           <div class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search customers…" id="customerSearch" oninput="debounceLoadCustomers()"></div>
           <div class="filter-bar">
-            <select id="filterState" onchange="loadCustomers()" class="admin-only" style="display:none"><option value="">All States</option><option>Maharashtra</option><option>Gujarat</option><option>Karnataka</option><option>Tamil Nadu</option><option>Delhi</option></select>
+            <select id="filterState" onchange="loadCustomers()" class="admin-only" style="display:none">
+            <option value="">All States/Countries</option>
+            <optgroup label="Indian States"><option>Andhra Pradesh</option><option>Gujarat</option><option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option><option>Telangana</option><option>Uttar Pradesh</option><option>West Bengal</option></optgroup>
+            <optgroup label="Union Territories"><option>Chandigarh</option><option>Delhi</option><option>Puducherry</option></optgroup>
+            <optgroup label="Middle East"><option>UAE</option><option>Saudi Arabia</option><option>Qatar</option><option>Kuwait</option><option>Bahrain</option><option>Oman</option></optgroup>
+            <optgroup label="South East Asia"><option>Singapore</option><option>Malaysia</option><option>Thailand</option><option>Indonesia</option><option>Vietnam</option></optgroup>
+          </select>
             <select id="filterStatus" onchange="loadCustomers()"><option value="">All Status</option><option value="active">Active</option><option value="pending">Pending</option></select>
             <select id="filterCompetition" onchange="loadCustomers()"><option value="">All Types</option><option value="New Account">New Account</option><option value="Existing Account">Existing Account</option><option value="Competitor Account">Competitor</option></select>
           </div>
         </div>
         <div class="table-wrap"><table>
-          <thead><tr><th>Customer</th><th>Segment</th><th>State</th><th>Type</th><th>Salesperson</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr>
+          <th onclick="sortCustomers('name')" style="cursor:pointer;user-select:none;">Customer <span id="sort_name" style="opacity:.5;">⇅</span></th>
+          <th onclick="sortCustomers('segment')" style="cursor:pointer;user-select:none;">Segment <span id="sort_segment" style="opacity:.5;">⇅</span></th>
+          <th onclick="sortCustomers('state')" style="cursor:pointer;user-select:none;">State <span id="sort_state" style="opacity:.5;">⇅</span></th>
+          <th onclick="sortCustomers('competition')" style="cursor:pointer;user-select:none;">Type <span id="sort_competition" style="opacity:.5;">⇅</span></th>
+          <th>Salesperson</th>
+          <th onclick="sortCustomers('status')" style="cursor:pointer;user-select:none;">Status <span id="sort_status" style="opacity:.5;">⇅</span></th>
+          <th>Actions</th>
+        </tr></thead>
           <tbody id="customerTableBody"><tr class="loading-row"><td colspan="7"><div class="spinner"></div></td></tr></tbody>
         </table></div>
       </div>
@@ -804,8 +818,9 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
         </div>
         <div class="form-group"><label class="form-label required">State / UT</label>
           <select id="nc_state">
-            <option value="">Select state / UT…</option>
-            <optgroup label="States">
+
+            <option value="">Select state / UT / Country…</option>
+            <optgroup label="── Indian States ──">
               <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
               <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option>
               <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
@@ -817,15 +832,26 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
               <option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
               <option>West Bengal</option>
             </optgroup>
-            <optgroup label="Union Territories">
-              <option>Andaman &amp; Nicobar Islands</option>
-              <option>Chandigarh</option>
-              <option>Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
-              <option>Delhi</option>
-              <option>Jammu &amp; Kashmir</option>
-              <option>Ladakh</option>
-              <option>Lakshadweep</option>
-              <option>Puducherry</option>
+            <optgroup label="── Union Territories ──">
+              <option>Andaman &amp; Nicobar Islands</option><option>Chandigarh</option>
+              <option>Dadra &amp; Nagar Haveli and Daman &amp; Diu</option><option>Delhi</option>
+              <option>Jammu &amp; Kashmir</option><option>Ladakh</option>
+              <option>Lakshadweep</option><option>Puducherry</option>
+            </optgroup>
+            <optgroup label="── Middle East ──">
+              <option>UAE</option><option>Saudi Arabia</option><option>Qatar</option>
+              <option>Kuwait</option><option>Bahrain</option><option>Oman</option>
+              <option>Jordan</option><option>Iraq</option><option>Iran</option>
+              <option>Egypt</option><option>Lebanon</option><option>Yemen</option>
+            </optgroup>
+            <optgroup label="── South East Asia ──">
+              <option>Singapore</option><option>Malaysia</option><option>Thailand</option>
+              <option>Indonesia</option><option>Vietnam</option><option>Philippines</option>
+              <option>Myanmar</option><option>Cambodia</option><option>Laos</option>
+              <option>Brunei</option><option>Timor-Leste</option>
+            </optgroup>
+            <optgroup label="── Other ──">
+              <option>Others</option>
             </optgroup>
           </select>
         </div>
@@ -1104,8 +1130,8 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
         </div>
         <div class="form-group"><label class="form-label required">State / UT</label>
           <select id="ec_state">
-            <option value="">Select state / UT…</option>
-            <optgroup label="States">
+            <option value="">Select state / UT / Country…</option>
+            <optgroup label="── Indian States ──">
               <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
               <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option>
               <option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option>
@@ -1117,11 +1143,26 @@ tbody tr.low-stock td:first-child{border-left:2px solid var(--red);}
               <option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option>
               <option>West Bengal</option>
             </optgroup>
-            <optgroup label="Union Territories">
+            <optgroup label="── Union Territories ──">
               <option>Andaman &amp; Nicobar Islands</option><option>Chandigarh</option>
               <option>Dadra &amp; Nagar Haveli and Daman &amp; Diu</option><option>Delhi</option>
               <option>Jammu &amp; Kashmir</option><option>Ladakh</option>
               <option>Lakshadweep</option><option>Puducherry</option>
+            </optgroup>
+            <optgroup label="── Middle East ──">
+              <option>UAE</option><option>Saudi Arabia</option><option>Qatar</option>
+              <option>Kuwait</option><option>Bahrain</option><option>Oman</option>
+              <option>Jordan</option><option>Iraq</option><option>Iran</option>
+              <option>Egypt</option><option>Lebanon</option><option>Yemen</option>
+            </optgroup>
+            <optgroup label="── South East Asia ──">
+              <option>Singapore</option><option>Malaysia</option><option>Thailand</option>
+              <option>Indonesia</option><option>Vietnam</option><option>Philippines</option>
+              <option>Myanmar</option><option>Cambodia</option><option>Laos</option>
+              <option>Brunei</option><option>Timor-Leste</option>
+            </optgroup>
+            <optgroup label="── Other ──">
+              <option>Others</option>
             </optgroup>
           </select>
         </div>
@@ -1349,14 +1390,17 @@ function buildChips() {
   const actWrap = document.getElementById('li_activityChips');
   const outWrap = document.getElementById('li_outcomeChips');
   if (!actWrap || !outWrap) return;
-
-  actWrap.innerHTML = ACTIVITY_TYPES.map(a =>
-    `<span class="chip" data-val="${a}" onclick="toggleChip(this,'activity')">${a}</span>`
-  ).join('');
-
-  outWrap.innerHTML = VISIT_OUTCOMES.map(o =>
-    `<span class="chip outcome" data-val="${o}" onclick="toggleChip(this,'outcome')">${o}</span>`
-  ).join('');
+  // Only build once — don't wipe selections on re-open
+  if (actWrap.children.length === 0) {
+    actWrap.innerHTML = ACTIVITY_TYPES.map(a =>
+      `<span class="chip" data-val="${a}" onclick="toggleChip(this,'activity')">${a}</span>`
+    ).join('');
+  }
+  if (outWrap.children.length === 0) {
+    outWrap.innerHTML = VISIT_OUTCOMES.map(o =>
+      `<span class="chip outcome" data-val="${o}" onclick="toggleChip(this,'outcome')">${o}</span>`
+    ).join('');
+  }
 }
 
 function toggleChip(el, type) {
@@ -1524,6 +1568,7 @@ async function loadCustomers() {
     const data = await apiCall('GET', '/customers?' + params);
     const customers = data.data.customers;
     allActiveCustomers = customers.filter(c => c.status === 'active');
+    allCustomersCache = customers; // cache for sorting
 
     const isAdmin = currentUser.role === 'admin';
     document.getElementById('customerFilterLabel').textContent = isAdmin
@@ -2759,6 +2804,82 @@ async function saveEditCustomer() {
   } finally {
     btn.disabled = false; btn.innerHTML = 'Save Changes';
   }
+}
+
+// ══════════════════════════════════════════════
+// CUSTOMER TABLE SORTING
+// ══════════════════════════════════════════════
+let sortField = 'name';
+let sortDir   = 1; // 1=asc, -1=desc
+let allCustomersCache = [];
+
+function sortCustomers(field) {
+  if (sortField === field) {
+    sortDir = -sortDir; // flip direction
+  } else {
+    sortField = field;
+    sortDir   = 1;
+  }
+  // Update sort indicators
+  document.querySelectorAll('th span[id^="sort_"]').forEach(el => {
+    el.textContent = '⇅'; el.style.opacity = '.5'; el.style.color = '';
+  });
+  const indicator = document.getElementById('sort_' + field);
+  if (indicator) {
+    indicator.textContent = sortDir === 1 ? '↑' : '↓';
+    indicator.style.opacity = '1';
+    indicator.style.color = 'var(--accent)';
+  }
+  renderCustomerTable(allCustomersCache);
+}
+
+function getFieldValue(c, field) {
+  switch(field) {
+    case 'name':        return (c.name || '').toLowerCase();
+    case 'segment':     return (c.segment?.value || '').toLowerCase();
+    case 'state':       return (c.address?.state || '').toLowerCase();
+    case 'competition': return (c.competition || '').toLowerCase();
+    case 'status':      return (c.status || '').toLowerCase();
+    default:            return '';
+  }
+}
+
+function renderCustomerTable(customers) {
+  const tb = document.getElementById('customerTableBody');
+  if (!tb) return;
+  const isAdmin = currentUser.role === 'admin';
+
+  // Sort
+  const sorted = [...customers].sort((a, b) => {
+    const av = getFieldValue(a, sortField);
+    const bv = getFieldValue(b, sortField);
+    return av < bv ? -sortDir : av > bv ? sortDir : 0;
+  });
+
+  if (!sorted.length) {
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty-state">No customers found</div></td></tr>';
+    return;
+  }
+  tb.innerHTML = sorted.map(c => {
+    const seg  = c.segment ? c.segment.value : '—';
+    const state = c.address?.state || '—';
+    const sp   = c.assignedTo?.name || c.submittedBy?.name || '—';
+    const statusBadge = c.status === 'active' ? 'badge-green' : c.status === 'pending' ? 'badge-amber' : 'badge-gray';
+    const compBadge   = c.competition === 'New Account' ? 'badge-green' : c.competition === 'Competitor Account' ? 'badge-red' : 'badge-blue';
+    return `<tr onclick="openCustomerDetail('${c._id}')">
+      <td><div style="font-weight:500;color:var(--text);">${c.name}</div><div style="font-size:11px;color:var(--text3);">${c.address?.city || ''}</div></td>
+      <td><span class="badge badge-gray">${seg}</span></td>
+      <td>${state}</td>
+      <td><span class="badge ${compBadge}">${c.competition}</span></td>
+      <td>${sp}</td>
+      <td><span class="badge ${statusBadge}">${c.status}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openInteractionForCustomer('${c._id}','${c.name.replace(/'/g,"\'")}')">Log</button>
+        ${isAdmin && c.status==='pending' ? `<button class="btn btn-success btn-sm" onclick="event.stopPropagation();approveCustomer('${c._id}','${c.name}')">Approve</button>` : ''}
+        ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteCustomer('${c._id}','${c.name}')">Del</button>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
 }
 // ══════════════════════════════════════════════
 // NOTIFICATIONS
