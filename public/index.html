@@ -1326,6 +1326,14 @@ async function doLogin() {
   }
 }
 
+
+// ── Safe name helper — prevents null.split() / null.replace() crashes ──
+function safeName(obj, fallback='—') {
+  return (obj && obj.name) ? obj.name : fallback;
+}
+function safeInitials(name, fallback='??') {
+  return (name || fallback).split(' ').map(n => n[0] || '').join('').toUpperCase().substring(0, 2) || fallback;
+}
 function doLogout() {
   localStorage.removeItem('sp_token');
   localStorage.removeItem('sp_user');
@@ -1342,7 +1350,7 @@ function initApp() {
 
   // Populate user info in sidebar
   const isAdmin = currentUser.role === 'admin';
-  document.getElementById('userAvatar').textContent = currentUser.name.split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2);
+  document.getElementById('userAvatar').textContent = (currentUser.name||'U').split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2);
   document.getElementById('userAvatar').className = 'avatar ' + (isAdmin ? 'admin' : 'sales');
   document.getElementById('sidebarUserName').textContent = currentUser.name;
   document.getElementById('sidebarUserRole').textContent = isAdmin ? 'Administrator' : 'Sales Rep · ' + (currentUser.assignedStates || []).join(', ');
@@ -1503,7 +1511,7 @@ async function loadDashboard() {
             return `<div class="upcoming-item">
               <div class="upcoming-date">${dateStr}</div>
               <div class="upcoming-content">
-                <div class="upcoming-title">${i.nextAction?.type || '—'} — ${i.customer?.name || '—'}</div>
+                <div class="upcoming-title">${i.nextAction?.type || '—'} — ${(i.customer && i.customer.name) ? i.customer.name : 'Customer'}</div>
                 <div class="upcoming-sub">${i.salesperson?.name || ''}</div>
               </div>
             </div>`;
@@ -1523,7 +1531,7 @@ async function loadDashboard() {
           <div class="activity-item">
             <div class="activity-dot" style="background:var(--accent)"></div>
             <div style="flex:1">
-              <div class="activity-text">${(i.activityTypes||[i.callType]).filter(Boolean).join(', ')} logged for <strong>${i.customer?.name || 'Customer'}</strong></div>
+              <div class="activity-text">${(i.activityTypes||[i.callType]).filter(Boolean).join(', ')} logged for <strong>${(i.customer && i.customer.name) ? i.customer.name : 'a customer'}</strong></div>
               <div class="activity-time">${timeAgo(i.createdAt)}</div>
             </div>
           </div>`).join('');
@@ -1568,7 +1576,7 @@ async function loadCustomers() {
     const data = await apiCall('GET', '/customers?' + params);
     const customers = data.data.customers;
     allActiveCustomers = customers.filter(c => c.status === 'active');
-    allCustomersCache = customers; // cache for sorting
+    allCustomersCache = (customers || []).filter(c => c && c._id); // cache for sorting
 
     const isAdmin = currentUser.role === 'admin';
     document.getElementById('customerFilterLabel').textContent = isAdmin
@@ -1609,7 +1617,7 @@ async function openCustomerDetail(id) {
     const data = await apiCall('GET', '/customers/' + id);
     const c = data.data.customer;
     selectedCustomerData = c;
-    const initials = c.name.split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2);
+    const initials = (c.name||'??').split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2);
     document.getElementById('detailAvatar').textContent = initials;
     document.getElementById('detailName').textContent = c.name;
     document.getElementById('detailMeta').textContent = (c.address?.state || '') + ' · ' + (c.segment?.value || '');
@@ -1839,8 +1847,8 @@ function customerTypeahead(inp) {
   const list = document.getElementById('li_customerList');
   const matches = allActiveCustomers.filter(c => c.name.toLowerCase().includes(q) || !q);
   list.innerHTML = matches.slice(0,8).map(c => `
-    <div class="typeahead-item" onclick="selectCustomer('${c._id}','${c.name.replace(/'/g,"\\'")}')">
-      <div>${c.name}</div><div class="typeahead-item-sub">${c.address?.state||''} · ${c.segment?.value||''}</div>
+    <div class="typeahead-item" onclick="selectCustomer('${c._id}','${(c.name||'').replace(/'/g,"\\'")}')">
+      <div>${c.name||'(No Name)'}</div><div class="typeahead-item-sub">${c.address?.state||''} · ${c.segment?.value||''}</div>
     </div>`).join('');
   list.classList.toggle('open', matches.length > 0);
 }
@@ -1944,7 +1952,7 @@ async function saveInteraction() {
   btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Saving…';
   try {
     await apiCall('POST', '/interactions', body);
-    showToast('Interaction logged. Reminder scheduled.', 'success');
+    showToast('Interaction logged successfully. Reminder scheduled.', 'success');
     closeModal('logInteractionModal');
     sendEmailOnSave = false;
     if (document.getElementById('page-interactions').classList.contains('active')) loadInteractions();
@@ -2847,6 +2855,8 @@ function getFieldValue(c, field) {
 function renderCustomerTable(customers) {
   const tb = document.getElementById('customerTableBody');
   if (!tb) return;
+  // Filter out any null/malformed customer records
+  customers = (customers || []).filter(c => c && c._id);
   const isAdmin = currentUser.role === 'admin';
 
   // Sort
@@ -2874,7 +2884,7 @@ function renderCustomerTable(customers) {
       <td>${sp}</td>
       <td><span class="badge ${statusBadge}">${c.status}</span></td>
       <td>
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openInteractionForCustomer('${c._id}','${c.name.replace(/'/g,"\'")}')">Log</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openInteractionForCustomer('${c._id}','${(c.name||'').replace(/'/g,"\'")}')">Log</button>
         ${isAdmin && c.status==='pending' ? `<button class="btn btn-success btn-sm" onclick="event.stopPropagation();approveCustomer('${c._id}','${c.name}')">Approve</button>` : ''}
         ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteCustomer('${c._id}','${c.name}')">Del</button>` : ''}
       </td>
