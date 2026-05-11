@@ -272,6 +272,51 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
 .doc-sign-title { font-size: 12px; color: var(--text3); }
 .doc-sign-co { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 600; }
 
+
+/* ── CUSTOMER SEARCH ──────────────────────────── */
+.cust-search-wrap { position: relative; }
+.cust-search-input {
+  width: 100%; padding: 8px 36px 8px 11px;
+  border: 1.5px solid var(--mg-border); border-radius: var(--radius);
+  background: var(--bg); font-size: 13px; color: var(--text);
+  outline: none; transition: border-color .15s, box-shadow .15s;
+}
+.cust-search-input:focus {
+  border-color: var(--mg);
+  box-shadow: 0 0 0 3px var(--mg-light);
+}
+.cust-search-icon {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--text3); pointer-events: none;
+}
+.cust-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 200;
+  background: #fff; border: 1px solid var(--mg-border);
+  border-radius: var(--radius); box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  max-height: 240px; overflow-y: auto; display: none;
+}
+.cust-dropdown.show { display: block; }
+.cust-option {
+  padding: 9px 12px; cursor: pointer; border-bottom: 1px solid var(--border);
+  transition: background .1s;
+}
+.cust-option:last-child { border-bottom: none; }
+.cust-option:hover, .cust-option.active { background: var(--mg-light); }
+.cust-option-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.cust-option-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.cust-selected-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 20px;
+  background: var(--mg-light); border: 1px solid var(--mg-border);
+  color: var(--mg); font-size: 12px; font-weight: 500; margin-top: 6px;
+}
+.cust-selected-badge button {
+  background: none; border: none; cursor: pointer; color: var(--mg);
+  font-size: 14px; line-height: 1; padding: 0; width: auto;
+}
+.cust-status { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.cust-status.loading { color: var(--mg); }
+.cust-status.error   { color: #c00; }
 /* ── PRINT STYLES ──────────────────────────── */
 @media print {
   body { background: #fff; }
@@ -312,6 +357,29 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
     <!-- Addressee -->
     <div class="form-section">
       <div class="form-section-title">Customer Details</div>
+
+      <!-- Customer Search / Select from CRM -->
+      <div class="fg">
+        <label>Select from CRM Customers</label>
+        <div class="cust-search-wrap" id="custSearchWrap">
+          <input type="text" id="custSearch" class="cust-search-input"
+            placeholder="Type to search customers…"
+            oninput="filterCustomers(this.value)"
+            onfocus="showDropdown()"
+            autocomplete="off">
+          <svg class="cust-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <div class="cust-dropdown" id="custDropdown"></div>
+        </div>
+        <div class="cust-status" id="custStatus">Loading customers…</div>
+        <div id="custSelectedBadge"></div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:8px;margin:10px 0;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-size:11px;color:var(--text3);white-space:nowrap;">or fill manually</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+
       <div class="fg">
         <label>To (Company Name / Contact)</label>
         <textarea id="f_to" rows="3" placeholder="M/s. XYZ Company Ltd&#10;Attention: Mr. Rajesh Kumar&#10;Bengaluru - 560001"></textarea>
@@ -572,6 +640,156 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 </div><!-- end app -->
 
 <script>
+
+// ════════════════════════════════════════
+// CUSTOMER LIST FROM CRM
+// ════════════════════════════════════════
+let allCrmCustomers = [];
+let selectedCustomer = null;
+
+async function loadCrmCustomers() {
+  const statusEl = document.getElementById('custStatus');
+  try {
+    // Read JWT token from localStorage (same as CRM)
+    const token = localStorage.getItem('sp_token');
+    if (!token) {
+      statusEl.textContent = '⚠ Not logged in to CRM — fill manually below';
+      statusEl.className = 'cust-status error';
+      return;
+    }
+
+    statusEl.textContent = 'Loading customers…';
+    statusEl.className = 'cust-status loading';
+
+    const res = await fetch('/api/customers?limit=500&status=active', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) throw new Error('Could not load customers (HTTP ' + res.status + ')');
+    const data = await res.json();
+
+    allCrmCustomers = (data.data?.customers || [])
+      .filter(c => c && c.name)
+      .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+    statusEl.textContent = allCrmCustomers.length
+      ? allCrmCustomers.length + ' customers loaded from CRM'
+      : 'No active customers found';
+    statusEl.className = 'cust-status';
+    renderDropdown(allCrmCustomers);
+  } catch(e) {
+    statusEl.textContent = '⚠ ' + e.message + ' — fill manually below';
+    statusEl.className = 'cust-status error';
+  }
+}
+
+function renderDropdown(list) {
+  const dd = document.getElementById('custDropdown');
+  if (!list.length) {
+    dd.innerHTML = '<div class="cust-option" style="color:var(--text3);cursor:default;">No customers found</div>';
+    return;
+  }
+  dd.innerHTML = list.slice(0, 80).map((cust, i) => `
+    <div class="cust-option" data-idx="${i}" onclick="selectCustomerFromList(${allCrmCustomers.indexOf(cust)})">
+      <div class="cust-option-name">${cust.name}</div>
+      <div class="cust-option-meta">
+        ${cust.address?.city ? cust.address.city + ' · ' : ''}
+        ${cust.address?.state || ''}
+        ${cust.phone ? ' · ' + cust.phone : ''}
+      </div>
+    </div>`).join('');
+}
+
+function filterCustomers(query) {
+  const dd = document.getElementById('custDropdown');
+  dd.classList.add('show');
+  if (!query.trim()) {
+    renderDropdown(allCrmCustomers);
+    return;
+  }
+  const q = query.toLowerCase();
+  const filtered = allCrmCustomers.filter(c =>
+    (c.name || '').toLowerCase().includes(q) ||
+    (c.address?.city || '').toLowerCase().includes(q) ||
+    (c.address?.state || '').toLowerCase().includes(q) ||
+    (c.phone || '').includes(q)
+  );
+  renderDropdown(filtered);
+}
+
+function showDropdown() {
+  const dd = document.getElementById('custDropdown');
+  dd.classList.add('show');
+  renderDropdown(allCrmCustomers);
+}
+
+function hideDropdown() {
+  setTimeout(() => {
+    document.getElementById('custDropdown').classList.remove('show');
+  }, 200);
+}
+
+function selectCustomerFromList(idx) {
+  const cust = allCrmCustomers[idx];
+  if (!cust) return;
+  selectedCustomer = cust;
+
+  // Auto-fill the "To" field
+  const addr = cust.address;
+  const addrLine = [
+    addr?.street,
+    addr?.city && addr?.pinCode ? addr.city + ' - ' + addr.pinCode : (addr?.city || addr?.pinCode),
+    addr?.state,
+  ].filter(Boolean).join(',\n');
+
+  document.getElementById('f_to').value =
+    'M/s. ' + cust.name +
+    (addrLine ? '\n' + addrLine : '');
+
+  // Auto-fill phone and email
+  if (cust.phone) document.getElementById('f_phone').value = cust.phone;
+  if (cust.email) document.getElementById('f_email').value = cust.email;
+
+  // Auto-fill primary contact if available
+  const primary = (cust.contacts || []).find(ct => ct.isPrimary) || cust.contacts?.[0];
+  if (primary && !cust.phone) {
+    document.getElementById('f_phone').value = primary.phone || '';
+  }
+
+  // Show selected badge
+  document.getElementById('custSelectedBadge').innerHTML =
+    `<span class="cust-selected-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
+      ${cust.name}
+      <button onclick="clearSelectedCustomer()" title="Clear">×</button>
+    </span>`;
+
+  // Clear search input and hide dropdown
+  document.getElementById('custSearch').value = '';
+  document.getElementById('custDropdown').classList.remove('show');
+  document.getElementById('custStatus').textContent = '✓ Customer details filled from CRM';
+  document.getElementById('custStatus').className = 'cust-status';
+
+  renderPreview();
+}
+
+function clearSelectedCustomer() {
+  selectedCustomer = null;
+  document.getElementById('custSelectedBadge').innerHTML = '';
+  document.getElementById('f_to').value = '';
+  document.getElementById('f_phone').value = '';
+  document.getElementById('f_email').value = '';
+  document.getElementById('custSearch').value = '';
+  document.getElementById('custStatus').textContent = allCrmCustomers.length + ' customers loaded from CRM';
+  renderPreview();
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (!document.getElementById('custSearchWrap').contains(e.target)) {
+    document.getElementById('custDropdown').classList.remove('show');
+  }
+});
+
 // ════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════
@@ -609,6 +827,9 @@ We thank you for the enquiry and are pleased to submit our offer as below.
 
   // Default items
   addItem('CALIBRATION of Digital UV Meter UV Sensor', 2, 'No', 4500);
+
+  // Load customers from CRM
+  loadCrmCustomers();
 
   // Wire all inputs to live preview
   document.querySelectorAll('input, select, textarea').forEach(el => {
