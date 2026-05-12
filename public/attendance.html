@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Attendance — SalesPulse CRM</title>
+<title>Attendance — Magmatic NDT CRM</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 :root{
-  --bg:#ffffff;--bg2:#ffffff;--bg3:#fff8f3;--bg4:#fff0e6;--bg5:#ffe5cc;
-  --border:rgba(220,100,0,0.12);--border2:rgba(220,100,0,0.22);--border3:rgba(220,100,0,0.38);
-  --text:#c44e00;--text2:#d06020;--text3:#e8935a;
-  --accent:#e8590c;--al:rgba(232,89,12,0.10);--ab:rgba(232,89,12,0.35);
-  --green:#1e7a3c;--gl:rgba(30,122,60,0.10);--gb:rgba(30,122,60,0.28);
-  --amber:#c45000;--aml:rgba(196,80,0,0.10);--amb:rgba(196,80,0,0.28);
-  --red:#c0182a;--rl:rgba(192,24,42,0.09);--rb:rgba(192,24,42,0.28);
+  --bg:#ffffff;--bg2:#ffffff;--bg3:#f5f6fa;--bg4:#eef0f8;--bg5:#e3e6f0;
+  --border:rgba(26,35,126,0.10);--border2:rgba(26,35,126,0.20);--border3:rgba(26,35,126,0.35);
+  --text:#1a237e;--text2:#3949ab;--text3:#7986cb;
+  --accent:#1a237e;--al:rgba(26,35,126,0.08);--ab:rgba(26,35,126,0.30);
+  --green:#2e7d32;--gl:rgba(46,125,50,0.10);--gb:rgba(46,125,50,0.28);
+  --amber:#e65100;--aml:rgba(230,81,0,0.10);--amb:rgba(230,81,0,0.28);
+  --red:#c62828;--rl:rgba(198,40,40,0.09);--rb:rgba(198,40,40,0.28);
   --purple:#8b5cf6;--teal:#14b8a6;
   --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
   --r:10px;--rs:6px;--rl2:14px;
@@ -22,24 +22,24 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);font-size:14px;}
 ::-webkit-scrollbar{width:4px;height:4px;}
-::-webkit-scrollbar-thumb{background:var(--accent-border,rgba(224,112,16,0.35));border-radius:4px;}
+::-webkit-scrollbar-thumb{background:rgba(26,35,126,0.20);border-radius:4px;}
 
 /* ── LAYOUT ───────────────────────────────────── */
 .app{display:flex;height:100vh;overflow:hidden;}
-.sidebar{width:220px;min-width:220px;background:#ffffff;border-right:1px solid rgba(220,100,0,0.18);display:flex;flex-direction:column;}
-.logo{padding:18px 16px 14px;border-bottom:1px solid rgba(220,100,0,0.15);display:flex;align-items:center;gap:10px;}
+.sidebar{width:220px;min-width:220px;background:#ffffff;border-right:1px solid rgba(26,35,126,0.12);display:flex;flex-direction:column;}
+.logo{padding:18px 16px 14px;border-bottom:1px solid rgba(26,35,126,0.12);display:flex;align-items:center;gap:10px;}
 .logo-badge{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;}
 .logo-badge svg{width:16px;height:16px;}
-.logo-name{font-family:var(--fh);font-size:15px;font-weight:700;color:#fff;}
+.logo-name{font-family:var(--fh);font-size:15px;font-weight:700;color:#1a237e;}
 .nav{flex:1;padding:10px 8px;overflow-y:auto;}
-.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--rs);cursor:pointer;color:#d06020;font-size:13px;transition:all .15s;margin-bottom:2px;}
-.nav-item:hover{background:rgba(232,89,12,0.08);color:#e8590c;}
-.nav-item.active{background:rgba(232,89,12,0.12);color:#e8590c;border:1px solid rgba(232,89,12,0.35);}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--rs);cursor:pointer;color:#3949ab;font-size:13px;transition:all .15s;margin-bottom:2px;}
+.nav-item:hover{background:rgba(26,35,126,0.07);color:#1a237e;}
+.nav-item.active{background:rgba(198,40,40,0.10);color:#c62828;border:1px solid rgba(198,40,40,0.30);}
 .nav-item svg{width:15px;height:15px;flex-shrink:0;}
-.nav-label{font-size:10px;color:#e8935a;text-transform:uppercase;letter-spacing:.8px;padding:8px 10px 4px;font-weight:600;}
+.nav-label{font-size:10px;color:#7986cb;text-transform:uppercase;letter-spacing:.8px;padding:8px 10px 4px;font-weight:600;}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .topbar{height:52px;background:#ffffff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;}
-.topbar-title{font-family:var(--fh);font-size:15px;font-weight:600;color:#fff;}
+.topbar-title{font-family:var(--fh);font-size:15px;font-weight:600;color:#1a237e;}
 .topbar-sub{font-size:12px;color:var(--text3);}
 .spacer{flex:1;}
 .back-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--rs);background:var(--bg4);border:1px solid var(--border2);color:var(--text2);font-size:12px;cursor:pointer;text-decoration:none;transition:all .15s;}
@@ -50,8 +50,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 /* ── BUTTONS ──────────────────────────────────── */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--rs);font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap;}
-.btn-primary{background:#e8590c;color:#fff;}
-.btn-primary:hover{background:#c44800;}
+.btn-primary{background:#c62828;color:#fff;}
+.btn-primary:hover{background:#b71c1c;}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed;}
 .btn-secondary{background:var(--bg4);color:var(--text);border-color:var(--border2);}
 .btn-secondary:hover{background:var(--bg5);}
@@ -65,7 +65,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 
 /* ── CLOCK WIDGET ─────────────────────────────── */
 .clock-hero{text-align:center;padding:28px 0 20px;}
-.clock-time{font-family:var(--fm);font-size:52px;font-weight:500;color:#fff;letter-spacing:2px;line-height:1;}
+.clock-time{font-family:var(--fm);font-size:52px;font-weight:500;color:#1a237e;letter-spacing:2px;line-height:1;}
 .clock-date{font-size:14px;color:var(--text3);margin-top:8px;}
 .status-ring{width:120px;height:120px;border-radius:50%;margin:20px auto;position:relative;display:flex;align-items:center;justify-content:center;}
 .status-ring.out{background:var(--rl);border:3px solid var(--red);}
@@ -100,7 +100,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .punch-card{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
 .punch-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
 .punch-box-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:600;}
-.punch-box-time{font-family:var(--fm);font-size:20px;color:#fff;font-weight:500;}
+.punch-box-time{font-family:var(--fm);font-size:20px;color:#1a237e;font-weight:500;}
 .punch-box-time.empty{color:var(--text3);font-size:14px;}
 .punch-box-zone{font-size:11px;color:var(--text3);margin-top:4px;}
 .punch-box-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;margin-top:4px;}
@@ -109,7 +109,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
 .stat-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
 .stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
-.stat-val{font-family:var(--fh);font-size:26px;font-weight:700;color:#fff;}
+.stat-val{font-family:var(--fh);font-size:26px;font-weight:700;color:#1a237e;}
 .stat-sub{font-size:11px;color:var(--text2);margin-top:4px;}
 
 /* ── TABLE ────────────────────────────────────── */
@@ -133,13 +133,13 @@ tbody tr:hover{background:var(--bg3);}
 
 /* ── SECTION HEADER ───────────────────────────── */
 .sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.sec-title{font-family:var(--fh);font-size:15px;font-weight:600;color:#fff;}
+.sec-title{font-family:var(--fh);font-size:15px;font-weight:600;color:#1a237e;}
 .sec-sub{font-size:12px;color:var(--text3);margin-top:1px;}
 
 /* ── CARD ─────────────────────────────────────── */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl2);padding:18px 20px;margin-bottom:14px;}
 .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.card-title{font-family:var(--fh);font-size:14px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px;}
+.card-title{font-family:var(--fh);font-size:14px;font-weight:600;color:#1a237e;display:flex;align-items:center;gap:8px;}
 
 /* ── FORMS ────────────────────────────────────── */
 .fg{margin-bottom:12px;}
@@ -153,9 +153,9 @@ select option{background:var(--bg3);}
 /* ── MODAL ────────────────────────────────────── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center;}
 .overlay.open{display:flex;}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl2);width:520px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 4px 24px rgba(220,100,0,0.12);}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl2);width:520px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 4px 24px rgba(26,35,126,0.10);}
 .mh{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.mh-title{font-family:var(--fh);font-size:15px;font-weight:600;color:#fff;}
+.mh-title{font-family:var(--fh);font-size:15px;font-weight:600;color:#1a237e;}
 .mc{padding:20px;overflow-y:auto;}
 .mf{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0;}
 .mclose{width:28px;height:28px;border-radius:6px;background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:16px;}
@@ -163,7 +163,7 @@ select option{background:var(--bg3);}
 
 /* ── TOAST ────────────────────────────────────── */
 .toast-wrap{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;}
-.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 15px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;min-width:260px;box-shadow:0 4px 16px rgba(220,100,0,0.10);animation:sIn .2s ease;}
+.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rs);padding:11px 15px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;min-width:260px;box-shadow:0 4px 16px rgba(26,35,126,0.08);animation:sIn .2s ease;}
 .toast.success{border-color:var(--gb);}
 .toast.error{border-color:var(--rb);}
 .toast.warning{border-color:var(--amb);}
@@ -188,7 +188,7 @@ select option{background:var(--bg3);}
 /* ═══════════════════════════════════════════════
    ATTENDANCE — MOBILE RESPONSIVE
    ═══════════════════════════════════════════════ */
-.att-hamburger{display:none;width:36px;height:36px;border-radius:var(--rs);background:transparent;border:1px solid rgba(220,100,0,0.22);align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.att-hamburger{display:none;width:36px;height:36px;border-radius:var(--rs);background:transparent;border:1px solid rgba(26,35,126,0.20);align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
 .att-hamburger svg{width:18px;height:18px;color:var(--accent);}
 .att-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:99;}
 .att-overlay.show{display:block;}
@@ -263,8 +263,18 @@ select option{background:var(--bg3);}
 <!-- ── SIDEBAR ──────────────────────────────── -->
 <aside class="sidebar">
   <div class="logo">
-    <div class="logo-badge"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-    <div class="logo-name">SalesPulse</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex-shrink:0;">
+      <svg viewBox="0 0 40 28" width="38" height="26" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="7" height="28" rx="2" fill="#c62828"/>
+        <rect x="33" y="0" width="7" height="28" rx="2" fill="#c62828"/>
+        <path d="M0 14 Q0 0 10 0 Q20 0 20 12 Q20 0 30 0 Q40 0 40 14" fill="none" stroke="#c62828" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div style="font-size:8px;font-weight:800;color:#1a1a6e;letter-spacing:1.5px;text-transform:uppercase;line-height:1;">MAGMATIC</div>
+    </div>
+    <div style="margin-left:6px;">
+      <div class="logo-name" style="color:#1a237e;font-size:13px;font-weight:700;line-height:1.2;">MAGMATIC NDT</div>
+      <div style="font-size:9px;color:#3949ab;letter-spacing:0.3px;">SYSTEMS PVT LTD</div>
+    </div>
   </div>
   <nav class="nav">
     <div class="nav-label">Attendance</div>
@@ -294,12 +304,12 @@ select option{background:var(--bg3);}
       Back to CRM
     </div>
   </nav>
-  <div style="padding:12px 10px;border-top:1px solid rgba(220,100,0,0.15);">
+  <div style="padding:12px 10px;border-top:1px solid rgba(26,35,126,0.12);">
     <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;">
-      <div class="avatar" id="sidebarAvatar" style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">AK</div>
+      <div class="avatar" id="sidebarAvatar" style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#c62828,#b71c1c);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;" id="attAvatarEl">AK</div>
       <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:500;color:#c44e00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="sidebarName">Loading…</div>
-        <div style="font-size:11px;color:#e8935a;" id="sidebarRole"></div>
+        <div style="font-size:13px;font-weight:500;color:#1a237e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="sidebarName">Loading…</div>
+        <div style="font-size:11px;color:#7986cb;" id="sidebarRole"></div>
       </div>
     </div>
   </div>
@@ -346,30 +356,30 @@ select option{background:var(--bg3);}
         </div>
 
         <!-- GPS Denied Fallback Panel -->
-        <div id="gpsFallbackPanel" style="display:none;background:#fff8f3;border:2px solid #e8590c;border-radius:10px;padding:16px;margin-bottom:14px;">
+        <div id="gpsFallbackPanel" style="display:none;background:#f5f6fa;border:2px solid #c62828;border-radius:10px;padding:16px;margin-bottom:14px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#e8590c" stroke-width="2" width="20" height="20"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <strong style="color:#e8590c;">GPS Access Issue</strong>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c62828" stroke-width="2" width="20" height="20"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <strong style="color:#c62828;">GPS Access Issue</strong>
           </div>
-          <div id="gpsFallbackReason" style="font-size:13px;color:#c44e00;margin-bottom:12px;"></div>
+          <div id="gpsFallbackReason" style="font-size:13px;color:#1a237e;margin-bottom:12px;"></div>
 
-          <div style="font-size:12px;color:#6b4c1e;font-weight:600;margin-bottom:6px;">How to enable location in Chrome:</div>
-          <div style="font-size:12px;color:#6b4c1e;line-height:1.8;">
+          <div style="font-size:12px;color:#283593;font-weight:600;margin-bottom:6px;">How to enable location in Chrome:</div>
+          <div style="font-size:12px;color:#283593;line-height:1.8;">
             1. Click the 🔒 lock icon in the address bar<br>
             2. Click <strong>Site settings</strong><br>
             3. Set <strong>Location</strong> to <strong>Allow</strong><br>
             4. Refresh this page
           </div>
 
-          <div style="font-size:12px;color:#6b4c1e;font-weight:600;margin-bottom:6px;margin-top:10px;">On mobile (Android Chrome):</div>
-          <div style="font-size:12px;color:#6b4c1e;line-height:1.8;">
+          <div style="font-size:12px;color:#283593;font-weight:600;margin-bottom:6px;margin-top:10px;">On mobile (Android Chrome):</div>
+          <div style="font-size:12px;color:#283593;line-height:1.8;">
             1. Go to <strong>Settings → Apps → Chrome → Permissions</strong><br>
             2. Enable <strong>Location</strong><br>
             3. Return here and tap Retry
           </div>
 
-          <div style="font-size:12px;color:#6b4c1e;font-weight:600;margin-bottom:6px;margin-top:10px;">On iPhone (Safari):</div>
-          <div style="font-size:12px;color:#6b4c1e;line-height:1.8;">
+          <div style="font-size:12px;color:#283593;font-weight:600;margin-bottom:6px;margin-top:10px;">On iPhone (Safari):</div>
+          <div style="font-size:12px;color:#283593;line-height:1.8;">
             1. Go to <strong>Settings → Safari → Location</strong><br>
             2. Set to <strong>Allow</strong><br>
             3. Return here and tap Retry
@@ -439,8 +449,8 @@ select option{background:var(--bg3);}
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;" id="myStatCards">
         <div class="stat-box"><div class="stat-label">Present Days</div><div class="stat-val" id="myStatPresent">—</div></div>
         <div class="stat-box"><div class="stat-label">Total Hours</div><div class="stat-val" id="myStatHours">—</div></div>
-        <div class="stat-box"><div class="stat-label">Late Arrivals</div><div class="stat-val" id="myStatLate" style="color:var(--amber);">—</div><div style="font-size:11px;color:#e8935a;">after 9:30 AM</div></div>
-        <div class="stat-box"><div class="stat-label">Early Exits</div><div class="stat-val" id="myStatEarly" style="color:var(--amber);">—</div><div style="font-size:11px;color:#e8935a;">before 6:00 PM</div></div>
+        <div class="stat-box"><div class="stat-label">Late Arrivals</div><div class="stat-val" id="myStatLate" style="color:var(--amber);">—</div><div style="font-size:11px;color:#7986cb;">after 9:30 AM</div></div>
+        <div class="stat-box"><div class="stat-label">Early Exits</div><div class="stat-val" id="myStatEarly" style="color:var(--amber);">—</div><div style="font-size:11px;color:#7986cb;">before 6:00 PM</div></div>
         <div class="stat-box"><div class="stat-label">Geo Violations</div><div class="stat-val" id="myStatViolations" style="color:var(--red);">—</div></div>
       </div>
 
@@ -469,8 +479,8 @@ select option{background:var(--bg3);}
         <div class="stat-box"><div class="stat-label">Total Staff</div><div class="stat-val" id="aTotal">—</div></div>
         <div class="stat-box"><div class="stat-label">Present</div><div class="stat-val" id="aPresent" style="color:var(--green);">—</div></div>
         <div class="stat-box"><div class="stat-label">Absent</div><div class="stat-val" id="aAbsent" style="color:var(--red);">—</div></div>
-        <div class="stat-box"><div class="stat-label">Late Arrivals</div><div class="stat-val" id="aLate" style="color:var(--amber);">—</div><div style="font-size:11px;color:#e8935a;">after 9:30 AM</div></div>
-        <div class="stat-box"><div class="stat-label">Early Exits</div><div class="stat-val" id="aEarly" style="color:var(--amber);">—</div><div style="font-size:11px;color:#e8935a;">before 6:00 PM</div></div>
+        <div class="stat-box"><div class="stat-label">Late Arrivals</div><div class="stat-val" id="aLate" style="color:var(--amber);">—</div><div style="font-size:11px;color:#7986cb;">after 9:30 AM</div></div>
+        <div class="stat-box"><div class="stat-label">Early Exits</div><div class="stat-val" id="aEarly" style="color:var(--amber);">—</div><div style="font-size:11px;color:#7986cb;">before 6:00 PM</div></div>
       </div>
 
       <!-- Admin live map -->
@@ -809,7 +819,7 @@ async function reverseGeocode(lat, lng) {
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
-      { headers: { 'Accept-Language': 'en', 'User-Agent': 'SalesPulseCRM/1.0' } }
+      { headers: { 'Accept-Language': 'en', 'User-Agent': 'MagmaticNDT-CRM/1.0' } }
     );
     if (!res.ok) return null;
     const data = await res.json();
@@ -1078,15 +1088,15 @@ async function loadMyHistory() {
       const dayName = new Date(r.date).toLocaleDateString('en-IN', { weekday:'short' });
       const inZone = r.clockIn?.isWithinZone;
       return `<tr class="${r.geofenceViolation?'violation-row':''}">
-        <td><div style="font-weight:500;">${r.date}</div><div style="font-size:11px;color:#e8935a;">${dayName}</div></td>
+        <td><div style="font-weight:500;">${r.date}</div><div style="font-size:11px;color:#7986cb;">${dayName}</div></td>
         <td>
           <div style="font-family:var(--fm);">${r.clockIn?.time ? fmtTime(r.clockIn.time) : '—'}</div>
-          <div style="font-size:11px;color:#e8935a;">${r.clockIn?.zoneName||''}</div>
+          <div style="font-size:11px;color:#7986cb;">${r.clockIn?.zoneName||''}</div>
           ${r.clockIn?.address ? `<div style="font-size:10px;color:var(--text3);margin-top:2px;">📍 ${r.clockIn.address}</div>` : ''}
         </td>
         <td>
           <div style="font-family:var(--fm);">${r.clockOut?.time ? fmtTime(r.clockOut.time) : '—'}</div>
-          <div style="font-size:11px;color:#e8935a;">${r.clockOut?.zoneName||''}</div>
+          <div style="font-size:11px;color:#7986cb;">${r.clockOut?.zoneName||''}</div>
           ${r.clockOut?.address ? `<div style="font-size:10px;color:var(--text3);margin-top:2px;">📍 ${r.clockOut.address}</div>` : ''}
         </td>
         <td style="font-family:var(--fm);color:${r.totalHours>=8?'var(--green)':r.totalHours>=4?'var(--amber)':'var(--red)'};">${r.totalHours?.toFixed(2)||'—'}</td>
@@ -1135,11 +1145,11 @@ function renderAdminTable(records) {
   if (!records.length) { tb.innerHTML = '<tr><td colspan="7" class="empty">No records for this date</td></tr>'; return; }
   tb.innerHTML = records.map(r => `
     <tr class="${r.geofenceViolation?'violation-row':''}">
-      <td><div style="font-weight:500;">${r.employee?.name||'—'}</div><div style="font-size:11px;color:#e8935a;">${r.employee?.role||''}</div></td>
+      <td><div style="font-weight:500;">${r.employee?.name||'—'}</div><div style="font-size:11px;color:#7986cb;">${r.employee?.role||''}</div></td>
       <td>
         <div style="font-family:var(--fm);">${r.clockIn?.time ? fmtTime(r.clockIn.time) : '—'}</div>
         ${r.isLate?'<span class="badge b-amber" style="font-size:10px;">Late</span>':''}
-        <div style="font-size:11px;color:#e8935a;">${r.clockIn?.zoneName||''}</div>
+        <div style="font-size:11px;color:#7986cb;">${r.clockIn?.zoneName||''}</div>
         ${r.clockIn?.address ? `<div style="font-size:10px;color:var(--text3);margin-top:2px;">📍 ${r.clockIn.address}</div>` : ''}
       </td>
       <td>
@@ -1327,7 +1337,7 @@ async function loadReport() {
               <td style="font-family:var(--fm);">${r.totalHours?.toFixed(2)||'—'}</td>
               <td>${statusBadge(r)}${r.isLate?'<div style="margin-top:3px;"><span class="badge b-amber" style="font-size:10px;">⏰ Late In</span></div>':''} ${r.isEarlyExit?'<div style="margin-top:3px;"><span class="badge b-amber" style="font-size:10px;">⚡ Early Out</span></div>':''}</td>
               <td>${r.geofenceViolation?'<span class="badge b-red">⚠ Violation</span>':'<span class="badge b-green">✓ OK</span>'}</td>
-              <td>${r.isManualOverride?`<span class="badge b-purple">Corrected</span><div style="font-size:11px;color:#e8935a;">${r.overrideReason||''}</div>`:''}</td>
+              <td>${r.isManualOverride?`<span class="badge b-purple">Corrected</span><div style="font-size:11px;color:#7986cb;">${r.overrideReason||''}</div>`:''}</td>
             </tr>`).join('')}
           </tbody>
         </table>

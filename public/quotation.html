@@ -7,20 +7,22 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --mg: #8b1a6b;       /* Magmatic purple/pink */
-  --mg2: #a82080;
-  --mg-light: rgba(139,26,107,0.08);
-  --mg-border: rgba(139,26,107,0.25);
-  --gold: #c8860a;
-  --bg: #f7f5f0;
+  --mg: #1a237e;         /* Magmatic navy blue */
+  --mg2: #283593;
+  --mg-light: rgba(26,35,126,0.07);
+  --mg-border: rgba(26,35,126,0.22);
+  --red: #c62828;        /* Magmatic red */
+  --red-light: rgba(198,40,40,0.08);
+  --gold: #c62828;
+  --bg: #ffffff;
   --bg2: #ffffff;
-  --bg3: #f0ede6;
-  --text: #1a1510;
-  --text2: #5a5040;
-  --text3: #9a8f80;
-  --border: rgba(0,0,0,0.10);
-  --border2: rgba(0,0,0,0.18);
-  --shadow: 0 4px 24px rgba(0,0,0,0.10);
+  --bg3: #f5f6fa;
+  --text: #1a237e;
+  --text2: #3949ab;
+  --text3: #7986cb;
+  --border: rgba(26,35,126,0.10);
+  --border2: rgba(26,35,126,0.18);
+  --shadow: 0 4px 24px rgba(26,35,126,0.10);
   --radius: 8px;
   --fh: 'EB Garamond', serif;
   --fb: 'DM Sans', sans-serif;
@@ -49,7 +51,7 @@ html, body { background: var(--bg); color: var(--text); font-family: var(--fb); 
 
 /* ── FORM PANEL ────────────────────────────── */
 .form-header {
-  background: var(--mg);
+  background: linear-gradient(135deg, #1a237e 0%, #283593 70%, #c62828 100%);
   padding: 20px 24px;
   color: #fff;
 }
@@ -59,8 +61,8 @@ html, body { background: var(--bg); color: var(--text); font-family: var(--fb); 
 .form-section { margin-bottom: 22px; }
 .form-section-title {
   font-size: 10px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.8px; color: var(--mg); margin-bottom: 12px;
-  padding-bottom: 6px; border-bottom: 1px solid var(--mg-border);
+  letter-spacing: 0.8px; color: #1a237e; margin-bottom: 12px;
+  padding-bottom: 6px; border-bottom: 1px solid rgba(26,35,126,0.18);
 }
 .fg { margin-bottom: 12px; }
 .fg label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 4px; }
@@ -87,7 +89,7 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
 /* ── LINE ITEMS TABLE ──────────────────────── */
 .items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 12px; }
 .items-table th {
-  background: var(--mg-light); color: var(--mg); font-size: 10px;
+  background: rgba(26,35,126,0.07); color: #1a237e; font-size: 10px;
   font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
   padding: 7px 8px; text-align: left; border: 1px solid var(--mg-border);
 }
@@ -96,7 +98,7 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
 .items-table input:focus { background: var(--mg-light); box-shadow: none; border-color: var(--mg); }
 .items-table .del-btn {
   width: 24px; height: 24px; border-radius: 4px; background: rgba(200,0,0,.08);
-  border: 1px solid rgba(200,0,0,.2); color: #c00; cursor: pointer;
+  border: 1px solid rgba(200,0,0,.2); color: #c62828; cursor: pointer;
   display: flex; align-items: center; justify-content: center; font-size: 14px; line-height: 1;
 }
 .items-table .del-btn:hover { background: rgba(200,0,0,.18); }
@@ -108,19 +110,19 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
   font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid transparent;
   transition: all .15s; white-space: nowrap;
 }
-.btn-mg { background: var(--mg); color: #fff; }
-.btn-mg:hover { background: var(--mg2); }
-.btn-outline { background: transparent; color: var(--mg); border-color: var(--mg-border); }
-.btn-outline:hover { background: var(--mg-light); }
+.btn-mg { background: var(--red); color: #fff; }
+.btn-mg:hover { background: #b71c1c; }
+.btn-outline { background: transparent; color: #1a237e; border-color: rgba(26,35,126,0.22); }
+.btn-outline:hover { background: rgba(26,35,126,0.07); }
 .btn-sm { padding: 5px 10px; font-size: 12px; }
-.btn-gold { background: var(--gold); color: #fff; }
-.btn-gold:hover { background: #a86e08; }
+.btn-gold { background: var(--red); color: #fff; }
+.btn-gold:hover { background: #b71c1c; }
 .btn svg { width: 14px; height: 14px; }
 
 /* ── TOTALS SECTION ────────────────────────── */
-.totals-box { background: var(--mg-light); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 12px; }
+.totals-box { background: rgba(26,35,126,0.06); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 12px; border: 1px solid rgba(26,35,126,0.12); }
 .totals-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 13px; }
-.totals-row.grand { font-weight: 700; font-size: 14px; border-top: 1px solid var(--mg-border); padding-top: 8px; margin-top: 4px; color: var(--mg); }
+.totals-row.grand { font-weight: 700; font-size: 14px; border-top: 1px solid rgba(26,35,126,0.20); padding-top: 8px; margin-top: 4px; color: #1a237e; }
 .totals-row label { color: var(--text2); }
 
 /* ── PREVIEW PANEL ─────────────────────────── */
@@ -130,7 +132,7 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
 }
 .preview-label {
   font-size: 11px; font-weight: 600; text-transform: uppercase;
-  letter-spacing: .8px; color: var(--text3); flex: 1;
+  letter-spacing: .8px; color: #7986cb; flex: 1;
 }
 
 /* ── THE QUOTATION DOCUMENT ─────────────────── */
@@ -151,7 +153,7 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
   align-items: start;
   gap: 20px;
   padding: 24px 32px 16px;
-  border-bottom: 3px solid var(--mg);
+  border-bottom: 3px solid var(--red);
 }
 .doc-company-name {
   font-family: var(--fh);
@@ -167,11 +169,11 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
   color: var(--text2);
   line-height: 1.7;
 }
-.doc-company-addr a { color: var(--mg); text-decoration: none; }
+.doc-company-addr a { color: #c62828; text-decoration: none; }
 .doc-logo {
   width: 110px;
   height: 70px;
-  background: linear-gradient(135deg, #e8d0e0 0%, #d4b0cc 100%);
+  background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -179,7 +181,7 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
   font-family: var(--fh);
   font-size: 13px;
   font-weight: 700;
-  color: var(--mg);
+  color: #1a237e;
   letter-spacing: 1px;
   text-align: center;
   flex-shrink: 0;
@@ -228,7 +230,7 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
 .price-section { margin: 20px 0; }
 .price-section-title {
   font-family: var(--fh); font-size: 15px; font-weight: 700;
-  color: var(--mg); margin-bottom: 10px; border-bottom: 2px solid var(--mg); padding-bottom: 4px;
+  color: var(--mg); margin-bottom: 10px; border-bottom: 2px solid var(--red); padding-bottom: 4px;
 }
 .price-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 .price-table th {
@@ -242,9 +244,9 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
 .price-table td:last-child, .price-table td:nth-child(3),
 .price-table td:nth-child(4), .price-table td:nth-child(2) { text-align: right; font-family: var(--fm); }
 .price-table tr:nth-child(even) td { background: var(--bg3); }
-.price-table .subtotal-row td { background: var(--mg-light); font-weight: 600; }
-.price-table .gst-row td { background: #fafaf5; color: var(--text2); }
-.price-table .total-row td { background: var(--mg); color: #fff; font-weight: 700; font-family: var(--fm); }
+.price-table .subtotal-row td { background: rgba(26,35,126,0.05); font-weight: 600; }
+.price-table .gst-row td { background: #f5f6fa; color: var(--text2); }
+.price-table .total-row td { background: #1a237e; color: #fff; font-weight: 700; font-family: var(--fm); }
 .price-table .hsn-row td { font-size: 11px; color: var(--text3); font-style: italic; border-bottom: none; }
 .price-table .note-row td { font-size: 11px; color: var(--text2); font-style: italic; border-bottom: none; padding-top: 4px; }
 
@@ -307,8 +309,8 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
 .cust-selected-badge {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 4px 10px; border-radius: 20px;
-  background: var(--mg-light); border: 1px solid var(--mg-border);
-  color: var(--mg); font-size: 12px; font-weight: 500; margin-top: 6px;
+  background: rgba(26,35,126,0.07); border: 1px solid rgba(26,35,126,0.22);
+  color: #1a237e; font-size: 12px; font-weight: 500; margin-top: 6px;
 }
 .cust-selected-badge button {
   background: none; border: none; cursor: pointer; color: var(--mg);
@@ -316,7 +318,7 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
 }
 .cust-status { font-size: 11px; color: var(--text3); margin-top: 4px; }
 .cust-status.loading { color: var(--mg); }
-.cust-status.error   { color: #c00; }
+.cust-status.error   { color: #c62828; }
 /* ── PRINT STYLES ──────────────────────────── */
 @media print {
   body { background: #fff; }
@@ -549,7 +551,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
     <div class="doc-header">
       <div>
         <div class="doc-company-name">Magmatic NDT Systems Pvt Ltd</div>
-        <div class="doc-company-addr">
+        <div class="doc-company-addr" style="color:#3949ab;">
           No 53, 4th Cross Road, 2nd Main Road<br>
           Anjanapura 10th Block Extn. LBS Nagar,<br>
           (Opposite to BTS Garage – Anjanapura)<br>
@@ -558,8 +560,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
         </div>
       </div>
       <div class="doc-logo">
-        <div style="font-family:'EB Garamond',serif;font-size:22px;font-weight:700;color:#8b1a6b;letter-spacing:3px;line-height:1;">M</div>
-        <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#8b1a6b;margin-top:2px;">MAGMATIC</div>
+        <div style="font-family:'EB Garamond',serif;font-size:22px;font-weight:700;color:#c62828;letter-spacing:3px;line-height:1;">M</div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#1a237e;margin-top:2px;">MAGMATIC</div>
       </div>
     </div>
 
@@ -994,7 +996,7 @@ function renderPreview() {
       <td style="text-align:right;">${fmt(i.qty * i.rate)}</td>
     </tr>`).join('');
 
-  document.getElementById('d_items').innerHTML = itemRows || '<tr><td colspan="5" style="text-align:center;color:#999;padding:12px;">No items added</td></tr>';
+  document.getElementById('d_items').innerHTML = itemRows || '<tr><td colspan="5" style="text-align:center;color:#7986cb;padding:12px;">No items added</td></tr>';
 
   document.getElementById('d_totals_foot').innerHTML = `
     ${hsn ? `<tr class="hsn-row"><td colspan="4" style="font-size:11px;color:var(--text3);font-style:italic;padding:6px 10px;">HSN Code: ${esc2(hsn)}</td><td></td></tr>` : ''}
