@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SalesPulse CRM</title>
+<title>Magmatic NDT — CRM</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -28,15 +28,15 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);display
 ::-webkit-scrollbar-thumb{background:rgba(26,35,126,0.20);border-radius:4px;}
 
 /* ── LOGIN SCREEN ─────────────────────────────────── */
-#loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;}
+#loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,#1a237e 0%,#283593 60%,#c62828 100%);display:flex;align-items:center;justify-content:center;z-index:999;}
 #loginScreen.hidden{display:none;}
 .login-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:36px 40px;width:380px;box-shadow:0 4px 24px rgba(26,35,126,0.10);}
-.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.login-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px;}
 .login-logo-badge{width:38px;height:38px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;}
 .login-logo-badge svg{width:20px;height:20px;}
 .login-logo-name{font-family:var(--font-head);font-size:18px;font-weight:700;color:#fff;}
-.login-title{font-family:var(--font-head);font-size:20px;font-weight:600;color:#fff;margin-bottom:6px;}
-.login-sub{font-size:13px;color:var(--text3);margin-bottom:24px;}
+.login-title{font-family:var(--font-head);font-size:20px;font-weight:600;color:#1a237e;margin-bottom:6px;}
+.login-sub{font-size:13px;color:#7986cb;margin-bottom:24px;}
 .login-hint{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.7;}
 .login-hint strong{color:var(--accent);font-weight:600;}
 .login-error{background:var(--red-bg);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:9px 12px;font-size:12.5px;color:var(--red);margin-bottom:14px;display:none;}
@@ -413,13 +413,23 @@ tbody tr:hover{background:rgba(26,35,126,0.05);}
 <!-- ══════════════════ LOGIN SCREEN ══════════════════ -->
 <div id="loginScreen">
   <div class="login-box">
-    <div class="login-logo">
-      <div class="login-logo-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <div class="login-logo" style="flex-direction:column;align-items:center;gap:6px;">
+      <!-- Big M logo -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+        <svg viewBox="0 0 60 42" width="70" height="50" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="10" height="42" rx="3" fill="#c62828"/>
+          <rect x="50" y="0" width="10" height="42" rx="3" fill="#c62828"/>
+          <path d="M0 22 Q0 0 15 0 Q30 0 30 18 Q30 0 45 0 Q60 0 60 22" fill="none" stroke="#c62828" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div style="font-size:13px;font-weight:900;color:#fff;letter-spacing:3px;text-transform:uppercase;">MAGMATIC</div>
       </div>
-      <div class="login-logo-name">SalesPulse CRM</div>
+      <!-- Company name -->
+      <div style="text-align:center;">
+        <div style="font-size:16px;font-weight:700;color:#fff;letter-spacing:0.5px;line-height:1.3;">MAGMATIC NDT SYSTEMS PVT LTD</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.65);margin-top:4px;letter-spacing:1px;">CRM PLATFORM</div>
+      </div>
     </div>
-    <div class="login-title">Welcome back</div>
+    <div class="login-title" style="color:#1a237e;font-size:17px;">Welcome back</div>
     <div class="login-sub">Sign in to your account to continue</div>
     <div class="login-hint">
       <strong>Admin:</strong> admin@magmaticndt.com<br>
@@ -439,8 +449,22 @@ tbody tr:hover{background:rgba(26,35,126,0.05);}
 <aside class="sidebar" id="appSidebar">
   <div class="sidebar-logo">
     <div class="logo-wrap">
-      <div class="logo-badge"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-      <div><div class="logo-name">SalesPulse</div><div class="logo-tag">CRM Platform</div></div>
+      <!-- M logo + MAGMATIC text stacked -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px;flex-shrink:0;">
+        <svg viewBox="0 0 40 28" width="40" height="28" xmlns="http://www.w3.org/2000/svg">
+          <!-- Two vertical pillars -->
+          <rect x="0" y="0" width="7" height="28" rx="2" fill="#c62828"/>
+          <rect x="33" y="0" width="7" height="28" rx="2" fill="#c62828"/>
+          <!-- Double arch top -->
+          <path d="M0 14 Q0 0 10 0 Q20 0 20 12 Q20 0 30 0 Q40 0 40 14" fill="none" stroke="#c62828" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div style="font-size:8px;font-weight:800;color:#1a1a6e;letter-spacing:1.5px;text-transform:uppercase;line-height:1;">MAGMATIC</div>
+      </div>
+      <!-- Company name beside logo -->
+      <div style="margin-left:8px;">
+        <div class="logo-name" style="color:#1a237e;font-size:13px;font-weight:700;line-height:1.2;">MAGMATIC NDT</div>
+        <div class="logo-tag" style="color:#3949ab;font-size:9px;letter-spacing:0.3px;">SYSTEMS PVT LTD</div>
+      </div>
     </div>
   </div>
   <nav class="nav">
@@ -1628,7 +1652,7 @@ function switchDetailTab(tab, el) {
   else if (tab === 'contacts') cont.innerHTML = `
     <div class="detail-section"><div class="detail-section-label">Contacts (${c.contacts?.length||0})</div>
       ${c.contacts?.length ? c.contacts.map(ct=>`<div class="detail-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
-        <div style="font-weight:500;font-size:13px;color:#fff;">${ct.name}${ct.isPrimary?' <span class="badge badge-blue" style="font-size:10px;margin-left:4px;">Primary</span>':''}</div>
+        <div style="font-weight:500;font-size:13px;color:#fff;">${ct.name||''}${ct.isPrimary?' <span class="badge badge-blue" style="font-size:10px;margin-left:4px;">Primary</span>':''}</div>
         <div style="font-size:12px;color:var(--text3);">${ct.designation||''} ${ct.phone?'· '+ct.phone:''}</div>
       </div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0;">No contacts added</div>'}
     </div>`;
@@ -1638,7 +1662,7 @@ function switchDetailTab(tab, el) {
     </div>`;
   else if (tab === 'competitors') cont.innerHTML = `
     <div class="detail-section"><div class="detail-section-label">Competitors (${c.competitors?.length||0})</div>
-      ${c.competitors?.length ? c.competitors.map(x=>`<div class="detail-row"><div class="detail-val"><span class="badge badge-red" style="margin-right:6px;">⚑</span>${x.name} ${x.notes?'<span style="color:var(--text3);font-size:11px;">— '+x.notes+'</span>':''}</div></div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0;">No competitors listed</div>'}
+      ${c.competitors?.length ? c.competitors.map(x=>`<div class="detail-row"><div class="detail-val"><span class="badge badge-red" style="margin-right:6px;">⚑</span>${x.name||''} ${x.notes?'<span style="color:var(--text3);font-size:11px;">— '+x.notes+'</span>':''}</div></div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:10px 0;">No competitors listed</div>'}
     </div>`;
 }
 
@@ -1648,7 +1672,7 @@ async function deleteCustomer(id, name) {
 }
 async function deleteCurrentCustomer() {
   if (!selectedCustomerData) return;
-  await deleteCustomer(selectedCustomerData._id, selectedCustomerData.name);
+  await deleteCustomer(selectedCustomerData._id, selectedCustomerData.name || '');
   closeDetailPanel();
 }
 async function approveCustomer(id, name) {
@@ -1684,7 +1708,7 @@ async function submitNewCustomer() {
   const contacts = [...document.querySelectorAll('#nc_contactSlots .slot-row')].map(r => {
     const inputs = r.querySelectorAll('input');
     return { name: inputs[0]?.value || '', phone: inputs[1]?.value || '', designation: inputs[2]?.value || '' };
-  }).filter(ct => ct.name.trim());
+  }).filter(ct => (ct.name || '').trim());
 
   const competitors = [...document.querySelectorAll('#nc_competitorSlots .slot-row')].map(r => {
     const inputs = r.querySelectorAll('input');
@@ -1827,7 +1851,7 @@ function openInteractionForCustomer(id, name) {
 function customerTypeahead(inp) {
   const q = inp.value.toLowerCase();
   const list = document.getElementById('li_customerList');
-  const matches = allActiveCustomers.filter(c => c.name.toLowerCase().includes(q) || !q);
+  const matches = allActiveCustomers.filter(c => (c.name || '').toLowerCase().includes(q) || !q);
   list.innerHTML = matches.slice(0,8).map(c => `
     <div class="typeahead-item" onclick="selectCustomer('${c._id}','${(c.name||'').replace(/'/g,"\\'")}')">
       <div>${c.name||'(No Name)'}</div><div class="typeahead-item-sub">${c.address?.state||''} · ${c.segment?.value||''}</div>
@@ -1969,12 +1993,12 @@ async function loadApprovals(type, el, silent=false) {
           <div class="approval-item">
             <div class="approval-icon" style="background:var(--accent-light)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" width="18" height="18"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
             <div class="approval-content">
-              <div class="approval-title">${c.name}</div>
+              <div class="approval-title">${c.name||''}</div>
               <div class="approval-meta">${c.address?.state||''} · ${c.segment?.value||''} · by ${c.submittedBy?.name||''} · ${new Date(c.createdAt).toLocaleDateString()}</div>
             </div>
             <div style="display:flex;gap:6px;flex-shrink:0;">
-              <button class="btn btn-success btn-sm" onclick="approveItem('customer','${c._id}','${c.name}',this)">Approve</button>
-              <button class="btn btn-danger btn-sm" onclick="rejectItem('customer','${c._id}','${c.name}',this)">Reject</button>
+              <button class="btn btn-success btn-sm" onclick="approveItem('customer','${c._id}','${c.name||''}',this)">Approve</button>
+              <button class="btn btn-danger btn-sm" onclick="rejectItem('customer','${c._id}','${c.name||''}',this)">Reject</button>
             </div>
           </div>`).join('');
       }
@@ -1988,13 +2012,13 @@ async function loadApprovals(type, el, silent=false) {
           <div class="approval-item">
             <div class="approval-icon" style="background:var(--purple-bg)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" width="18" height="18"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
             <div class="approval-content">
-              <div class="approval-title">${p.name} <span class="badge badge-amber" style="margin-left:8px;">Needs Categorization</span></div>
+              <div class="approval-title">${p.name||''} <span class="badge badge-amber" style="margin-left:8px;">Needs Categorization</span></div>
               <div class="approval-meta">Submitted by ${p.submittedBy?.name||''} · ${new Date(p.createdAt).toLocaleDateString()}</div>
               <div style="margin-top:8px;"><select id="prodGroup_${p._id}" style="width:auto;padding:5px 28px 5px 8px;font-size:12px;"><option value="">Assign to group…</option><option>MPI Machine</option><option>FPI Machine</option><option>EDDY Current Machine</option><option>Consumables</option><option>Spares</option><option>Accessories</option><option>Service</option><option>Others</option></select></div>
             </div>
             <div style="display:flex;gap:6px;flex-shrink:0;">
-              <button class="btn btn-success btn-sm" onclick="approveProduct('${p._id}','${p.name}',this)">Approve</button>
-              <button class="btn btn-danger btn-sm" onclick="rejectItem('product','${p._id}','${p.name}',this)">Reject</button>
+              <button class="btn btn-success btn-sm" onclick="approveProduct('${p._id}','${p.name||''}',this)">Approve</button>
+              <button class="btn btn-danger btn-sm" onclick="rejectItem('product','${p._id}','${p.name||''}',this)">Reject</button>
             </div>
           </div>`).join('');
       }
@@ -2037,14 +2061,14 @@ async function loadUsers() {
     tb.innerHTML = users.map(u=>`<tr>
       <td><div style="display:flex;align-items:center;gap:10px;">
         <div class="avatar ${u.role==='admin'?'admin':'sales'}" style="width:30px;height:30px;font-size:11px;">${(u.name||'').split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2)}</div>
-        <div><div style="font-weight:500;">${u.name}</div><div style="font-size:11px;color:var(--text3);">${u.email}</div></div>
+        <div><div style="font-weight:500;">${u.name||'—'}</div><div style="font-size:11px;color:var(--text3);">${u.email}</div></div>
       </div></td>
       <td><span class="badge ${u.role==='admin'?'badge-purple':'badge-blue'}">${u.role==='admin'?'Admin':'Sales Rep'}</span></td>
       <td><div style="display:flex;gap:4px;flex-wrap:wrap;">${(u.assignedStates||[]).map(s=>`<span class="badge badge-gray">${s}</span>`).join('')||'<span style="color:var(--text3)">None</span>'}</div></td>
       <td style="color:var(--text3);font-size:12px;">${u.lastLogin?new Date(u.lastLogin).toLocaleDateString():'Never'}</td>
       <td>
-        <button class="btn btn-secondary btn-sm" onclick="openEditUser('${u._id}','${u.name}','${u.email}','${u.phone||''}','${u.role}','${(u.assignedStates||[]).join('||')}')"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' width='12' height='12'><path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/><path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/></svg> Edit</button>
-        ${u._id!==currentUser.id?`<button class="btn btn-danger btn-sm" onclick="deactivateUser('${u._id}','${u.name}')">Remove</button>`:''}
+        <button class="btn btn-secondary btn-sm" onclick="openEditUser('${u._id}','${u.name||""}','${u.email}','${u.phone||''}','${u.role}','${(u.assignedStates||[]).join('||')}')"><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' width='12' height='12'><path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/><path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/></svg> Edit</button>
+        ${u._id!==currentUser.id?`<button class="btn btn-danger btn-sm" onclick="deactivateUser('${u._id}','${u.name||''}')">Remove</button>`:''}
       </td>
     </tr>`).join('');
   } catch(e) { tb.innerHTML='<tr><td colspan="5" style="color:var(--red);text-align:center;padding:20px;">'+e.message+'</td></tr>'; }
@@ -2412,7 +2436,7 @@ function renderSpReport(report) {
             <tr style="border-bottom:1px solid var(--border);">
               <td>
                 <div style="display:flex;align-items:center;gap:8px;">
-                  <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">${(r.salespersonName||'?').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)}</div>
+                  <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;">${((r.salespersonName||'?')).split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2)}</div>
                   <div><div style="font-weight:500;color:var(--text);">${r.salespersonName||'—'}</div><div style="font-size:11px;color:var(--text3);">${r.salespersonEmail||''}</div></div>
                 </div>
               </td>
@@ -2647,7 +2671,7 @@ function exportReportCSV() {
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href = url;
-  a.download = `salespulse_${tab}_report_${rptFilters.from||'all'}_to_${rptFilters.to||'all'}.csv`;
+  a.download = `magmatic_${tab}_report_${rptFilters.from||'all'}_to_${rptFilters.to||'all'}.csv`;
   a.click();
   URL.revokeObjectURL(url);
   showToast('CSV exported', 'success');
@@ -2814,11 +2838,11 @@ function renderCustomerTable(customers) {
   tb.innerHTML = sorted.map(c => {
     const seg  = c.segment ? c.segment.value : '—';
     const state = c.address?.state || '—';
-    const sp   = c.assignedTo?.name || c.submittedBy?.name || '—';
+    const sp   = (c.assignedTo?.name || c.submittedBy?.name || '—');
     const statusBadge = c.status === 'active' ? 'badge-green' : c.status === 'pending' ? 'badge-amber' : 'badge-gray';
     const compBadge   = c.competition === 'New Account' ? 'badge-green' : c.competition === 'Competitor Account' ? 'badge-red' : 'badge-blue';
     return `<tr onclick="openCustomerDetail('${c._id}')">
-      <td><div style="font-weight:500;color:var(--text);">${c.name}</div><div style="font-size:11px;color:var(--text3);">${c.address?.city || ''}</div></td>
+      <td><div style="font-weight:500;color:var(--text);">${c.name||'—'}</div><div style="font-size:11px;color:var(--text3);">${c.address?.city || ''}</div></td>
       <td><span class="badge badge-gray">${seg}</span></td>
       <td>${state}</td>
       <td><span class="badge ${compBadge}">${c.competition}</span></td>
@@ -2826,8 +2850,8 @@ function renderCustomerTable(customers) {
       <td><span class="badge ${statusBadge}">${c.status}</span></td>
       <td>
         <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openInteractionForCustomer('${c._id}','${(c.name||'').replace(/'/g,"\'")}')">Log</button>
-        ${isAdmin && c.status==='pending' ? `<button class="btn btn-success btn-sm" onclick="event.stopPropagation();approveCustomer('${c._id}','${c.name}')">Approve</button>` : ''}
-        ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteCustomer('${c._id}','${c.name}')">Del</button>` : ''}
+        ${isAdmin && c.status==='pending' ? `<button class="btn btn-success btn-sm" onclick="event.stopPropagation();approveCustomer('${c._id}','${c.name||""}')">Approve</button>` : ''}
+        ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteCustomer('${c._id}','${c.name||""}')">Del</button>` : ''}
       </td>
     </tr>`;
   }).join('');
