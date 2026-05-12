@@ -7,13 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#ffffff;--bg2:#ffffff;--bg3:#fff8f3;--bg4:#fff0e6;--bg5:#ffe5cc;
-  --border:rgba(220,100,0,0.12);--border2:rgba(220,100,0,0.22);--border3:rgba(220,100,0,0.38);
-  --text:#c44e00;--text2:#d06020;--text3:#e8935a;
-  --accent:#e8590c;--accent-light:rgba(232,89,12,0.10);--accent-border:rgba(232,89,12,0.35);
-  --green:#2a7a3c;--green-bg:rgba(42,122,60,0.10);--green-border:rgba(42,122,60,0.28);
-  --amber:#c47000;--amber-bg:rgba(196,112,0,0.10);--amber-border:rgba(196,112,0,0.28);
-  --red:#d42020;--red-bg:rgba(212,32,32,0.09);--red-border:rgba(212,32,32,0.28);
+  --bg:#ffffff;--bg2:#ffffff;--bg3:#f5f6fa;--bg4:#eef0f8;--bg5:#e3e6f0;
+  --border:rgba(26,35,126,0.10);--border2:rgba(26,35,126,0.20);--border3:rgba(26,35,126,0.35);
+  --text:#1a237e;--text2:#3949ab;--text3:#7986cb;
+  --accent:#1a237e;--accent-light:rgba(26,35,126,0.08);--accent-border:rgba(26,35,126,0.30);
+  --green:#2e7d32;--green-bg:rgba(46,125,50,0.10);--green-border:rgba(46,125,50,0.28);
+  --amber:#e65100;--amber-bg:rgba(230,81,0,0.10);--amber-border:rgba(230,81,0,0.28);
+  --red:#c62828;--red-bg:rgba(198,40,40,0.09);--red-border:rgba(198,40,40,0.28);
   --purple:#8b5cf6;--purple-bg:rgba(139,92,246,0.12);
   --teal:#14b8a6;--teal-bg:rgba(20,184,166,0.12);
   --radius:10px;--radius-sm:6px;--radius-lg:14px;
@@ -25,12 +25,12 @@ html,body{height:100%;overflow:hidden;}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);display:flex;font-size:13.5px;line-height:1.5;}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:rgba(220,100,0,0.25);border-radius:4px;}
+::-webkit-scrollbar-thumb{background:rgba(26,35,126,0.20);border-radius:4px;}
 
 /* ── LOGIN SCREEN ─────────────────────────────────── */
 #loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;}
 #loginScreen.hidden{display:none;}
-.login-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:36px 40px;width:380px;box-shadow:0 4px 24px rgba(220,100,0,0.10);}
+.login-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:36px 40px;width:380px;box-shadow:0 4px 24px rgba(26,35,126,0.10);}
 .login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
 .login-logo-badge{width:38px;height:38px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;}
 .login-logo-badge svg{width:20px;height:20px;}
@@ -42,37 +42,37 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);display
 .login-error{background:var(--red-bg);border:1px solid var(--red-border);border-radius:var(--radius-sm);padding:9px 12px;font-size:12.5px;color:var(--red);margin-bottom:14px;display:none;}
 
 /* ── SIDEBAR ──────────────────────────────────────── */
-.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:#ffffff;border-right:1px solid rgba(220,100,0,0.18);display:flex;flex-direction:column;z-index:10;}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:#ffffff;border-right:1px solid rgba(26,35,126,0.12);display:flex;flex-direction:column;z-index:10;}
 .sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(220,100,0,0.15);}
 .logo-wrap{display:flex;align-items:center;gap:10px;}
 .logo-badge{width:34px;height:34px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .logo-badge svg{width:18px;height:18px;}
-.logo-name{font-family:var(--font-head);font-size:16px;font-weight:700;letter-spacing:-0.3px;color:var(--accent);}
+.logo-name{font-family:var(--font-head);font-size:16px;font-weight:700;letter-spacing:-0.3px;color:#1a237e;}
 .logo-tag{font-size:10px;color:var(--text3);letter-spacing:0.5px;margin-top:1px;}
 .nav{flex:1;padding:10px 8px;overflow-y:auto;}
 .nav-group{margin-bottom:18px;}
-.nav-group-label{font-size:10px;color:#e8935a;text-transform:uppercase;letter-spacing:0.8px;padding:0 8px;margin-bottom:5px;font-weight:500;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--tr);color:#d06020;font-size:13px;position:relative;}
-.nav-item:hover{background:rgba(232,89,12,0.08);color:#e8590c;}
-.nav-item.active{background:rgba(232,89,12,0.12);color:#e8590c;border:1px solid rgba(232,89,12,0.35);}
+.nav-group-label{font-size:10px;color:#7986cb;text-transform:uppercase;letter-spacing:0.8px;padding:0 8px;margin-bottom:5px;font-weight:500;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--tr);color:#3949ab;font-size:13px;position:relative;}
+.nav-item:hover{background:rgba(26,35,126,0.07);color:#1a237e;}
+.nav-item.active{background:rgba(198,40,40,0.10);color:#c62828;border:1px solid rgba(198,40,40,0.30);}
 .nav-item svg{width:15px;height:15px;flex-shrink:0;}
 .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-family:var(--font-mono);}
 .nav-badge.amber{background:var(--amber);color:#000;}
 .sidebar-footer{padding:12px 8px;border-top:1px solid rgba(220,100,0,0.15);}
 .user-card{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;}
 .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:12px;font-weight:700;flex-shrink:0;}
-.avatar.admin{background:linear-gradient(135deg,#e8590c,#c44800);color:#fff;}
+.avatar.admin{background:linear-gradient(135deg,#c62828,#b71c1c);color:#fff;}
 .avatar.sales{background:linear-gradient(135deg,#2a8c4a,#1a7c3a);color:#fff;}
 .user-info{flex:1;min-width:0;}
-.user-name{font-size:13px;font-weight:500;color:#c44e00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.user-role{font-size:10.5px;color:#e8935a;}
-.logout-btn{width:28px;height:28px;border-radius:6px;background:rgba(232,89,12,0.08);border:1px solid rgba(232,89,12,0.25);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#d06020;transition:all var(--tr);flex-shrink:0;}
+.user-name{font-size:13px;font-weight:500;color:#1a237e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-size:10.5px;color:#7986cb;}
+.logout-btn{width:28px;height:28px;border-radius:6px;background:rgba(26,35,126,0.06);border:1px solid rgba(26,35,126,0.18);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#3949ab;transition:all var(--tr);flex-shrink:0;}
 .logout-btn:hover{background:var(--red-bg);color:var(--red);border-color:var(--red-border);}
 
 /* ── MAIN ─────────────────────────────────────────── */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .topbar{height:52px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;background:#ffffff;}
-.topbar-title{font-family:var(--font-head);font-size:15px;font-weight:700;color:#e8590c;letter-spacing:-0.2px;}
+.topbar-title{font-family:var(--font-head);font-size:15px;font-weight:700;color:#1a237e;letter-spacing:-0.2px;}
 .topbar-breadcrumb{font-size:12px;color:var(--text3);}
 .spacer{flex:1;}
 .topbar-actions{display:flex;align-items:center;gap:8px;}
@@ -87,8 +87,8 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);display
 
 /* ── BUTTONS ──────────────────────────────────────── */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all var(--tr);white-space:nowrap;}
-.btn-primary{background:#e8590c;color:#fff;border-color:#e8590c;}
-.btn-primary:hover{background:#c44800;}
+.btn-primary{background:#c62828;color:#fff;border-color:#c62828;}
+.btn-primary:hover{background:#b71c1c;}
 .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
 .btn-secondary{background:var(--bg4);color:var(--text);border-color:var(--border2);}
 .btn-secondary:hover{background:var(--bg5);}
@@ -136,7 +136,7 @@ th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--
 td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
 tbody tr{transition:background var(--tr);cursor:pointer;}
-tbody tr:hover{background:var(--accent-light);}
+tbody tr:hover{background:rgba(26,35,126,0.05);}
 
 /* ── BADGES ───────────────────────────────────────── */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;}
@@ -147,10 +147,10 @@ tbody tr:hover{background:var(--accent-light);}
 .badge-purple{background:var(--purple-bg);color:var(--purple);}
 .badge-teal{background:var(--teal-bg);color:var(--teal);}
 .badge-gray{background:var(--bg4);color:var(--text2);border:1px solid var(--border2);}
-.chip{display:inline-flex;align-items:center;padding:6px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid rgba(220,100,0,0.25);background:#fff8f3;color:#c44e00;transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
+.chip{display:inline-flex;align-items:center;padding:6px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:2px solid rgba(26,35,126,0.20);background:#f5f6fa;color:#1a237e;transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
 .chip:hover{border-color:var(--accent-border);color:var(--accent);background:var(--accent-light);}
-.chip.selected{background:#e8590c !important;border-color:#e8590c !important;color:#fff !important;font-weight:600;box-shadow:0 2px 6px rgba(232,89,12,0.30);}
-.chip.outcome.selected{background:#1e7a3c !important;border-color:#1e7a3c !important;color:#fff !important;font-weight:600;box-shadow:0 2px 6px rgba(30,122,60,0.25);}
+.chip.selected{background:#c62828 !important;border-color:#c62828 !important;color:#fff !important;font-weight:600;box-shadow:0 2px 6px rgba(198,40,40,0.30);}
+.chip.outcome.selected{background:#2e7d32 !important;border-color:#2e7d32 !important;color:#fff !important;font-weight:600;box-shadow:0 2px 6px rgba(46,125,50,0.25);}
 .chip.outcome:hover{border-color:var(--green-border);color:var(--green);background:var(--green-bg);}
 
 /* ── SEARCH / FILTER ──────────────────────────────── */
@@ -170,7 +170,7 @@ tbody tr:hover{background:var(--accent-light);}
 /* ── MODAL ────────────────────────────────────────── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:100;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:560px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 4px 24px rgba(220,100,0,0.12);}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);width:560px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 4px 24px rgba(26,35,126,0.10);}
 .modal-lg{width:720px;}
 .modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .modal-title{font-family:var(--font-head);font-size:15px;font-weight:600;color:var(--text);}
@@ -263,7 +263,7 @@ tbody tr:hover{background:var(--accent-light);}
 .empty-state{text-align:center;padding:40px 20px;color:var(--text3);}
 .empty-state svg{width:40px;height:40px;margin-bottom:12px;opacity:0.3;}
 .toast-wrap{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px;}
-.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 15px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;min-width:260px;box-shadow:0 4px 16px rgba(220,100,0,0.10);animation:slideIn 0.2s ease;}
+.toast{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 15px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;min-width:260px;box-shadow:0 4px 16px rgba(26,35,126,0.08);animation:slideIn 0.2s ease;}
 .toast.success{border-color:var(--green-border);}
 .toast.warning{border-color:var(--amber-border);}
 .toast.error{border-color:var(--red-border);}
@@ -907,7 +907,7 @@ tbody tr:hover{background:var(--accent-light);}
             <input type="hidden" id="li_customerId">
           </div>
         </div>
-        <div class="form-group"><label class="form-label required">Date &amp; Time</label><input type="datetime-local" id="li_date"></div>
+        <div class="form-group"><label class="form-label required">Date</label><input type="date" id="li_date"></div>
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Product Group</label>
@@ -1356,7 +1356,7 @@ function initApp() {
   const isAdmin = currentUser.role === 'admin';
   document.getElementById('userAvatar').textContent = (currentUser.name||'U').split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2);
   document.getElementById('userAvatar').className = 'avatar ' + (isAdmin ? 'admin' : 'sales');
-  document.getElementById('sidebarUserName').textContent = currentUser.name;
+  document.getElementById('sidebarUserName').textContent = currentUser.name || 'User';
   document.getElementById('sidebarUserRole').textContent = isAdmin ? 'Administrator' : 'Sales Rep · ' + (currentUser.assignedStates || []).join(', ');
 
   // Show admin sections
@@ -1375,7 +1375,7 @@ function initApp() {
   // Set default datetime
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  document.getElementById('li_date').value = now.toISOString().slice(0,16);
+  document.getElementById('li_date').value = now.toISOString().slice(0,10);
 
   buildChips();
   loadDashboard();
@@ -1601,7 +1601,7 @@ async function openCustomerDetail(id) {
     selectedCustomerData = c;
     const initials = (c.name||'??').split(' ').map(n=>n[0]).join('').toUpperCase().substring(0,2);
     document.getElementById('detailAvatar').textContent = initials;
-    document.getElementById('detailName').textContent = c.name;
+    document.getElementById('detailName').textContent = c.name || '(No Name)';
     document.getElementById('detailMeta').textContent = (c.address?.state || '') + ' · ' + (c.segment?.value || '');
     document.getElementById('customerDetailPanel').classList.add('open');
     switchDetailTab('info', document.querySelector('#customerDetailPanel .tab'));
@@ -1689,7 +1689,7 @@ async function submitNewCustomer() {
   const competitors = [...document.querySelectorAll('#nc_competitorSlots .slot-row')].map(r => {
     const inputs = r.querySelectorAll('input');
     return { name: inputs[0]?.value || '', notes: inputs[1]?.value || '' };
-  }).filter(cp => cp.name.trim());
+  }).filter(cp => (cp.name || '').trim());
 
   const body = {
     name, email, phone,
@@ -1796,7 +1796,7 @@ async function loadInteractions() {
             <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:3px;">
               ${(i.activityTypes||[i.callType]).filter(Boolean).map(a=>`<span class="badge" style="background:${callColors[a]||'var(--accent)'}22;color:${callColors[a]||'var(--accent)'};font-size:10px;">${a}</span>`).join('')}
             </div>
-            <div style="font-size:11.5px;color:var(--text3);">${new Date(i.interactionDate).toLocaleString()} · ${i.salesperson?.name||''} · ${i.productName||''}</div>
+            <div style="font-size:11.5px;color:var(--text3);">${new Date(i.interactionDate).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})} · ${i.salesperson?.name||''} · ${i.productName||''}</div>
           </div>
         </div>
         <div class="interaction-body">${i.notes||'<em style="color:var(--text3);">No notes</em>'}</div>
@@ -1850,7 +1850,7 @@ async function loadProductsForGroup(group) {
   try {
     const data = await apiCall('GET', '/products?group=' + group);
     sel.innerHTML = '<option value="">Select product…</option>' +
-      data.data.products.map(p => `<option value="${p._id}" data-name="${p.name}">${p.name}${p.isPending?' (pending)':''}</option>`).join('') +
+      data.data.products.map(p => `<option value="${p._id}" data-name="${p.name||''}">${p.name||'(No Name)'}${p.isPending?' (pending)':''}</option>`).join('') +
       '<option value="__new__">+ Other / New Product…</option>';
   } catch(e) { sel.innerHTML = '<option value="">Failed to load</option>'; }
 }
@@ -2215,7 +2215,7 @@ async function initReportsPage() {
     const spSel = document.getElementById('rpt_salesperson');
     if (spSel) {
       spSel.innerHTML = '<option value="">All Salespersons</option>' +
-        salespersons.map(u => `<option value="${u._id}">${u.name}</option>`).join('');
+        salespersons.map(u => `<option value="${u._id}">${u.name||'Unknown'}</option>`).join('');
     }
     const stSel = document.getElementById('rpt_state');
     if (stSel) {
@@ -2225,7 +2225,7 @@ async function initReportsPage() {
     const cuSel = document.getElementById('rpt_customer');
     if (cuSel) {
       cuSel.innerHTML = '<option value="">All Customers</option>' +
-        customers.map(c => `<option value="${c._id}">${c.name} — ${c.address?.state||''}</option>`).join('');
+        customers.map(c => `<option value="${c._id}">${c.name||'(No Name)'} — ${c.address?.state||''}</option>`).join('');
     }
   } catch(e) { console.warn('Filter load failed:', e.message); }
 
@@ -2689,7 +2689,7 @@ async function openEditCustomer() {
     const data = await apiCall('GET', '/users');
     spSel.innerHTML = '<option value="">Select salesperson…</option>' +
       data.data.users.map(u =>
-        `<option value="${u._id}" ${cust.assignedTo?._id === u._id || cust.assignedTo === u._id ? 'selected' : ''}>${u.name} (${u.role === 'admin' ? 'Admin' : 'Sales Rep'})</option>`
+        `<option value="${u._id}" ${cust.assignedTo?._id === u._id || cust.assignedTo === u._id ? 'selected' : ''}>${u.name||'Unknown'} (${u.role === 'admin' ? 'Admin' : 'Sales Rep'})</option>`
       ).join('');
   } catch(e) {
     spSel.innerHTML = '<option value="">Failed to load</option>';
