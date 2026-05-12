@@ -486,6 +486,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
       <div class="totals-row"><label>Subtotal</label><span id="t_sub">₹0.00</span></div>
       <div class="totals-row"><label id="t_gst_label">GST (18%)</label><span id="t_gst">₹0.00</span></div>
       <div class="totals-row grand"><label>Grand Total</label><span id="t_grand">₹0.00</span></div>
+      <div style="margin-top:8px;padding:8px 10px;background:rgba(26,35,126,0.05);border-radius:6px;border:1px solid rgba(26,35,126,0.12);">
+        <div style="font-size:10px;font-weight:600;color:#1a237e;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:2px;">Amount in Words</div>
+        <div style="font-size:12px;color:#283593;font-style:italic;" id="t_grand_words">Zero Rupees Only</div>
+      </div>
     </div>
 
     <!-- Payment & Terms -->
@@ -792,6 +796,39 @@ document.addEventListener('click', (e) => {
   }
 });
 
+
+// ════════════════════════════════════════════════
+// NUMBER TO WORDS (Indian system — Rupees & Paise)
+// ════════════════════════════════════════════════
+function numberToWords(n) {
+  if (isNaN(n) || n < 0) return '';
+  n = Math.round(n * 100) / 100; // round to 2 decimal places
+
+  const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine',
+    'Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen',
+    'Seventeen','Eighteen','Nineteen'];
+  const tens = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+
+  function words(num) {
+    if (num === 0) return '';
+    if (num < 20) return ones[num] + ' ';
+    if (num < 100) return tens[Math.floor(num/10)] + (num%10 ? ' ' + ones[num%10] : '') + ' ';
+    if (num < 1000) return ones[Math.floor(num/100)] + ' Hundred ' + words(num%100);
+    if (num < 100000) return words(Math.floor(num/1000)) + 'Thousand ' + words(num%1000);
+    if (num < 10000000) return words(Math.floor(num/100000)) + 'Lakh ' + words(num%100000);
+    return words(Math.floor(num/10000000)) + 'Crore ' + words(num%10000000);
+  }
+
+  const rupees = Math.floor(n);
+  const paise  = Math.round((n - rupees) * 100);
+
+  let result = '';
+  if (rupees > 0) result += words(rupees).trim() + ' Rupees';
+  if (paise > 0)  result += (rupees > 0 ? ' and ' : '') + words(paise).trim() + ' Paise';
+  if (!result)    result  = 'Zero Rupees';
+  return result + ' Only';
+}
+
 // ════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════
@@ -904,6 +941,8 @@ function updateTotals() {
   document.getElementById('t_gst_label').textContent = `GST (${gstRate}%)`;
   document.getElementById('t_gst').textContent   = '₹' + fmt(gstAmt);
   document.getElementById('t_grand').textContent = '₹' + fmt(grand);
+  const wordsEl = document.getElementById('t_grand_words');
+  if (wordsEl) wordsEl.textContent = numberToWords(grand);
 }
 
 // ════════════════════════════════════════
@@ -1015,6 +1054,12 @@ function renderPreview() {
       <td colspan="3"></td>
       <td style="text-align:right;">GRAND TOTAL</td>
       <td style="text-align:right;">₹ ${fmt(grand)}</td>
+    </tr>
+    <tr>
+      <td colspan="5" style="padding:10px 10px 8px;border-top:none;background:#eef0f8;">
+        <span style="font-size:11px;font-weight:600;color:#1a237e;text-transform:uppercase;letter-spacing:0.4px;">Amount in Words: </span>
+        <span style="font-size:12px;color:#283593;font-style:italic;">${numberToWords(grand)}</span>
+      </td>
     </tr>`;
 
   // Terms
