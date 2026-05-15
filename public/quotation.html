@@ -319,6 +319,69 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
 .cust-status { font-size: 11px; color: var(--text3); margin-top: 4px; }
 .cust-status.loading { color: var(--mg); }
 .cust-status.error   { color: #c62828; }
+
+/* ── DOCKET / SAVED QUOTATIONS ────────────────────────── */
+.docket-panel {
+  position:fixed;top:0;right:0;bottom:0;width:420px;background:#fff;
+  border-left:1px solid rgba(26,35,126,0.15);z-index:300;
+  display:flex;flex-direction:column;transform:translateX(100%);
+  transition:transform .25s ease;box-shadow:-4px 0 20px rgba(26,35,126,0.12);
+}
+.docket-panel.open { transform:translateX(0); }
+.docket-header {
+  background:linear-gradient(135deg,#1a237e,#283593);
+  color:#fff;padding:16px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.docket-header h2 { font-family:var(--fh);font-size:17px;font-weight:600;flex:1;margin:0; }
+.docket-close {
+  width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,0.15);
+  border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+}
+.docket-search {
+  padding:12px 16px;border-bottom:1px solid rgba(26,35,126,0.10);flex-shrink:0;
+}
+.docket-search input {
+  width:100%;padding:8px 12px;border:1px solid rgba(26,35,126,0.18);
+  border-radius:6px;font-size:13px;color:#1a237e;
+}
+.docket-search input:focus { border-color:#1a237e;outline:none; }
+.docket-list { flex:1;overflow-y:auto;padding:8px 12px; }
+.docket-item {
+  background:#f5f6fa;border:1px solid rgba(26,35,126,0.10);border-radius:8px;
+  padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all .15s;position:relative;
+}
+.docket-item:hover { background:#eef0f8;border-color:rgba(26,35,126,0.25); }
+.docket-item.active-docket { border-color:#c62828;background:#fff8f8; }
+.docket-item-ref { font-weight:700;color:#1a237e;font-size:13px;margin-bottom:3px; }
+.docket-item-to  { font-size:12px;color:#3949ab;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.docket-item-meta { display:flex;gap:8px;flex-wrap:wrap;align-items:center; }
+.docket-badge { font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600; }
+.docket-badge.draft  { background:#eef0f8;color:#3949ab; }
+.docket-badge.sent   { background:#e8f5e9;color:#2e7d32; }
+.docket-badge.accepted { background:#e3f2fd;color:#1565c0; }
+.docket-badge.revised { background:#fff3e0;color:#e65100; }
+.docket-badge.ver    { background:rgba(26,35,126,0.08);color:#1a237e; }
+.docket-item-actions { display:flex;gap:5px;margin-top:8px; }
+.docket-item-actions button {
+  flex:1;padding:5px 8px;border-radius:5px;border:1px solid;font-size:11px;
+  font-weight:600;cursor:pointer;transition:all .15s;
+}
+.btn-load   { background:#fff;border-color:rgba(26,35,126,0.25);color:#1a237e; }
+.btn-load:hover { background:#eef0f8; }
+.btn-revise { background:#fff;border-color:rgba(198,40,40,0.3);color:#c62828; }
+.btn-revise:hover { background:#fff8f8; }
+.btn-del-docket { background:#fff;border-color:rgba(198,40,40,0.25);color:#c62828;flex:0 0 30px; }
+.btn-del-docket:hover { background:#fff8f8; }
+.docket-empty { text-align:center;padding:40px 20px;color:#7986cb;font-size:13px; }
+.docket-footer { padding:14px 16px;border-top:1px solid rgba(26,35,126,0.10);flex-shrink:0; }
+.badge-ver { background:rgba(26,35,126,0.08);color:#1a237e;font-size:10px;padding:1px 6px;border-radius:8px;font-weight:600; }
+.docket-overlay {
+  position:fixed;inset:0;background:rgba(0,0,0,0.25);z-index:299;display:none;
+}
+.docket-overlay.show { display:block; }
+@media print { .docket-panel,.docket-overlay,.docket-btn-wrap { display:none !important; } }
+
 /* ── PRINT STYLES ──────────────────────────── */
 @media print {
   body { background: #fff; }
@@ -528,6 +591,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 
     <!-- Actions -->
     <div style="display:flex;gap:8px;flex-wrap:wrap;padding-bottom:24px;">
+      <button class="btn btn-mg" onclick="saveQuotation()" style="gap:5px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+        Save Quotation
+      </button>
       <button class="btn btn-mg" onclick="window.print()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
         Print / Save PDF
@@ -546,10 +613,19 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 ══════════════════════════════════════════ -->
 <div class="preview-panel">
   <div class="preview-toolbar">
-    <span class="preview-label">Live Quotation Preview</span>
+    <span class="preview-label" id="previewLabel">Live Quotation Preview</span>
+    <span id="currentDocketBadge" style="display:none;font-size:11px;background:rgba(26,35,126,0.08);color:#1a237e;padding:3px 10px;border-radius:10px;font-weight:600;border:1px solid rgba(26,35,126,0.18);"></span>
+    <button class="btn btn-outline btn-sm" onclick="openDocketPanel()" style="gap:5px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Saved (<span id="docketCountTop">0</span>)
+    </button>
+    <button class="btn btn-mg btn-sm" onclick="saveQuotation()" style="gap:5px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+      Save
+    </button>
     <button class="btn btn-gold btn-sm" onclick="window.print()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Download PDF
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Print / PDF
     </button>
   </div>
 
@@ -714,6 +790,7 @@ function renderDropdown(list) {
 
 function filterCustomers(query) {
   const dd = document.getElementById('custDropdown');
+  if (!dd) return;
   dd.classList.add('show');
   if (!query.trim()) {
     renderDropdown(allCrmCustomers);
@@ -731,6 +808,7 @@ function filterCustomers(query) {
 
 function showDropdown() {
   const dd = document.getElementById('custDropdown');
+  if (!dd) return;
   dd.classList.add('show');
   renderDropdown(allCrmCustomers);
 }
@@ -769,7 +847,7 @@ function selectCustomerFromList(idx) {
   }
 
   // Show selected badge
-  document.getElementById('custSelectedBadge').innerHTML =
+  (document.getElementById('custSelectedBadge')||{innerHTML:''}).innerHTML =
     `<span class="cust-selected-badge">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="20 6 9 17 4 12"/></svg>
       ${cust.name}
@@ -779,7 +857,7 @@ function selectCustomerFromList(idx) {
   // Clear search input and hide dropdown
   document.getElementById('custSearch').value = '';
   document.getElementById('custDropdown').classList.remove('show');
-  document.getElementById('custStatus').textContent = '✓ Customer details filled from CRM';
+  const _cs1=document.getElementById('custStatus'); if(_cs1) _cs1.textContent='✓ Customer details filled from CRM';
   document.getElementById('custStatus').className = 'cust-status';
 
   renderPreview();
@@ -787,12 +865,12 @@ function selectCustomerFromList(idx) {
 
 function clearSelectedCustomer() {
   selectedCustomer = null;
-  document.getElementById('custSelectedBadge').innerHTML = '';
+  (document.getElementById('custSelectedBadge')||{innerHTML:''}).innerHTML = '';
   document.getElementById('f_to').value = '';
   document.getElementById('f_phone').value = '';
   document.getElementById('f_email').value = '';
   document.getElementById('custSearch').value = '';
-  document.getElementById('custStatus').textContent = allCrmCustomers.length + ' customers loaded from CRM';
+  const _cs2=document.getElementById('custStatus'); if(_cs2) _cs2.textContent=allCrmCustomers.length+' customers loaded from CRM';
   renderPreview();
 }
 
@@ -876,6 +954,13 @@ We thank you for the enquiry and are pleased to submit our offer as below.
 
   // Load customers from CRM
   loadCrmCustomers();
+  // Load saved quotation dockets
+  renderDocketList();
+  updateCurrentBadge();
+
+  // Load docket list and restore last session if available
+  renderDocketList();
+  updateCurrentBadge();
 
   // Wire all inputs to live preview
   document.querySelectorAll('input, select, textarea').forEach(el => {
@@ -905,6 +990,7 @@ function removeItem(id) {
 
 function renderItemsTable() {
   const tbody = document.getElementById('itemsBody');
+  if (!tbody) return;
   tbody.innerHTML = items.map(item => `
     <tr>
       <td><input type="text" value="${esc(item.desc)}" oninput="updateItem(${item.id},'desc',this.value)" placeholder="Description of goods/service"></td>
@@ -944,12 +1030,12 @@ function calcTotals() {
 
 function updateTotals() {
   const { subtotal, gstRate, gstAmt, grand } = calcTotals();
-  document.getElementById('t_sub').textContent   = '₹' + fmt(subtotal);
-  document.getElementById('t_gst_label').textContent = `GST (${gstRate}%)`;
-  document.getElementById('t_gst').textContent   = '₹' + fmt(gstAmt);
-  document.getElementById('t_grand').textContent = '₹' + fmt(grand);
-  const wordsEl = document.getElementById('t_grand_words');
-  if (wordsEl) wordsEl.textContent = numberToWords(grand);
+  const safe = (id,val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  safe('t_sub',   '₹' + fmt(subtotal));
+  safe('t_gst_label', `GST (${gstRate}%)`);
+  safe('t_gst',   '₹' + fmt(gstAmt));
+  safe('t_grand', '₹' + fmt(grand));
+  safe('t_grand_words', numberToWords(grand));
 }
 
 // ════════════════════════════════════════
@@ -982,6 +1068,10 @@ function updateValidHint() {
 function renderPreview() {
   updateTotals();
   updateValidHint();
+
+  // Helper: safely set text on an element (no crash if missing)
+  const safeText = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  const safeHTML = (id, val) => { const el=document.getElementById(id); if(el) el.innerHTML=val; };
 
   const get = id => document.getElementById(id)?.value || '';
 
@@ -1042,9 +1132,9 @@ function renderPreview() {
       <td style="text-align:right;">${fmt(i.qty * i.rate)}</td>
     </tr>`).join('');
 
-  document.getElementById('d_items').innerHTML = itemRows || '<tr><td colspan="5" style="text-align:center;color:#7986cb;padding:12px;">No items added</td></tr>';
+  (document.getElementById('d_items')||{innerHTML:''}).innerHTML = itemRows || '<tr><td colspan="5" style="text-align:center;color:#7986cb;padding:12px;">No items added</td></tr>';
 
-  document.getElementById('d_totals_foot').innerHTML = `
+  (document.getElementById('d_totals_foot')||{innerHTML:''}).innerHTML = `
     ${hsn ? `<tr class="hsn-row"><td colspan="4" style="font-size:11px;color:var(--text3);font-style:italic;padding:6px 10px;">HSN Code: ${esc2(hsn)}</td><td></td></tr>` : ''}
     ${note ? `<tr class="note-row"><td colspan="5" style="font-size:11px;color:var(--text2);font-style:italic;padding:4px 10px;">${esc2(note)}</td></tr>` : ''}
     <tr class="subtotal-row">
@@ -1070,7 +1160,7 @@ function renderPreview() {
     </tr>`;
 
   // Terms
-  document.getElementById('d_terms').innerHTML = `
+  (document.getElementById('d_terms')||{innerHTML:''}).innerHTML = `
     <div style="margin-top:14px;">
       ${payment ? `<div><strong>Payment Terms:</strong> ${esc2(payment)}</div>` : ''}
       ${delivery ? `<div><strong>Delivery:</strong> ${esc2(delivery)}</div>` : ''}
@@ -1104,8 +1194,247 @@ function resetForm() {
   init();
 }
 
+
+// ════════════════════════════════════════════════
+// QUOTATION DOCKET
+// ════════════════════════════════════════════════
+const DOCKET_KEY = 'magmatic_quotations_v1';
+let currentDocketId = null;
+let currentVersion  = 1;
+
+function loadDockets() {
+  try { return JSON.parse(localStorage.getItem(DOCKET_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveDockets(d) { localStorage.setItem(DOCKET_KEY, JSON.stringify(d)); }
+
+function serializeForm() {
+  const get = id => document.getElementById(id)?.value || '';
+  return {
+    ref:get('f_ref'),date:get('f_date'),validPreset:get('f_valid_preset'),
+    validCustom:get('f_valid_custom'),to:get('f_to'),phone:get('f_phone'),
+    email:get('f_email'),subject:get('f_subject'),body:get('f_body'),
+    hsn:get('f_hsn'),note:get('f_note'),gst:get('f_gst'),
+    payment:get('f_payment'),delivery:get('f_delivery'),warranty:get('f_warranty'),
+    items:JSON.parse(JSON.stringify(items)),
+  };
+}
+
+function deserializeForm(data) {
+  const set = (id,val) => { const el=document.getElementById(id); if(el) el.value=val||''; };
+  set('f_ref',data.ref); set('f_date',data.date);
+  set('f_valid_preset',data.validPreset||'30');
+  set('f_valid_custom',data.validCustom||'');
+  set('f_to',data.to); set('f_phone',data.phone); set('f_email',data.email);
+  set('f_subject',data.subject); set('f_body',data.body);
+  set('f_hsn',data.hsn); set('f_note',data.note);
+  set('f_gst',data.gst||'18'); set('f_payment',data.payment);
+  set('f_delivery',data.delivery); set('f_warranty',data.warranty);
+  const wrap=document.getElementById('f_valid_custom_wrap');
+  if(wrap) wrap.style.display=(data.validPreset==='custom')?'block':'none';
+  items=data.items||[];
+  nextId=items.length>0?Math.max(...items.map(i=>i.id))+1:1;
+  renderItemsTable(); renderPreview();
+}
+
+function nextDocketNumber() {
+  const dockets=loadDockets(), today=new Date();
+  const yr=today.getFullYear(), mo=String(today.getMonth()+1).padStart(2,'0');
+  const prefix=`MNDT/QUO/${yr}/${mo}/`;
+  const nums=dockets.map(d=>d.versions[0]?.data?.ref||'')
+    .filter(r=>r.startsWith(prefix)).map(r=>parseInt(r.slice(prefix.length))||0);
+  return `${prefix}${String((nums.length?Math.max(...nums):0)+1).padStart(3,'0')}`;
+}
+
+function saveQuotation() {
+  const formData=serializeForm();
+  if(!formData.to.trim()&&!formData.ref.trim()){
+    showDocketToast('Please fill in Customer (To) or Ref before saving.','warn'); return;
+  }
+  const dockets=loadDockets();
+  if(currentDocketId){
+    const idx=dockets.findIndex(d=>d.id===currentDocketId);
+    if(idx!==-1){
+      const newVer=(dockets[idx].versions[0]?.version||0)+1;
+      currentVersion=newVer;
+      dockets[idx].versions.unshift({version:newVer,savedAt:new Date().toISOString(),data:formData,status:dockets[idx].status||'draft'});
+      dockets[idx].updatedAt=new Date().toISOString();
+      dockets[idx].latestRef=formData.ref; dockets[idx].latestTo=formData.to.split('\n')[0];
+      saveDockets(dockets); renderDocketList(); updateCurrentBadge();
+      showDocketToast(`Version ${newVer} saved — ${formData.ref}`,'ok'); return;
+    }
+  }
+  const id='QD_'+Date.now();
+  const ref=formData.ref||nextDocketNumber();
+  document.getElementById('f_ref').value=ref; formData.ref=ref;
+  currentDocketId=id; currentVersion=1;
+  dockets.unshift({id,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),
+    latestRef:ref,latestTo:formData.to.split('\n')[0]||'Unknown Customer',
+    status:'draft',versions:[{version:1,savedAt:new Date().toISOString(),data:formData,status:'draft'}]});
+  saveDockets(dockets); renderDocketList(); updateCurrentBadge();
+  showDocketToast(`Saved — ${ref}`,'ok');
+}
+
+function loadDocket(docketId,versionNum){
+  const dockets=loadDockets(), docket=dockets.find(d=>d.id===docketId);
+  if(!docket) return;
+  const ver=versionNum!=null?docket.versions.find(v=>v.version===versionNum):docket.versions[0];
+  if(!ver) return;
+  currentDocketId=docketId; currentVersion=ver.version;
+  deserializeForm(ver.data); updateCurrentBadge(); closeDocketPanel();
+  showDocketToast(`Loaded: ${ver.data.ref} (v${ver.version})`,'ok');
+}
+
+function reviseQuotation(docketId){
+  const dockets=loadDockets(), docket=dockets.find(d=>d.id===docketId);
+  if(!docket) return;
+  const latest=docket.versions[0], formData=JSON.parse(JSON.stringify(latest.data));
+  const base=formData.ref.replace(/\/Rev\d*$/,'');
+  const revMatch=formData.ref.match(/\/Rev(\d*)$/);
+  const revNum=revMatch?(parseInt(revMatch[1]||'1')+1):1;
+  formData.ref=`${base}/Rev${revNum}`;
+  currentDocketId=docketId; currentVersion=latest.version;
+  deserializeForm(formData); docket.status='revised';
+  saveDockets(dockets); closeDocketPanel();
+  showDocketToast(`Revision ready — edit and Save to create new version`,'ok');
+}
+
+function setDocketStatus(docketId,status){
+  const dockets=loadDockets(), docket=dockets.find(d=>d.id===docketId);
+  if(!docket) return;
+  docket.status=status; if(docket.versions[0]) docket.versions[0].status=status;
+  saveDockets(dockets); renderDocketList();
+}
+
+function deleteDocket(docketId){
+  const dockets=loadDockets(), docket=dockets.find(d=>d.id===docketId);
+  if(!docket) return;
+  if(!confirm(`Delete ${docket.latestRef}?\nThis cannot be undone.`)) return;
+  saveDockets(dockets.filter(d=>d.id!==docketId));
+  if(currentDocketId===docketId){currentDocketId=null;currentVersion=1;updateCurrentBadge();}
+  renderDocketList();
+}
+
+function newQuotation(){
+  if(currentDocketId&&!confirm('Start a new blank quotation? Unsaved changes will be lost.')) return;
+  currentDocketId=null; currentVersion=1; updateCurrentBadge(); closeDocketPanel(); resetForm();
+}
+
+function renderDocketList(query){
+  const dockets=loadDockets();
+  const el=document.getElementById('docketList');
+  if(!el) return; // panel not in DOM yet
+  const cb=document.getElementById('docketCountBadge');
+  const ct=document.getElementById('docketCountTop');
+  if(cb) cb.textContent=dockets.length+' saved';
+  if(ct) ct.textContent=dockets.length;
+  let list=dockets;
+  if(query&&query.trim()){
+    const q=query.toLowerCase();
+    list=dockets.filter(d=>(d.latestRef||'').toLowerCase().includes(q)||(d.latestTo||'').toLowerCase().includes(q)||(d.versions[0]?.data?.subject||'').toLowerCase().includes(q));
+  }
+  if(!list.length){
+    el.innerHTML=`<div class="docket-empty">${query?'No quotations match your search.':'No saved quotations yet.<br>Save your first quotation to see it here.'}</div>`;
+    return;
+  }
+  const SL={draft:'Draft',sent:'Sent',accepted:'Accepted',revised:'Revised'};
+  el.innerHTML=list.map(d=>{
+    const latest=d.versions[0]||{}, vc=d.versions.length, isActive=d.id===currentDocketId, st=d.status||'draft';
+    const verRows=d.versions.map(v=>`
+      <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:#fff;border-radius:4px;border:1px solid rgba(26,35,126,0.08);margin-bottom:4px;">
+        <span class="badge-ver">v${v.version}</span>
+        <span style="font-size:11px;color:#7986cb;flex:1;">${new Date(v.savedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</span>
+        <span style="font-size:10px;color:#3949ab;">${v.data?.ref||''}</span>
+        <button onclick="event.stopPropagation();loadDocket('${d.id}',${v.version})" style="font-size:10px;padding:2px 7px;border-radius:4px;background:#1a237e;color:#fff;border:none;cursor:pointer;">Load</button>
+      </div>`).join('');
+    return `<div class="docket-item ${isActive?'active-docket':''}" id="di_${d.id}">
+      <div class="docket-item-ref">${d.latestRef||'—'}${isActive?'<span style="font-size:10px;background:#c62828;color:#fff;padding:1px 6px;border-radius:8px;margin-left:4px;">● Active</span>':''}</div>
+      <div class="docket-item-to">${d.latestTo||'—'}</div>
+      <div class="docket-item-meta">
+        <span class="docket-badge ${st}">${SL[st]||st}</span>
+        <span class="docket-badge ver">${vc} version${vc>1?'s':''}</span>
+        <span style="font-size:10px;color:#7986cb;">${new Date(d.updatedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</span>
+        <select onchange="setDocketStatus('${d.id}',this.value)" onclick="event.stopPropagation()" style="font-size:10px;padding:2px 5px;border:1px solid rgba(26,35,126,0.18);border-radius:4px;color:#1a237e;background:#fff;">
+          <option value="draft" ${st==='draft'?'selected':''}>Draft</option>
+          <option value="sent" ${st==='sent'?'selected':''}>Sent</option>
+          <option value="accepted" ${st==='accepted'?'selected':''}>Accepted</option>
+          <option value="revised" ${st==='revised'?'selected':''}>Revised</option>
+        </select>
+      </div>
+      <div class="docket-item-actions">
+        <button class="btn-load" onclick="event.stopPropagation();loadDocket('${d.id}',null)">↓ Load Latest (v${latest.version||1})</button>
+        <button class="btn-revise" onclick="event.stopPropagation();reviseQuotation('${d.id}')">✎ Revise</button>
+        <button class="btn-del-docket" onclick="event.stopPropagation();deleteDocket('${d.id}')" title="Delete">🗑</button>
+      </div>
+      ${vc>1?`<details style="margin-top:8px;"><summary style="font-size:11px;color:#7986cb;cursor:pointer;list-style:none;">▸ ${vc} versions — click to view history</summary><div style="margin-top:6px;">${verRows}</div></details>`:''}
+    </div>`;
+  }).join('');
+}
+
+function openDocketPanel(){
+  renderDocketList();
+  document.getElementById('docketPanel').classList.add('open');
+  document.getElementById('docketOverlay').classList.add('show');
+  document.getElementById('docketSearch').value='';
+}
+function closeDocketPanel(){
+  document.getElementById('docketPanel').classList.remove('open');
+  document.getElementById('docketOverlay').classList.remove('show');
+}
+
+function updateCurrentBadge(){
+  const badge=document.getElementById('currentDocketBadge');
+  if(!badge) return;
+  if(currentDocketId){
+    const d=loadDockets().find(x=>x.id===currentDocketId);
+    badge.style.display=''; badge.textContent=(d?.latestRef||'')+' · v'+currentVersion;
+  } else { badge.style.display='none'; }
+}
+
+function showDocketToast(msg,type){
+  const el=document.createElement('div');
+  const bg=type==='warn'?'#e65100':'#1a237e';
+  el.style.cssText=`position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:${bg};color:#fff;padding:10px 22px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.2);white-space:nowrap;`;
+  el.textContent=msg; document.body.appendChild(el);
+  setTimeout(()=>el.remove(),3000);
+}
+
 // Start
 init();
 </script>
+
+<!-- ── DOCKET OVERLAY ─────────────────────────────── -->
+<div class="docket-overlay" id="docketOverlay" onclick="closeDocketPanel()"></div>
+
+<!-- ── DOCKET PANEL ───────────────────────────────── -->
+<div class="docket-panel" id="docketPanel">
+  <div class="docket-header">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+    </svg>
+    <h2>Saved Quotations</h2>
+    <span id="docketCountBadge" style="font-size:11px;background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:10px;"></span>
+    <button class="docket-close" onclick="closeDocketPanel()">✕</button>
+  </div>
+  <div class="docket-search">
+    <input type="text" id="docketSearch" placeholder="Search by ref, customer, subject…"
+      oninput="renderDocketList(this.value)">
+  </div>
+  <div class="docket-list" id="docketList">
+    <div class="docket-empty">No saved quotations yet.<br>Save your first quotation to see it here.</div>
+  </div>
+  <div class="docket-footer" style="display:flex;gap:8px;">
+    <button class="btn btn-mg" style="flex:1;" onclick="saveQuotation()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save Quotation
+    </button>
+    <button class="btn btn-outline" onclick="newQuotation()" title="New blank quotation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New
+    </button>
+  </div>
+</div>
+
 </body>
 </html>
