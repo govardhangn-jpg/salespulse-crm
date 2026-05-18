@@ -27,7 +27,8 @@ const app = express();
 app.set('trust proxy', 1);
 
 // ─── Security middleware ───────────────────────────────
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(helmet({ contentSecurityPolicy: false })); // includes X-XSS-Protection
+// Additional XSS sanitization via mongoSanitize below
 app.use(mongoSanitize()); // Prevent NoSQL injection
 app.use(cors({
   origin: process.env.CLIENT_URL || '*',
