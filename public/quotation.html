@@ -3,6 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1a237e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Magmatic">
+  <meta name="application-name" content="Magmatic NDT CRM">
+  <meta name="msapplication-TileColor" content="#1a237e">
+  <meta name="msapplication-TileImage" content="/icons/icon-144.png">
+  <link rel="apple-touch-icon" href="/icons/icon-152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72.png">
 <title>Quotation Generator — Magmatic NDT Systems</title>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -1436,5 +1450,59 @@ init();
   </div>
 </div>
 
+
+  <script>
+    // Register Service Worker — only on the real domain, not in previews/iframes
+    if ('serviceWorker' in navigator &&
+        window.self === window.top &&
+        !['localhost:3000','claudeusercontent.com','127.0.0.1'].some(h => location.hostname.includes(h) && location.port === '')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => {
+            // Check for updates silently
+            reg.addEventListener('updatefound', () => {
+              const nw = reg.installing;
+              nw.addEventListener('statechange', () => {
+                if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                  if (confirm('A new version of Magmatic NDT CRM is available. Reload to update?')) {
+                    nw.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
+                  }
+                }
+              });
+            });
+          })
+          .catch(() => {}); // Fail silently — SW is an enhancement, not required
+      });
+    }
+
+    // PWA Install prompt
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      // Show install button if present
+      const installBtn = document.getElementById('pwaInstallBtn');
+      if (installBtn) installBtn.style.display = 'flex';
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      const installBtn = document.getElementById('pwaInstallBtn');
+      if (installBtn) installBtn.style.display = 'none';
+      console.log('[PWA] App installed successfully');
+    });
+
+    function triggerPWAInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then(choice => {
+          deferredInstallPrompt = null;
+          const installBtn = document.getElementById('pwaInstallBtn');
+          if (installBtn) installBtn.style.display = 'none';
+        });
+      }
+    }
+  </script>
 </body>
 </html>
