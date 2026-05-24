@@ -31,7 +31,7 @@ router.get(
   '/',
   applyStateFilter,
   asyncHandler(async (req, res) => {
-    const { search, segment, status, competition, state, page = 1, limit = 500 } = req.query;
+    const { search, segment, status, competition, state, assignedTo, page = 1, limit = 500 } = req.query;
 
     // Build filter — always merge with state filter
     const filter = { ...req.stateFilter };
@@ -40,6 +40,7 @@ router.get(
     if (status) filter.status = status;
     if (competition) filter.competition = competition;
     if (state && req.user.role === 'admin') filter['address.state'] = state;
+    if (assignedTo && req.user.role === 'admin') filter.assignedTo = assignedTo;
     if (segment) {
       const [category, value] = segment.split(':');
       if (value) { filter['segment.category'] = category; filter['segment.value'] = value; }
