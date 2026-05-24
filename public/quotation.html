@@ -476,7 +476,21 @@ input[type=number] { -moz-appearance:textfield; appearance:textfield; }
       <!-- Customer Search / Select from CRM -->
       <div class="fg">
         <label>Select from CRM Customers</label>
-        <div class="cust-search-wrap" id="custSearchWrap">
+        <!-- Sales rep filter -->
+      <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
+        <div style="flex:1;">
+          <label style="font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:3px;">Filter by Sales Rep</label>
+          <select id="custSalesRepFilter" onchange="filterCustomers(document.getElementById('custSearch').value)"
+            style="width:100%;padding:7px 10px;border:1px solid rgba(26,35,126,0.18);border-radius:6px;font-size:12px;color:#1a237e;background:#fff;">
+            <option value="">All Sales Representatives</option>
+          </select>
+        </div>
+        <div style="flex:0 0 auto;align-self:flex-end;">
+          <button onclick="clearSalesRepFilter()" class="btn btn-outline btn-sm" style="font-size:11px;padding:7px 10px;">Clear</button>
+        </div>
+      </div>
+
+      <div class="cust-search-wrap" id="custSearchWrap">
           <input type="text" id="custSearch" class="cust-search-input"
             placeholder="Type to search customers…"
             oninput="filterCustomers(this.value)"
@@ -833,6 +847,7 @@ async function loadCrmCustomers() {
       ? allCrmCustomers.length + ' customers loaded from CRM'
       : 'No active customers found';
     statusEl.className = 'cust-status';
+    populateSalesRepFilter();
     renderDropdown(allCrmCustomers);
   } catch(e) {
     statusEl.textContent = '⚠ ' + e.message + ' — fill manually below';
@@ -846,13 +861,13 @@ function renderDropdown(list) {
     dd.innerHTML = '<div class="cust-option" style="color:var(--text3);cursor:default;">No customers found</div>';
     return;
   }
-  dd.innerHTML = list.slice(0, 80).map((cust, i) => `
-    <div class="cust-option" data-idx="${i}" onclick="selectCustomerFromList(${allCrmCustomers.indexOf(cust)})">
-      <div class="cust-option-name">${cust.name}</div>
+  dd.innerHTML = list.slice(0, 100).map((cust) => `
+    <div class="cust-option" onclick="selectCustomerFromList(${allCrmCustomers.indexOf(cust)})">
+      <div class="cust-option-name">${cust.name||''}</div>
       <div class="cust-option-meta">
-        ${cust.address?.city ? cust.address.city + ' · ' : ''}
-        ${cust.address?.state || ''}
-        ${cust.phone ? ' · ' + cust.phone : ''}
+        ${cust.address?.state ? cust.address.state : ''}
+        ${cust.address?.city ? ' · ' + cust.address.city : ''}
+        ${(cust.assignedTo?.name || cust.submittedBy?.name) ? ' · <span style="color:#1a237e;font-weight:500;">' + (cust.assignedTo?.name || cust.submittedBy?.name) + '</span>' : ''}
       </div>
     </div>`).join('');
 }
@@ -861,25 +876,77 @@ function filterCustomers(query) {
   const dd = document.getElementById('custDropdown');
   if (!dd) return;
   dd.classList.add('show');
-  if (!query.trim()) {
-    renderDropdown(allCrmCustomers);
-    return;
+
+  // Get selected sales rep filter
+  const repFilter = (document.getElementById('custSalesRepFilter')?.value || '').toLowerCase();
+
+  let list = allCrmCustomers;
+
+  // Filter by sales rep first
+  if (repFilter) {
+    list = list.filter(c => {
+      const repName = (c.assignedTo?.name || c.submittedBy?.name || '').toLowerCase();
+      return repName.includes(repFilter);
+    });
   }
-  const q = query.toLowerCase();
-  const filtered = allCrmCustomers.filter(c =>
-    (c.name || '').toLowerCase().includes(q) ||
-    (c.address?.city || '').toLowerCase().includes(q) ||
-    (c.address?.state || '').toLowerCase().includes(q) ||
-    (c.phone || '').includes(q)
-  );
-  renderDropdown(filtered);
+
+  // Then filter by search query
+  if (query && query.trim()) {
+    const q = query.toLowerCase();
+    list = list.filter(c =>
+      (c.name || '').toLowerCase().includes(q) ||
+      (c.address?.city || '').toLowerCase().includes(q) ||
+      (c.address?.state || '').toLowerCase().includes(q) ||
+      (c.phone || '').includes(q)
+    );
+  }
+
+  renderDropdown(list);
+}
+
+function populateSalesRepFilter() {
+  const sel = document.getElementById('custSalesRepFilter');
+  if (!sel) return;
+
+  // Collect unique sales rep names
+  const reps = new Map();
+  allCrmCustomers.forEach(c => {
+    const rep = c.assignedTo || c.submittedBy;
+    if (rep && rep._id && rep.name) {
+      reps.set(rep._id, rep.name);
+    }
+  });
+
+  // Sort by name
+  const sorted = [...reps.entries()].sort((a, b) => a[1].localeCompare(b[1]));
+
+  // Rebuild options (keep first "All" option)
+  sel.innerHTML = '<option value="">All Sales Representatives (' + allCrmCustomers.length + ' customers)</option>';
+  sorted.forEach(([id, name]) => {
+    const count = allCrmCustomers.filter(c =>
+      (c.assignedTo?._id === id || c.submittedBy?._id === id)
+    ).length;
+    const opt = document.createElement('option');
+    opt.value = name.toLowerCase();
+    opt.textContent = name + ' (' + count + ')';
+    sel.appendChild(opt);
+  });
+}
+
+function clearSalesRepFilter() {
+  const sel = document.getElementById('custSalesRepFilter');
+  if (sel) sel.value = '';
+  const search = document.getElementById('custSearch');
+  if (search) search.value = '';
+  filterCustomers('');
 }
 
 function showDropdown() {
   const dd = document.getElementById('custDropdown');
   if (!dd) return;
   dd.classList.add('show');
-  renderDropdown(allCrmCustomers);
+  // Show filtered list (respects active rep filter)
+  filterCustomers(document.getElementById('custSearch')?.value || '');
 }
 
 function hideDropdown() {
@@ -993,16 +1060,14 @@ let nextId = 1;
 // INIT
 // ════════════════════════════════════════
 function init() {
-  // Set today's date
+  // Set today's date only — no other defaults so page starts blank
   const today = new Date();
   document.getElementById('f_date').value = today.toISOString().slice(0,10);
 
-  // Generate default ref
-  const yr = today.getFullYear();
-  const mo = String(today.getMonth()+1).padStart(2,'0');
-  document.getElementById('f_ref').value = `MNDT/QUO/${yr}/${mo}/001`;
+  // Generate next docket number as ref suggestion
+  document.getElementById('f_ref').value = nextDocketNumber();
 
-  // Default body
+  // Default letter body template
   document.getElementById('f_body').value =
 `Dear Sir,
 
@@ -1011,15 +1076,6 @@ We thank you for the enquiry and are pleased to submit our offer as below.
 1. Scope of Supply
 2. Price Schedule
 3. Terms and Conditions`;
-
-  // Default HSN
-  document.getElementById('f_hsn').value = '998719';
-
-  // Default warranty
-  document.getElementById('f_warranty').value = '12 months from date of delivery';
-
-  // Default items
-  addItem('CALIBRATION of Digital UV Meter UV Sensor', 2, 'No', 4500);
 
   // Load customers from CRM
   loadCrmCustomers();
@@ -1145,14 +1201,14 @@ function renderPreview() {
   const get = id => document.getElementById(id)?.value || '';
 
   // To / Meta
-  setText('d_to', get('f_to') || '—');
+  setText('d_to', get('f_to') || '');
   const attnVal = get('f_attn');
   const attnWrap = document.getElementById('d_attn_wrap');
   if (attnWrap) attnWrap.style.display = attnVal ? '' : 'none';
   setText('d_attn', attnVal);
-  setText('d_contact', get('f_phone') || '—');
-  setText('d_email', get('f_email') || '—');
-  setText('d_ref', get('f_ref') || '—');
+  setText('d_contact', get('f_phone') || '');
+  setText('d_email', get('f_email') || '');
+  setText('d_ref', get('f_ref') || '');
 
   // Date
   const dateVal = get('f_date');
@@ -1262,9 +1318,8 @@ function esc2(str) {
 }
 function resetForm() {
   if (!confirm('Reset all fields?')) return;
-  items = []; nextId = 1;
-  document.querySelectorAll('input,textarea').forEach(el => el.value = '');
-  init();
+  currentDocketId = null;
+  newQuotation();
 }
 
 
@@ -1391,18 +1446,36 @@ function deleteDocket(docketId){
 function newQuotation(){
   if(currentDocketId&&!confirm('Start a new blank quotation? Unsaved changes will be lost.')) return;
   currentDocketId=null; currentVersion=1; updateCurrentBadge(); closeDocketPanel();
-  // Clear all fields completely
-  ['f_to','f_attn','f_phone','f_email','f_ref','f_subject','f_body',
+  // Clear all fields completely — start fresh
+  ['f_to','f_attn','f_phone','f_email','f_subject',
    'f_hsn','f_note','f_warranty'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.value='';
   });
+  // Reset to today's date and new ref number
   document.getElementById('f_date').value = new Date().toISOString().slice(0,10);
-  document.getElementById('f_valid_preset').value='30';
-  document.getElementById('f_gst').value='18';
-  document.getElementById('f_payment').value='Advance';
-  document.getElementById('f_delivery').value='Ex-Works, Bengaluru';
-  document.getElementById('f_valid_custom_wrap').style.display='none';
+  document.getElementById('f_ref').value   = nextDocketNumber();
+  // Reset letter body to standard template
+  document.getElementById('f_body').value =
+`Dear Sir,
+
+We thank you for the enquiry and are pleased to submit our offer as below.
+
+1. Scope of Supply
+2. Price Schedule
+3. Terms and Conditions`;
+  document.getElementById('f_valid_preset').value = '30';
+  document.getElementById('f_gst').value           = '18';
+  document.getElementById('f_payment').value        = 'Advance';
+  document.getElementById('f_delivery').value       = 'Ex-Works, Bengaluru';
+  document.getElementById('f_valid_custom_wrap').style.display = 'none';
+  // Clear all line items
   items=[]; nextId=1; renderItemsTable();
+  // Clear customer selection
+  const badge=document.getElementById('custSelectedBadge'); if(badge) badge.innerHTML='';
+  const srch=document.getElementById('custSearch'); if(srch) srch.value='';
+  const repF=document.getElementById('custSalesRepFilter'); if(repF) repF.value='';
+  const stEl=document.getElementById('custStatus');
+  if(stEl) stEl.textContent=allCrmCustomers.length ? allCrmCustomers.length+' customers loaded from CRM' : '';
   currentDocketId=null; updateCurrentBadge();
   renderPreview();
 }

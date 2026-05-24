@@ -596,6 +596,7 @@ tbody tr:hover{background:rgba(26,35,126,0.05);}
           </select>
             <select id="filterStatus" onchange="loadCustomers()"><option value="">All Status</option><option value="active">Active</option><option value="pending">Pending</option></select>
             <select id="filterCompetition" onchange="loadCustomers()"><option value="">All Types</option><option value="New Account">New Account</option><option value="Existing Account">Existing Account</option><option value="Competitor Account">Competitor</option></select>
+            <select id="filterSalesperson" onchange="loadCustomers()" class="admin-only" style="display:none"><option value="">All Sales Reps</option></select>
           </div>
         </div>
         <div class="table-wrap"><table>
@@ -1607,13 +1608,15 @@ async function loadCustomers() {
   const params = new URLSearchParams();
   params.set('limit', '500'); // load all customers at once
   const search = document.getElementById('customerSearch').value.trim();
-  const state = document.getElementById('filterState').value;
+  const state  = document.getElementById('filterState').value;
   const status = document.getElementById('filterStatus').value;
-  const comp = document.getElementById('filterCompetition').value;
+  const comp   = document.getElementById('filterCompetition').value;
+  const spId   = document.getElementById('filterSalesperson')?.value || '';
   if (search) params.set('search', search);
-  if (state) params.set('state', state);
+  if (state)  params.set('state', state);
   if (status) params.set('status', status);
-  if (comp) params.set('competition', comp);
+  if (comp)   params.set('competition', comp);
+  if (spId)   params.set('assignedTo', spId);
 
   try {
     const data = await apiCall('GET', '/customers?' + params);
@@ -1623,8 +1626,29 @@ async function loadCustomers() {
 
     const isAdmin = currentUser.role === 'admin';
     document.getElementById('customerFilterLabel').textContent = isAdmin
-      ? `All customers — ${data.total} total`
-      : `My Customers — ${data.total} assigned to you`;
+      ? `All customers — ${data.total || customers.length} total`
+      : `My Customers — ${data.total || customers.length} assigned to you`;
+
+    // Populate sales rep filter (admin only)
+    if (isAdmin) {
+      const spSel = document.getElementById('filterSalesperson');
+      if (spSel) {
+        const currentVal = spSel.value;
+        const reps = new Map();
+        customers.forEach(cust => {
+          const rep = cust.assignedTo || cust.submittedBy;
+          if (rep && rep._id && rep.name) reps.set(rep._id, rep.name);
+        });
+        const sorted = [...reps.entries()].sort((a,b) => a[1].localeCompare(b[1]));
+        spSel.innerHTML = '<option value="">All Sales Reps</option>' +
+          sorted.map(([id, name]) => {
+            const cnt = customers.filter(cu =>
+              cu.assignedTo?._id === id || cu.submittedBy?._id === id
+            ).length;
+            return `<option value="${id}" ${id === currentVal ? 'selected' : ''}>${name} (${cnt})</option>`;
+          }).join('');
+      }
+    }
 
     // Always go through renderCustomerTable so A→Z sort is applied on every load
     renderCustomerTable(customers);
