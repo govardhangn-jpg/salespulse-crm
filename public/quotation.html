@@ -515,6 +515,44 @@ input[type=number] { -moz-appearance:textfield; appearance:textfield; }
 .sending-spinner { display:none;align-items:center;gap:8px;font-size:13px;color:#7986cb; }
 @media(max-width:768px){.send-modal{width:100%;max-width:100%;border-radius:12px 12px 0 0;margin-top:auto;}}
 
+
+/* ── SEND QUOTATION MODAL ─────────────────────── */
+.send-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;display:none;align-items:center;justify-content:center;}
+.send-overlay.open{display:flex;}
+.send-modal{background:#fff;border-radius:12px;width:540px;max-width:96vw;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(26,35,126,0.22);}
+.send-hdr{background:linear-gradient(135deg,#1a237e,#283593);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0;border-radius:12px 12px 0 0;}
+.send-hdr h3{font-family:var(--fh);font-size:17px;font-weight:600;flex:1;margin:0;}
+.send-close-btn{background:rgba(255,255,255,0.15);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;line-height:1;}
+.send-tabs{display:flex;border-bottom:2px solid #eef0f8;flex-shrink:0;}
+.send-tab{flex:1;padding:11px 8px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;color:#7986cb;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.send-tab.active{color:#1a237e;border-bottom-color:#1a237e;}
+.send-tab:hover{background:#f5f6fa;color:#1a237e;}
+.send-body{padding:18px 20px;overflow-y:auto;flex:1;}
+.send-panel{display:none;}
+.send-panel.active{display:block;}
+.sfg{margin-bottom:12px;}
+.sfg label{display:block;font-size:11.5px;font-weight:600;color:#3949ab;margin-bottom:4px;}
+.sfg input,.sfg textarea,.sfg select{width:100%;padding:8px 11px;border:1px solid rgba(26,35,126,0.18);border-radius:6px;font-size:13px;color:#1a237e;outline:none;transition:border .15s;}
+.sfg input:focus,.sfg textarea:focus{border-color:#1a237e;box-shadow:0 0 0 3px rgba(26,35,126,0.08);}
+.sfg textarea{resize:vertical;line-height:1.6;}
+.attach-zone{border:2px dashed rgba(26,35,126,0.25);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:all .15s;margin-top:6px;}
+.attach-zone:hover{border-color:#1a237e;background:#f5f6fa;}
+.attach-zone.drag-over{border-color:#c62828;background:#fff8f8;}
+.attach-item{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#f5f6fa;border-radius:6px;margin-top:5px;font-size:12px;color:#3949ab;}
+.attach-item .fn{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.attach-del{background:none;border:none;cursor:pointer;color:#c62828;font-size:16px;padding:0 2px;line-height:1;}
+.wa-msg-box{background:#e8f5e9;border:1px solid rgba(46,125,50,0.25);border-radius:10px;padding:14px;font-size:12px;color:#1b5e20;line-height:1.8;white-space:pre-wrap;max-height:220px;overflow-y:auto;font-family:var(--fm);}
+.send-ftr{padding:14px 20px;border-top:1px solid #eef0f8;display:flex;gap:8px;justify-content:flex-end;align-items:center;flex-shrink:0;}
+.btn-wa-send{background:#25D366;color:#fff;border:none;}
+.btn-wa-send:hover{background:#1da851;}
+.btn-send-email{background:#c62828;color:#fff;border:none;}
+.btn-send-email:hover{background:#b71c1c;}
+.send-status{font-size:12px;padding:8px 12px;border-radius:6px;margin-bottom:10px;display:none;}
+.send-status.ok{background:#e8f5e9;color:#2e7d32;display:block;}
+.send-status.err{background:#ffebee;color:#c62828;display:block;}
+.send-status.loading{background:#e8eaf6;color:#1a237e;display:block;}
+@media(max-width:600px){.send-modal{width:100%;max-width:100%;border-radius:12px 12px 0 0;margin-top:auto;}}
+
 </style>
 </head>
 <body>
@@ -757,7 +795,7 @@ input[type=number] { -moz-appearance:textfield; appearance:textfield; }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Print / PDF
     </button>
-    <button class="btn btn-sm" onclick="openSendModal()" style="background:#1a237e;color:#fff;gap:5px;">
+    <button class="btn btn-sm" onclick="openSendModal()" style="background:#1a237e;color:#fff;gap:5px;flex-shrink:0;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       Send
     </button>
@@ -1631,219 +1669,269 @@ function showDocketToast(msg,type){
 }
 
 
-// ════════════════════════════════════════════════
-// SEND QUOTATION — Email & WhatsApp
-// ════════════════════════════════════════════════
-let attachedFiles = [];
-let currentSendTab = 'email';
 
+// ════════════════════════════════════════════════
+// SEND QUOTATION — Direct Email API + WhatsApp
+// ════════════════════════════════════════════════
+let emailAttachments = [];  // File objects for email
+let waAttachments    = [];  // File objects for WhatsApp
+let currentSendTab   = 'email';
+
+// ── Open modal & pre-fill ─────────────────────────
 function openSendModal() {
-  // Pre-fill fields from current quotation
   const get = id => document.getElementById(id)?.value || '';
 
-  // From: use CRM logged-in user's email from localStorage
+  // From: logged-in user's email
   let userEmail = '';
-  try {
-    const userData = JSON.parse(localStorage.getItem('sp_user') || '{}');
-    userEmail = userData.email || '';
-  } catch(e) {}
-  const fromEl = document.getElementById('send_from');
-  if (fromEl && !fromEl.value) fromEl.value = userEmail || 'bopanna@magmaticndt.com';
+  try { userEmail = JSON.parse(localStorage.getItem('sp_user')||'{}').email || ''; } catch(e){}
+  setIfEmpty('se_from', userEmail || 'bopanna@magmaticndt.com');
 
-  // To: customer email if filled
-  const toEl = document.getElementById('send_to');
-  if (toEl && !toEl.value) toEl.value = get('f_email');
+  // To: customer email
+  setIfEmpty('se_to', get('f_email'));
 
-  // CC: info@magmaticndt.com default
-  const ccEl = document.getElementById('send_cc');
-  if (ccEl && !ccEl.value) ccEl.value = 'info@magmaticndt.com';
+  // CC
+  setIfEmpty('se_cc', 'info@magmaticndt.com');
 
   // Subject
-  const ref     = get('f_ref');
-  const custName= get('f_to').split('\n')[0].replace('M/s. ','').replace('M/S. ','');
-  const subjEl  = document.getElementById('send_subject');
-  if (subjEl && !subjEl.value)
-    subjEl.value = `Quotation ${ref} — ${custName}`.trim();
+  const ref  = get('f_ref');
+  const cust = get('f_to').split('\n')[0].replace(/^M\/s\.?\s*/i,'').trim();
+  setIfEmpty('se_subject', `Quotation ${ref}${cust ? ' — ' + cust : ''}`);
 
   // Body
-  const bodyEl = document.getElementById('send_body');
-  if (bodyEl && !bodyEl.value) {
-    const { grand } = calcTotals();
-    bodyEl.value =
+  const {grand} = calcTotals();
+  const amtWords = numberToWords(grand);
+  setIfEmpty('se_body',
 `Dear Sir / Madam,
 
-Please find attached our quotation ${ref} for your kind consideration.
+Greetings from Magmatic NDT Systems Pvt Ltd!
 
-${get('f_subject') ? 'Reference: ' + get('f_subject') + '\n' : ''}Amount: ₹${fmt(grand)} (${numberToWords(grand)})
+Please find herewith our quotation ${ref}${get('f_subject') ? ' for ' + get('f_subject') : ''}.
 
-We look forward to your valued order.
+${grand > 0 ? 'Total Amount: ₹' + fmt(grand) + ' (' + amtWords + ')\n' : ''}
+We trust the offer suits your requirements and look forward to your valued order.
 
-Thanking you,
-For Magmatic NDT Systems Pvt Limited
+For any clarifications, please feel free to contact us.
+
+Thanking you and assuring our best services at all times.
+
+For Magmatic NDT Systems Pvt Ltd
 K P Bopanna — Director
-Tel: 9113872878
-www.magmaticndt.in`;
-  }
+Tel: 9113872878 | www.magmaticndt.in`);
 
   // WhatsApp number
-  const waEl = document.getElementById('send_wa_number');
-  if (waEl && !waEl.value) waEl.value = get('f_phone').replace(/[^0-9+]/g,'');
+  setIfEmpty('sw_number', get('f_phone').replace(/[^0-9+]/g,''));
 
+  clearSendStatus();
+  emailAttachments = [];
+  waAttachments    = [];
+  renderAttachList();
+  renderWAAttachList();
   updateWAPreview();
   document.getElementById('sendOverlay').classList.add('open');
   switchSendTab('email');
 }
 
+function setIfEmpty(id, val) {
+  const el = document.getElementById(id);
+  if (el && !el.value) el.value = val || '';
+}
+
 function closeSendModal() {
   document.getElementById('sendOverlay').classList.remove('open');
+  clearSendStatus();
 }
 
 function switchSendTab(tab) {
   currentSendTab = tab;
   ['email','whatsapp'].forEach(t => {
-    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
-    document.getElementById('panel-' + t).classList.toggle('active', t === tab);
+    document.getElementById('stab-' + t)?.classList.toggle('active', t === tab);
+    document.getElementById('spanel-' + t)?.classList.toggle('active', t === tab);
   });
-  const emailBtn = document.getElementById('sendEmailBtn');
-  const waBtn    = document.getElementById('sendWABtn');
-  if (emailBtn) emailBtn.style.display = tab === 'email' ? '' : 'none';
-  if (waBtn)    waBtn.style.display    = tab === 'whatsapp' ? '' : 'none';
+  const eb = document.getElementById('sendEmailBtn');
+  const wb = document.getElementById('sendWABtn');
+  if (eb) eb.style.display = tab === 'email'     ? '' : 'none';
+  if (wb) wb.style.display = tab === 'whatsapp'  ? '' : 'none';
 }
 
-// ── File attachments ──────────────────────────────
-function handleFileAttach(input) {
-  const files = Array.from(input.files);
-  files.forEach(file => {
-    if (!attachedFiles.find(f => f.name === file.name)) {
-      attachedFiles.push(file);
-    }
-  });
+// ── Status display ─────────────────────────────────
+function showSendStatus(msg, type) {
+  const el = document.getElementById('sendStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.className   = 'send-status ' + type;
+}
+function clearSendStatus() {
+  const el = document.getElementById('sendStatus');
+  if (el) { el.textContent = ''; el.className = 'send-status'; }
+}
+
+// ── Email attachments ──────────────────────────────
+function handleFileSelect(input) {
+  addFiles(emailAttachments, Array.from(input.files));
   renderAttachList();
-  input.value = ''; // reset so same file can be attached again
+  input.value = '';
 }
-
-function attachQuotationPDF() {
-  // Tell user to print-to-PDF first, then attach
-  showDocketToast('Please use Print / PDF to save the quotation as a PDF file, then attach it using the Attach File button.', 'warn');
+function handleFileDrop(e) {
+  e.preventDefault();
+  document.getElementById('attachZone')?.classList.remove('drag-over');
+  addFiles(emailAttachments, Array.from(e.dataTransfer.files));
+  renderAttachList();
 }
-
+function addFiles(arr, files) {
+  files.forEach(f => {
+    if (!arr.find(x => x.name === f.name)) arr.push(f);
+  });
+}
+function removeEmailAttachment(i) {
+  emailAttachments.splice(i, 1);
+  renderAttachList();
+}
 function renderAttachList() {
-  const list = document.getElementById('attachList');
-  if (!list) return;
-  if (!attachedFiles.length) { list.innerHTML = ''; return; }
-  list.innerHTML = attachedFiles.map((f, i) => `
+  const el = document.getElementById('attachList');
+  if (!el) return;
+  el.innerHTML = emailAttachments.map((f,i) => `
     <div class="attach-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      <span class="attach-name">${f.name}</span>
-      <span style="font-size:10px;color:#7986cb;">${(f.size/1024).toFixed(1)} KB</span>
-      <button class="attach-del" onclick="removeAttachment(${i})">×</button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1a237e" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span class="fn">${f.name}</span>
+      <span style="font-size:10px;color:#7986cb;white-space:nowrap;">${(f.size/1024).toFixed(0)} KB</span>
+      <button class="attach-del" onclick="removeEmailAttachment(${i})">×</button>
     </div>`).join('');
 }
 
-function removeAttachment(idx) {
-  attachedFiles.splice(idx, 1);
-  renderAttachList();
+// ── WhatsApp attachments ───────────────────────────
+function handleWAFileSelect(input) {
+  addFiles(waAttachments, Array.from(input.files));
+  renderWAAttachList();
+  input.value = '';
+}
+function renderWAAttachList() {
+  const el = document.getElementById('waAttachList');
+  if (!el) return;
+  el.innerHTML = waAttachments.map((f,i) => `
+    <div class="attach-item" style="margin-top:4px;">
+      <span class="fn">${f.name}</span>
+      <span style="font-size:10px;color:#7986cb;">${(f.size/1024).toFixed(0)} KB</span>
+      <button class="attach-del" onclick="waAttachments.splice(${i},1);renderWAAttachList()">×</button>
+    </div>`).join('');
 }
 
-// ── Send via Email (mailto: opens default client) ─
-function sendViaEmail() {
-  const get = id => document.getElementById(id)?.value || '';
-  const to      = get('send_to').trim();
-  const from    = get('send_from').trim();
-  const cc      = get('send_cc').trim();
-  const subject = get('send_subject').trim();
-  const body    = get('send_body').trim();
-
-  if (!to) {
-    showDocketToast('Please enter the recipient email address.', 'warn');
-    return;
-  }
-
-  // Build mailto link
-  let mailto = `mailto:${encodeURIComponent(to)}`;
-  const params = [];
-  if (cc)      params.push('cc='      + encodeURIComponent(cc));
-  if (from)    params.push('from='    + encodeURIComponent(from));
-  if (subject) params.push('subject=' + encodeURIComponent(subject));
-  if (body)    params.push('body='    + encodeURIComponent(body));
-  if (params.length) mailto += '?' + params.join('&');
-
-  // Open in default mail client
-  window.location.href = mailto;
-
-  // Note about attachments
-  if (attachedFiles.length) {
-    setTimeout(() => {
-      showDocketToast('Email client opened. Please attach the files manually in your email client.', 'warn');
-    }, 1000);
-  } else {
-    showDocketToast('Email client opened with quotation details.', 'ok');
-  }
-
-  // Update docket status to Sent
-  if (currentDocketId) {
-    setDocketStatus(currentDocketId, 'sent');
-  }
-}
-
-// ── Send via WhatsApp ────────────────────────────
+// ── WhatsApp preview ───────────────────────────────
 function updateWAPreview() {
-  const get    = id => document.getElementById(id)?.value || '';
-  const ref    = (document.getElementById('f_ref') ? document.getElementById('f_ref').value : '') || '—';
-  const cust   = (document.getElementById('f_to')  ? document.getElementById('f_to').value.split('\n')[0] : '') || '—';
-  const { grand } = calcTotals();
-  const subject= get('f_subject') || ref;
+  const get = id => document.getElementById(id)?.value || '';
+  const ref  = document.getElementById('f_ref')?.value || '—';
+  const cust = (document.getElementById('f_to')?.value||'').split('\n')[0] || '—';
+  const subj = get('f_subject') || get('se_subject') || '';
+  const {grand} = calcTotals();
 
   const msg =
 `*Magmatic NDT Systems Pvt Ltd*
-Tel: 9113872878 | www.magmaticndt.in
+📍 Bengaluru – 560108
+📞 9113872878 | 🌐 www.magmaticndt.in
 
 Dear Sir / Madam,
 
-Please find our quotation details below:
+Greetings! Please find our quotation details below:
 
-*Ref:* ${ref}
-*Customer:* ${cust}
-${subject ? '*Subject:* ' + subject + '\n' : ''}*Amount:* ₹${fmt(grand)}
+*Quotation Ref:* ${ref}
+*Customer:* ${cust}${subj ? '\n*Subject:* ' + subj : ''}
+*Amount:* ₹${fmt(grand)}
 *(${numberToWords(grand)})*
 
-Kindly share your valued purchase order at your earliest convenience.
+Kindly review and share your valued Purchase Order.
 
-For the detailed quotation PDF, please request via email to bopanna@magmaticndt.com
+For the quotation PDF, please request at:
+📧 bopanna@magmaticndt.com
 
 Thank you,
-*K P Bopanna*
-Director, Magmatic NDT Systems Pvt Ltd`;
+*K P Bopanna* | Director
+_Magmatic NDT Systems Pvt Ltd_`;
 
-  const prev = document.getElementById('waPreview');
-  if (prev) prev.textContent = msg;
+  const el = document.getElementById('waPreview');
+  if (el) el.textContent = msg;
 }
 
-function sendViaWhatsApp() {
-  const get    = id => document.getElementById(id)?.value || '';
-  let number   = get('send_wa_number').replace(/[^0-9+]/g, '');
-  const preview= document.getElementById('waPreview');
-  const msg    = preview ? preview.textContent : '';
+// ── SEND EMAIL via backend API ─────────────────────
+async function sendViaEmail() {
+  const get = id => (document.getElementById(id)?.value || '').trim();
+  const to      = get('se_to');
+  const from    = get('se_from');
+  const cc      = get('se_cc');
+  const subject = get('se_subject');
+  const body    = get('se_body');
 
-  if (!number) {
-    showDocketToast('Please enter the WhatsApp number.', 'warn');
-    return;
+  if (!to)      { showSendStatus('⚠ Please enter recipient email address.','err'); return; }
+  if (!subject) { showSendStatus('⚠ Please enter a subject.','err'); return; }
+
+  // Check SMTP config
+  const token = localStorage.getItem('sp_token');
+  if (!token) { showSendStatus('⚠ Please log in to the CRM first.','err'); return; }
+
+  showSendStatus('Sending email…','loading');
+  const sendBtn = document.getElementById('sendEmailBtn');
+  const indic   = document.getElementById('sendingIndicator');
+  if (sendBtn)  { sendBtn.disabled = true; }
+  if (indic)    { indic.style.display = 'flex'; }
+
+  try {
+    const formData = new FormData();
+    formData.append('to',      to);
+    formData.append('from',    from);
+    if (cc)     formData.append('cc',      cc);
+    formData.append('subject', subject);
+    formData.append('body',    body);
+    formData.append('quotationRef', document.getElementById('f_ref')?.value || '');
+
+    // Attach files
+    emailAttachments.forEach(f => formData.append('attachments', f));
+
+    const res = await fetch('/api/email/send', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body:   formData,
+    });
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message || 'Send failed');
+
+    showSendStatus('✅ ' + (data.message || 'Email sent successfully!'), 'ok');
+    emailAttachments = [];
+    renderAttachList();
+
+    // Mark docket as Sent
+    if (currentDocketId) setDocketStatus(currentDocketId, 'sent');
+
+    setTimeout(closeSendModal, 2500);
+  } catch(err) {
+    showSendStatus('❌ ' + err.message, 'err');
+    console.error('Email error:', err);
+  } finally {
+    if (sendBtn) sendBtn.disabled = false;
+    if (indic)   indic.style.display = 'none';
   }
+}
 
-  // Remove leading 0, add +91 if no country code
-  if (number.startsWith('0'))    number = '91' + number.slice(1);
+// ── SEND via WhatsApp ──────────────────────────────
+function sendViaWhatsApp() {
+  let number = (document.getElementById('sw_number')?.value || '').replace(/[^0-9+]/g,'');
+  if (!number) { showSendStatus('⚠ Please enter a WhatsApp number.','err'); return; }
+
+  // Normalise number
+  if (number.startsWith('0'))   number = '91' + number.slice(1);
   if (!number.startsWith('+') && !number.startsWith('91')) number = '91' + number;
   number = number.replace('+','');
 
-  const waURL = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
-  window.open(waURL, '_blank');
+  const msg = document.getElementById('waPreview')?.textContent || '';
+  const url  = `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
 
-  // Update docket status to Sent
-  if (currentDocketId) {
-    setDocketStatus(currentDocketId, 'sent');
+  // If files selected, prompt user
+  if (waAttachments.length > 0) {
+    showSendStatus(`✅ WhatsApp opened. After sending the message, use the 📎 icon to attach your ${waAttachments.length} file(s).`, 'ok');
+  } else {
+    showSendStatus('✅ WhatsApp opened with quotation message.', 'ok');
   }
 
-  showDocketToast('WhatsApp opened with quotation message.', 'ok');
+  if (currentDocketId) setDocketStatus(currentDocketId, 'sent');
 }
 
 
@@ -1939,107 +2027,116 @@ init();
     }
   </script>
 
-<!-- ── SEND QUOTATION MODAL ───────────────────────── -->
+
+<!-- ══ SEND QUOTATION MODAL ══════════════════════════ -->
 <div class="send-overlay" id="sendOverlay" onclick="if(event.target===this)closeSendModal()">
   <div class="send-modal">
-    <div class="send-modal-header">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-      </svg>
+
+    <div class="send-hdr">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       <h3>Send Quotation</h3>
-      <button onclick="closeSendModal()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;">✕</button>
+      <button class="send-close-btn" onclick="closeSendModal()">✕</button>
     </div>
-    <div class="send-modal-body">
-      <!-- Tabs -->
-      <div class="send-tabs">
-        <div class="send-tab active" id="tab-email" onclick="switchSendTab('email')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,4 12,13 2,4"/></svg>
-          Email
-        </div>
-        <div class="send-tab" id="tab-whatsapp" onclick="switchSendTab('whatsapp')">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
-          WhatsApp
-        </div>
-      </div>
 
-      <!-- EMAIL PANEL -->
-      <div class="send-panel active" id="panel-email">
+    <div class="send-tabs">
+      <div class="send-tab active" id="stab-email" onclick="switchSendTab('email')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,4 12,13 2,4"/></svg>
+        Email
+      </div>
+      <div class="send-tab" id="stab-whatsapp" onclick="switchSendTab('whatsapp')">
+        <svg viewBox="0 0 24 24" fill="#25D366" width="14" height="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2"/></svg>
+        WhatsApp
+      </div>
+    </div>
+
+    <div class="send-body">
+      <div class="send-status" id="sendStatus"></div>
+
+      <!-- ══ EMAIL PANEL ══════════════════════════════ -->
+      <div class="send-panel active" id="spanel-email">
         <div class="sfg">
-          <label>From (your email)</label>
-          <input type="email" id="send_from" placeholder="bopanna@magmaticndt.com">
-          <div style="font-size:11px;color:#7986cb;margin-top:3px;">Uses your login email by default</div>
+          <label>From</label>
+          <input type="email" id="se_from" placeholder="bopanna@magmaticndt.com">
         </div>
         <div class="sfg">
-          <label>To <span style="color:#c62828;">*</span></label>
-          <input type="email" id="send_to" placeholder="customer@company.com">
+          <label>To <span style="color:#c62828">*</span></label>
+          <input type="email" id="se_to" placeholder="customer@company.com">
         </div>
         <div class="sfg">
-          <label>CC (optional)</label>
-          <input type="email" id="send_cc" placeholder="info@magmaticndt.com">
+          <label>CC</label>
+          <input type="email" id="se_cc" placeholder="info@magmaticndt.com">
         </div>
         <div class="sfg">
-          <label>Subject</label>
-          <input type="text" id="send_subject" placeholder="Quotation — MNDT/QUO/2026/05/001">
+          <label>Subject <span style="color:#c62828">*</span></label>
+          <input type="text" id="se_subject">
         </div>
         <div class="sfg">
-          <label>Message Body</label>
-          <textarea id="send_body" rows="6"></textarea>
+          <label>Message</label>
+          <textarea id="se_body" rows="7"></textarea>
         </div>
         <div class="sfg">
-          <label>Attachments</label>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <button class="btn btn-outline btn-sm" onclick="document.getElementById('attachFileInput').click()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-              Attach File
-            </button>
-            <button class="btn btn-outline btn-sm" onclick="attachQuotationPDF()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Attach This Quotation
-            </button>
-            <input type="file" id="attachFileInput" multiple style="display:none" onchange="handleFileAttach(this)">
+          <label>Attachments (drag & drop or click)</label>
+          <div class="attach-zone" id="attachZone"
+            onclick="document.getElementById('se_files').click()"
+            ondragover="event.preventDefault();this.classList.add('drag-over')"
+            ondragleave="this.classList.remove('drag-over')"
+            ondrop="handleFileDrop(event)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#7986cb" stroke-width="1.5" width="28" height="28"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+            <div style="font-size:12px;color:#7986cb;margin-top:6px;">Click or drag files here<br><span style="font-size:11px;">PDF, images, docs — max 10MB each</span></div>
           </div>
-          <div class="attach-list" id="attachList"></div>
-        </div>
-        <div style="background:#fff8f3;border:1px solid rgba(198,40,40,0.2);border-radius:6px;padding:10px 12px;font-size:11.5px;color:#6b4c1e;">
-          <strong>Note:</strong> Email will open in your default email client (Outlook / Gmail) with all fields pre-filled. You can review and send from there.
+          <input type="file" id="se_files" multiple style="display:none" onchange="handleFileSelect(this)">
+          <div id="attachList"></div>
         </div>
       </div>
 
-      <!-- WHATSAPP PANEL -->
-      <div class="send-panel" id="panel-whatsapp">
+      <!-- ══ WHATSAPP PANEL ═══════════════════════════ -->
+      <div class="send-panel" id="spanel-whatsapp">
         <div class="sfg">
-          <label>WhatsApp Number <span style="color:#c62828;">*</span></label>
-          <input type="tel" id="send_wa_number" placeholder="+91 98765 43210"
-            oninput="updateWAPreview()">
+          <label>WhatsApp Number <span style="color:#c62828">*</span></label>
+          <input type="tel" id="sw_number" placeholder="+91 98765 43210" oninput="updateWAPreview()">
           <div style="font-size:11px;color:#7986cb;margin-top:3px;">Include country code e.g. +91 for India</div>
         </div>
         <div class="sfg">
           <label>Message Preview</label>
-          <div class="wa-preview" id="waPreview">Fill in the details above to preview the message…</div>
+          <div class="wa-msg-box" id="waPreview"></div>
         </div>
-        <div style="background:#e8f5e9;border:1px solid rgba(46,125,50,0.25);border-radius:6px;padding:10px 12px;font-size:11.5px;color:#1b5e20;margin-top:8px;">
-          <strong>Note:</strong> Opens WhatsApp Web / App with the message pre-filled. For the PDF, use the <strong>Print / PDF</strong> button to save the quotation, then attach it manually in WhatsApp.
+        <div class="sfg">
+          <label>Share Files / Quotation PDF</label>
+          <div style="background:#f5f6fa;border-radius:8px;padding:12px;font-size:12.5px;color:#3949ab;line-height:1.8;">
+            <strong>Step 1:</strong> Click <em>Open WhatsApp</em> below — the text message will be pre-filled.<br>
+            <strong>Step 2:</strong> In WhatsApp, tap the 📎 attachment icon to attach files.<br>
+            <strong>Step 3:</strong> To send the quotation PDF — use <strong>Print / PDF</strong> first to save it, then attach from WhatsApp.<br><br>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <div class="sfg" style="flex:1;min-width:180px;margin:0;">
+                <label style="margin-bottom:4px;">Or attach files directly here to share link:</label>
+                <div class="attach-zone" style="padding:10px;" onclick="document.getElementById('sw_files').click()">
+                  <span style="font-size:12px;color:#7986cb;">📎 Click to select files</span>
+                </div>
+                <input type="file" id="sw_files" multiple style="display:none" onchange="handleWAFileSelect(this)">
+                <div id="waAttachList"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="send-modal-footer">
-      <div class="sending-spinner" id="sendingSpinner">
-        <div style="width:16px;height:16px;border:2px solid #eef0f8;border-top-color:#1a237e;border-radius:50%;animation:spin .6s linear infinite;"></div>
+    <div class="send-ftr">
+      <span id="sendingIndicator" style="display:none;font-size:12px;color:#7986cb;align-items:center;gap:6px;">
+        <div style="width:14px;height:14px;border:2px solid #eef0f8;border-top-color:#1a237e;border-radius:50%;animation:spin .6s linear infinite;"></div>
         Sending…
-      </div>
-      <button class="btn btn-outline" onclick="closeSendModal()">Cancel</button>
-      <button class="btn btn-wa" id="sendWABtn" style="display:none" onclick="sendViaWhatsApp()">
-        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+      </span>
+      <button class="btn btn-outline btn-sm" onclick="closeSendModal()">Cancel</button>
+      <button class="btn btn-wa-send btn-sm" id="sendWABtn" style="display:none" onclick="sendViaWhatsApp()">
         Open WhatsApp
       </button>
-      <button class="btn btn-email-send" id="sendEmailBtn" onclick="sendViaEmail()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        Open in Email Client
+      <button class="btn btn-send-email btn-sm" id="sendEmailBtn" onclick="sendViaEmail()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Send Email
       </button>
     </div>
+
   </div>
 </div>
 
 </body>
-</html>
