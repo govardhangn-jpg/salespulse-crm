@@ -1,61 +1,60 @@
 const express = require('express');
 const router  = express.Router();
-const nodemailer = require('nodemailer');
-const multer  = require('multer');
 const { protect } = require('../middleware/auth');
 
-// ── In-memory storage for attachments (no disk needed) ──
-const storage = multer.memoryStorage();
-const upload  = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024, files: 5 }, // 10MB per file, 5 files max
-});
+// ── Use built-in modules only — no multer needed ──
+// Files are sent as base64 in JSON body from the frontend
 
-// ── Create transporter from env vars ──────────────────
-function makeTransporter(fromEmail) {
-  // Use SMTP env vars; falls back to Gmail OAuth2 if set
+function makeTransporter() {
+  // Lazy-require nodemailer only when needed
+  const nodemailer = require('nodemailer');
   return nodemailer.createTransport({
     host:   process.env.SMTP_HOST   || 'smtp.gmail.com',
     port:   parseInt(process.env.SMTP_PORT || '587'),
     secure: process.env.SMTP_SECURE === 'true',
     auth: {
-      user: process.env.SMTP_USER || fromEmail,
+      user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS || process.env.SMTP_PASSWORD,
     },
   });
 }
 
 // POST /api/email/send
-router.post('/send', protect, upload.array('attachments', 5), async (req, res) => {
+// Body: { to, cc, from, subject, body, attachments: [{name, type, data(base64)}] }
+router.post('/send', protect, express.json({ limit: '25mb' }), async (req, res) => {
   try {
-    const { to, cc, from, subject, body, quotationRef } = req.body;
+    const { to, cc, subject, body, attachments = [] } = req.body;
 
     if (!to || !subject)
-      return res.status(400).json({ status:'fail', message:'To and Subject are required.' });
+      return res.status(400).json({ status: 'fail', message: 'To and Subject are required.' });
 
-    // Use logged-in user email as sender, or env default
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS)
+      return res.status(503).json({
+        status: 'fail',
+        message: 'Email not configured. Please set SMTP_USER and SMTP_PASS in environment variables.',
+      });
+
     const fromAddr = process.env.SMTP_FROM
-      || `${req.user.name} <${process.env.SMTP_USER || 'bopanna@magmaticndt.com'}>`;
+      || `${req.user.name} <${process.env.SMTP_USER}>`;
 
-    const transporter = makeTransporter(req.user.email);
+    const transporter = makeTransporter();
 
-    // Build mail options
     const mailOptions = {
       from:    fromAddr,
       to,
       subject,
       text:    body,
       html:    body.replace(/\n/g, '<br>'),
-      replyTo: req.user.email, // reply goes to the logged-in user
+      replyTo: req.user.email,
     };
     if (cc) mailOptions.cc = cc;
 
-    // Add attachments from multipart upload
-    if (req.files && req.files.length > 0) {
-      mailOptions.attachments = req.files.map(f => ({
-        filename:    f.originalname,
-        content:     f.buffer,
-        contentType: f.mimetype,
+    // Attachments sent as base64 from frontend
+    if (attachments.length > 0) {
+      mailOptions.attachments = attachments.map(a => ({
+        filename:    a.name,
+        content:     Buffer.from(a.data, 'base64'),
+        contentType: a.type || 'application/octet-stream',
       }));
     }
 
@@ -63,13 +62,13 @@ router.post('/send', protect, upload.array('attachments', 5), async (req, res) =
 
     res.json({
       status:  'success',
-      message: `Email sent to ${to}${req.files?.length ? ` with ${req.files.length} attachment(s)` : ''}`,
+      message: `Email sent to ${to}${attachments.length ? ` with ${attachments.length} attachment(s)` : ''}`,
     });
   } catch (err) {
-    console.error('Email send error:', err);
+    console.error('[Email] Send error:', err.message);
     res.status(500).json({
       status:  'error',
-      message: err.message || 'Failed to send email. Check SMTP settings.',
+      message: err.message || 'Failed to send email. Check SMTP settings on Render.',
     });
   }
 });
