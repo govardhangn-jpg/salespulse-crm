@@ -436,15 +436,10 @@ tbody tr:hover{background:rgba(26,35,126,0.05);}
     </div>
     <div class="login-title" style="color:#1a237e;font-size:17px;">Welcome back</div>
     <div class="login-sub">Sign in to your account to continue</div>
-    <div class="login-hint">
-      <strong>Admin:</strong> admin@magmaticndt.com<br>
-      <strong>Sales (MH/KA):</strong> priya@salespulse.com<br>
-      <strong>Sales (GJ):</strong> rahul@salespulse.com<br>
-      All passwords: <strong>Password@123</strong>
-    </div>
+
     <div class="login-error" id="loginError"></div>
-    <div class="form-group"><label class="form-label required">Email</label><input type="email" id="loginEmail" value="admin@magmaticndt.com" placeholder="you@company.com"></div>
-    <div class="form-group"><label class="form-label required">Password</label><input type="password" id="loginPassword" value="Password@123" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="form-group"><label class="form-label required">Email</label><input type="email" id="loginEmail"  placeholder="you@company.com"></div>
+    <div class="form-group"><label class="form-label required">Password</label><input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <button class="btn btn-primary" style="width:100%;justify-content:center;" id="loginBtn" onclick="doLogin()">Sign In</button>
   </div>
 </div>
