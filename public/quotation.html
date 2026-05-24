@@ -230,8 +230,8 @@ textarea { resize: vertical; line-height: 1.6; min-height: 60px; }
 .doc-meta-right {
   padding: 16px 32px;
 }
-.doc-meta-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; font-weight: 600; }
-.doc-meta-value { font-size: 13px; color: var(--text); font-weight: 500; margin-bottom: 10px; line-height: 1.4; }
+.doc-meta-label { font-size: 10px; color: #1a237e; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; font-weight: 700; }
+.doc-meta-value { font-size: 13px; color: #3b2a8c; font-weight: 500; margin-bottom: 10px; line-height: 1.4; }
 .doc-meta-value:last-child { margin-bottom: 0; }
 .doc-ref-row { display: flex; gap: 24px; }
 .doc-ref-row > div { flex: 1; }
@@ -417,6 +417,37 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
   .form-panel { height: auto; position: static; }
   .preview-panel { height: auto; }
 }
+
+/* Remove spinners from number inputs */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
+input[type=number] { -moz-appearance:textfield; appearance:textfield; }
+
+/* ── SINGLE PAGE PRINT LAYOUT ──────────────────── */
+@media print {
+  @page { margin: 8mm 10mm; size: A4 portrait; }
+  .quotation-doc { box-shadow: none !important; }
+  .doc-header { padding: 10px 18px 8px !important; }
+  .doc-company-name { font-size: 16px !important; }
+  .doc-company-addr { font-size: 10px !important; line-height: 1.5 !important; }
+  .doc-title-band { padding: 4px !important; font-size: 12px !important; }
+  .doc-meta { padding: 0 !important; }
+  .doc-meta-left, .doc-meta-right { padding: 8px 18px !important; }
+  .doc-meta-label { font-size: 8px !important; margin-bottom: 1px !important; }
+  .doc-meta-value { font-size: 11px !important; margin-bottom: 6px !important; }
+  .doc-body { padding: 10px 18px !important; }
+  .doc-salutation { font-size: 11px !important; margin-bottom: 8px !important; }
+  .price-section-title { font-size: 12px !important; margin-bottom: 6px !important; }
+  .price-table th { padding: 5px 8px !important; font-size: 9px !important; }
+  .price-table td { padding: 4px 8px !important; font-size: 10px !important; }
+  .doc-terms { font-size: 10px !important; margin-top: 8px !important; }
+  .doc-footer { margin-top: 12px !important; }
+  .doc-closing { font-size: 10px !important; line-height: 1.6 !important; margin-bottom: 16px !important; }
+  .doc-sign-name { font-size: 16px !important; }
+  .doc-sign-co, .doc-sign-title { font-size: 10px !important; }
+  img[alt="Authorised Signatory"] { height: 50px !important; }
+  .doc-footer-band { display: block !important; }
+}
 </style>
 </head>
 <body>
@@ -466,7 +497,11 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 
       <div class="fg">
         <label>To (Company Name / Contact)</label>
-        <textarea id="f_to" rows="3" placeholder="M/s. XYZ Company Ltd&#10;Attention: Mr. Rajesh Kumar&#10;Bengaluru - 560001"></textarea>
+        <textarea id="f_to" rows="3" placeholder="M/s. XYZ Company Ltd&#10;Bengaluru - 560001"></textarea>
+      </div>
+      <div class="fg">
+        <label>Kind Attention</label>
+        <input type="text" id="f_attn" placeholder="Mr. Rajesh Kumar, Purchase Manager">
       </div>
       <div class="form-row">
         <div class="fg">
@@ -650,7 +685,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
     <div class="doc-header">
       <div>
         <div class="doc-company-name">Magmatic NDT Systems Pvt Ltd</div>
-        <div class="doc-company-addr" style="color:#3949ab;">
+        <div class="doc-company-addr" style="color:#3b2a8c;">
           No 53, 4th Cross Road, 2nd Main Road<br>
           Anjanapura 10th Block Extn. LBS Nagar,<br>
           (Opposite to BTS Garage – Anjanapura)<br>
@@ -670,6 +705,10 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
       <div class="doc-meta-left">
         <div class="doc-meta-label">To</div>
         <div class="doc-meta-value" id="d_to" style="white-space:pre-line;"></div>
+        <div id="d_attn_wrap" style="display:none;">
+          <div class="doc-meta-label" style="color:#c62828;">Kind Attention</div>
+          <div class="doc-meta-value" id="d_attn" style="color:#c62828;font-weight:600;"></div>
+        </div>
         <div class="doc-meta-label">Contact</div>
         <div class="doc-meta-value" id="d_contact"></div>
         <div class="doc-meta-label">Email</div>
@@ -734,6 +773,22 @@ hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
             <div class="doc-sign-title">Director</div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Company Footer Band -->
+    <div class="doc-footer-band" style="margin-top:20px;border-top:2px solid #1a237e;padding:10px 32px;background:#f5f6fa;">
+      <div style="text-align:center;font-size:11px;color:#3b2a8c;font-weight:700;letter-spacing:0.5px;margin-bottom:4px;">
+        MPI, LPI Equipments · Consumables · Services &amp; Marking Machines
+      </div>
+      <div style="text-align:center;font-size:10.5px;color:#3b2a8c;">
+        <strong>Sales and Service Centers at:</strong>
+        Chennai · Coimbatore · Pune · Delhi NCR · Ludhiana · Gujarat
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:#3949ab;">
+        <span>Tel: 9113872878</span>
+        <span>www.magmaticndt.in</span>
+        <span>bopanna@magmaticndt.com · info@magmaticndt.com</span>
       </div>
     </div>
 
@@ -1091,6 +1146,10 @@ function renderPreview() {
 
   // To / Meta
   setText('d_to', get('f_to') || '—');
+  const attnVal = get('f_attn');
+  const attnWrap = document.getElementById('d_attn_wrap');
+  if (attnWrap) attnWrap.style.display = attnVal ? '' : 'none';
+  setText('d_attn', attnVal);
   setText('d_contact', get('f_phone') || '—');
   setText('d_email', get('f_email') || '—');
   setText('d_ref', get('f_ref') || '—');
@@ -1229,7 +1288,7 @@ function serializeForm() {
     validCustom:get('f_valid_custom'),to:get('f_to'),phone:get('f_phone'),
     email:get('f_email'),subject:get('f_subject'),body:get('f_body'),
     hsn:get('f_hsn'),note:get('f_note'),gst:get('f_gst'),
-    payment:get('f_payment'),delivery:get('f_delivery'),warranty:get('f_warranty'),
+    payment:get('f_payment'),delivery:get('f_delivery'),warranty:get('f_warranty'),attn:get('f_attn'),
     items:JSON.parse(JSON.stringify(items)),
   };
 }
@@ -1243,7 +1302,7 @@ function deserializeForm(data) {
   set('f_subject',data.subject); set('f_body',data.body);
   set('f_hsn',data.hsn); set('f_note',data.note);
   set('f_gst',data.gst||'18'); set('f_payment',data.payment);
-  set('f_delivery',data.delivery); set('f_warranty',data.warranty);
+  set('f_delivery',data.delivery); set('f_warranty',data.warranty); set('f_attn',data.attn||'');
   const wrap=document.getElementById('f_valid_custom_wrap');
   if(wrap) wrap.style.display=(data.validPreset==='custom')?'block':'none';
   items=data.items||[];
@@ -1331,7 +1390,21 @@ function deleteDocket(docketId){
 
 function newQuotation(){
   if(currentDocketId&&!confirm('Start a new blank quotation? Unsaved changes will be lost.')) return;
-  currentDocketId=null; currentVersion=1; updateCurrentBadge(); closeDocketPanel(); resetForm();
+  currentDocketId=null; currentVersion=1; updateCurrentBadge(); closeDocketPanel();
+  // Clear all fields completely
+  ['f_to','f_attn','f_phone','f_email','f_ref','f_subject','f_body',
+   'f_hsn','f_note','f_warranty'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('f_date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('f_valid_preset').value='30';
+  document.getElementById('f_gst').value='18';
+  document.getElementById('f_payment').value='Advance';
+  document.getElementById('f_delivery').value='Ex-Works, Bengaluru';
+  document.getElementById('f_valid_custom_wrap').style.display='none';
+  items=[]; nextId=1; renderItemsTable();
+  currentDocketId=null; updateCurrentBadge();
+  renderPreview();
 }
 
 function renderDocketList(query){
