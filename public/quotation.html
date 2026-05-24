@@ -1850,7 +1850,7 @@ _Magmatic NDT Systems Pvt Ltd_`;
   if (el) el.textContent = msg;
 }
 
-// ── SEND EMAIL via backend API ─────────────────────
+// ── SEND EMAIL via backend API (base64 attachments, no multer) ────
 async function sendViaEmail() {
   const get = id => (document.getElementById(id)?.value || '').trim();
   const to      = get('se_to');
@@ -1862,32 +1862,39 @@ async function sendViaEmail() {
   if (!to)      { showSendStatus('⚠ Please enter recipient email address.','err'); return; }
   if (!subject) { showSendStatus('⚠ Please enter a subject.','err'); return; }
 
-  // Check SMTP config
   const token = localStorage.getItem('sp_token');
   if (!token) { showSendStatus('⚠ Please log in to the CRM first.','err'); return; }
 
-  showSendStatus('Sending email…','loading');
+  showSendStatus('Preparing email…','loading');
   const sendBtn = document.getElementById('sendEmailBtn');
   const indic   = document.getElementById('sendingIndicator');
-  if (sendBtn)  { sendBtn.disabled = true; }
-  if (indic)    { indic.style.display = 'flex'; }
+  if (sendBtn) sendBtn.disabled = true;
+  if (indic)   indic.style.display = 'flex';
 
   try {
-    const formData = new FormData();
-    formData.append('to',      to);
-    formData.append('from',    from);
-    if (cc)     formData.append('cc',      cc);
-    formData.append('subject', subject);
-    formData.append('body',    body);
-    formData.append('quotationRef', document.getElementById('f_ref')?.value || '');
+    // Convert files to base64 (no multer needed on server)
+    const attachments = await Promise.all(
+      emailAttachments.map(f => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload  = () => resolve({
+          name: f.name,
+          type: f.type,
+          data: reader.result.split(',')[1], // base64 only
+        });
+        reader.onerror = reject;
+        reader.readAsDataURL(f);
+      }))
+    );
 
-    // Attach files
-    emailAttachments.forEach(f => formData.append('attachments', f));
+    showSendStatus('Sending email…','loading');
 
     const res = await fetch('/api/email/send', {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token },
-      body:   formData,
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type':  'application/json',
+      },
+      body: JSON.stringify({ to, from, cc, subject, body, attachments }),
     });
     const data = await res.json();
 
@@ -1896,10 +1903,7 @@ async function sendViaEmail() {
     showSendStatus('✅ ' + (data.message || 'Email sent successfully!'), 'ok');
     emailAttachments = [];
     renderAttachList();
-
-    // Mark docket as Sent
     if (currentDocketId) setDocketStatus(currentDocketId, 'sent');
-
     setTimeout(closeSendModal, 2500);
   } catch(err) {
     showSendStatus('❌ ' + err.message, 'err');
