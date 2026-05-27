@@ -33,36 +33,41 @@ router.get(
   asyncHandler(async (req, res) => {
     const { search, segment, status, competition, state, assignedTo, page = 1, limit = 500 } = req.query;
 
-    // Build filter — always merge with state filter
-    const filter = { ...req.stateFilter };
+    // ── Build filter ─────────────────────────────────────────
+    const andClauses = [];
 
-    // Additional filters
-    if (status) filter.status = status;
-    if (competition) filter.competition = competition;
-    if (state && req.user.role === 'admin') filter['address.state'] = state;
-    if (assignedTo && req.user.role === 'admin') filter.assignedTo = assignedTo;
-    if (segment) {
-      const [category, value] = segment.split(':');
-      if (value) { filter['segment.category'] = category; filter['segment.value'] = value; }
-      else filter['segment.value'] = category;
+    // State filter from middleware (empty for admin or unassigned users)
+    if (req.stateFilter && Object.keys(req.stateFilter).length > 0) {
+      andClauses.push(req.stateFilter);
     }
 
-    // Admins see ALL customers (no restriction)
-    // Sales reps see: customers assigned to them OR submitted by them (any status except rejected)
-    if (req.user.role !== 'admin') {
-      filter.$and = [
-        { status: { $ne: 'rejected' } },
-        {
-          $or: [
-            { assignedTo: req.user._id },
-            { submittedBy: req.user._id },
-          ],
-        },
-      ];
+    // Status filter
+    if (status) andClauses.push({ status });
+    if (competition) andClauses.push({ competition });
+    if (state && req.user.role === 'admin') andClauses.push({ 'address.state': state });
+    if (assignedTo && req.user.role === 'admin') andClauses.push({ assignedTo });
+    if (segment) {
+      const [category, value] = segment.split(':');
+      if (value) andClauses.push({ 'segment.category': category, 'segment.value': value });
+      else andClauses.push({ 'segment.value': category });
     }
 
     // Text search
-    if (search) filter.$text = { $search: search };
+    if (search) andClauses.push({ $text: { $search: search } });
+
+    // Sales reps see ONLY their own customers (assigned to them OR submitted by them)
+    // Excludes rejected; includes pending, active, inactive
+    if (req.user.role !== 'admin') {
+      andClauses.push({ status: { $ne: 'rejected' } });
+      andClauses.push({
+        $or: [
+          { assignedTo: req.user._id },
+          { submittedBy: req.user._id },
+        ],
+      });
+    }
+
+    const filter = andClauses.length > 0 ? { $and: andClauses } : {};
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
