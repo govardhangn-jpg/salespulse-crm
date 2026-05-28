@@ -600,7 +600,10 @@ input[type=number] { -moz-appearance:textfield; appearance:textfield; }
             placeholder="Type to search customers…"
             oninput="filterCustomers(this.value)"
             onfocus="showDropdown()"
-            autocomplete="off">
+            onkeyup="filterCustomers(this.value)"
+            onclick="showDropdown()"
+            autocomplete="off"
+            spellcheck="false">
           <svg class="cust-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <div class="cust-dropdown" id="custDropdown"></div>
         </div>
@@ -930,55 +933,98 @@ let selectedCustomer = null;
 
 async function loadCrmCustomers() {
   const statusEl = document.getElementById('custStatus');
+  if (!statusEl) return;
+
   try {
-    // Read JWT token from localStorage (same as CRM)
-    const token = localStorage.getItem('sp_token');
+    // ── Try multiple token storage keys (CRM may use different key) ──
+    const token = localStorage.getItem('sp_token')
+               || localStorage.getItem('token')
+               || localStorage.getItem('authToken')
+               || sessionStorage.getItem('sp_token');
+
     if (!token) {
-      statusEl.textContent = '⚠ Not logged in to CRM — fill manually below';
+      statusEl.textContent = '⚠ Not logged in to CRM — enter customer details manually below';
       statusEl.className = 'cust-status error';
       return;
     }
 
-    statusEl.textContent = 'Loading customers…';
+    statusEl.textContent = 'Loading customers from CRM…';
     statusEl.className = 'cust-status loading';
 
-    const res = await fetch('/api/customers?limit=500&status=active', {
+    // ── Fetch ALL customers (no status filter — avoid $and conflict) ──
+    const res = await fetch('/api/customers?limit=500', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
-    if (!res.ok) throw new Error('Could not load customers (HTTP ' + res.status + ')');
-    const data = await res.json();
 
-    allCrmCustomers = (data.data?.customers || [])
-      .filter(c => c && c.name)
+    if (res.status === 401) {
+      statusEl.textContent = '⚠ Session expired — please log in to CRM again';
+      statusEl.className = 'cust-status error';
+      return;
+    }
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || 'HTTP ' + res.status);
+    }
+
+    const data = await res.json();
+    const raw  = data.data?.customers || data.customers || [];
+
+    if (!Array.isArray(raw)) {
+      throw new Error('Unexpected API response format');
+    }
+
+    allCrmCustomers = raw
+      .filter(c => c && c._id && c.name && c.name.trim())
       .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
-    statusEl.textContent = allCrmCustomers.length
-      ? allCrmCustomers.length + ' customers loaded from CRM'
-      : 'No active customers found';
-    statusEl.className = 'cust-status';
+    if (allCrmCustomers.length === 0) {
+      statusEl.textContent = 'No customers found in CRM';
+      statusEl.className = 'cust-status';
+    } else {
+      statusEl.textContent = '✓ ' + allCrmCustomers.length + ' customers loaded';
+      statusEl.className = 'cust-status';
+    }
+
     populateSalesRepFilter();
     renderDropdown(allCrmCustomers);
+
   } catch(e) {
-    statusEl.textContent = '⚠ ' + e.message + ' — fill manually below';
+    console.error('[Quotation] loadCrmCustomers error:', e);
+    statusEl.textContent = '⚠ Could not load customers: ' + e.message;
     statusEl.className = 'cust-status error';
   }
 }
 
 function renderDropdown(list) {
   const dd = document.getElementById('custDropdown');
-  if (!list.length) {
-    dd.innerHTML = '<div class="cust-option" style="color:var(--text3);cursor:default;">No customers found</div>';
+  if (!dd) return;
+
+  if (!list || !list.length) {
+    dd.innerHTML = allCrmCustomers.length === 0
+      ? '<div class="cust-option" style="color:var(--text3);cursor:default;padding:12px;">No customers loaded from CRM yet</div>'
+      : '<div class="cust-option" style="color:var(--text3);cursor:default;padding:12px;">No customers match your search</div>';
     return;
   }
-  dd.innerHTML = list.slice(0, 100).map((cust) => `
-    <div class="cust-option" onclick="selectCustomerFromList(${allCrmCustomers.indexOf(cust)})">
-      <div class="cust-option-name">${cust.name||''}</div>
+
+  // Show first 100 results
+  dd.innerHTML = list.slice(0, 100).map((cust) => {
+    const idx = allCrmCustomers.indexOf(cust);
+    const rep = cust.assignedTo?.name || cust.submittedBy?.name || '';
+    const city = cust.address?.city || '';
+    const state = cust.address?.state || '';
+    const loc = [city, state].filter(Boolean).join(', ');
+    return `<div class="cust-option" onclick="selectCustomerFromList(${idx})">
+      <div class="cust-option-name">${escHtml(cust.name)}</div>
       <div class="cust-option-meta">
-        ${cust.address?.state ? cust.address.state : ''}
-        ${cust.address?.city ? ' · ' + cust.address.city : ''}
-        ${(cust.assignedTo?.name || cust.submittedBy?.name) ? ' · <span style="color:#1a237e;font-weight:500;">' + (cust.assignedTo?.name || cust.submittedBy?.name) + '</span>' : ''}
+        ${loc ? escHtml(loc) : ''}
+        ${rep ? ' · <span style="color:#1a237e;font-weight:500;">' + escHtml(rep) + '</span>' : ''}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+}
+
+function escHtml(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function filterCustomers(query) {
@@ -1054,8 +1100,13 @@ function showDropdown() {
   const dd = document.getElementById('custDropdown');
   if (!dd) return;
   dd.classList.add('show');
-  // Show filtered list (respects active rep filter)
-  filterCustomers(document.getElementById('custSearch')?.value || '');
+  const query = document.getElementById('custSearch')?.value || '';
+  if (allCrmCustomers.length === 0) {
+    // Retry loading if empty
+    loadCrmCustomers();
+  } else {
+    filterCustomers(query);
+  }
 }
 
 function hideDropdown() {
@@ -1121,8 +1172,10 @@ function clearSelectedCustomer() {
 
 // Close dropdown when clicking outside
 document.addEventListener('click', (e) => {
-  if (!document.getElementById('custSearchWrap').contains(e.target)) {
-    document.getElementById('custDropdown').classList.remove('show');
+  const wrap = document.getElementById('custSearchWrap');
+  const dd   = document.getElementById('custDropdown');
+  if (wrap && dd && !wrap.contains(e.target)) {
+    dd.classList.remove('show');
   }
 });
 
