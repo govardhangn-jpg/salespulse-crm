@@ -89,8 +89,8 @@ const CUSTOMERS = [
   {
     "name": "PRECISION CAMSHAFTS LIMITED.,",
     "address": "No D-5, D-6, D-7/1, M.I.D.C, Chincholi, Solapur - 413255, Cont No: 9168646531/32/33",
-    "city": "Solapur",
-    "state": "Maharashtra",
+    "city": "Bengaluru",
+    "state": "Karnataka",
     "pinCode": "413255"
   },
   {
@@ -110,8 +110,8 @@ const CUSTOMERS = [
   {
     "name": "SUNDRAM FASTENERS LTD., SEZ-SRI CITY",
     "address": "No 1855, Peepul Boulevard, Sez Unit - Sri City, Chittoor - 517646",
-    "city": "Chittoor",
-    "state": "Andhra Pradesh",
+    "city": "Bengaluru",
+    "state": "Karnataka",
     "pinCode": "517646"
   },
   {
@@ -922,8 +922,8 @@ const CUSTOMERS = [
   {
     "name": "VEE TEE AUTO MANUFACTURING PVT LTD.,",
     "address": "Bhiwadi Plant - RJ01 , PLOT NO A146 E , Phase 1, RIICO Industrial Area, Bhiwadi ,Alwar - 301019",
-    "city": "Alwar",
-    "state": "Rajasthan",
+    "city": "Bengaluru",
+    "state": "Karnataka",
     "pinCode": "301019"
   },
   {
@@ -1181,8 +1181,8 @@ const CUSTOMERS = [
   {
     "name": "MASS METALFORM",
     "address": "G-1005 , Phase -IIIrd , RIICO Industrial Area, Bhiwadi , Dist : Alwar - 301019",
-    "city": "Alwar",
-    "state": "Rajasthan",
+    "city": "Bengaluru",
+    "state": "Karnataka",
     "pinCode": "301019"
   },
   {
@@ -1202,8 +1202,8 @@ const CUSTOMERS = [
   {
     "name": "MASS WIRE & STEELS PRIVATE LIMITED.,",
     "address": "SP-149 ,D , E & F , RIICO Industrial Area, Phase -1, Bhiwadi , Alwar - 301019",
-    "city": "Alwar",
-    "state": "Rajasthan",
+    "city": "Bengaluru",
+    "state": "Karnataka",
     "pinCode": "301019"
   },
   {
@@ -1412,8 +1412,8 @@ const CUSTOMERS = [
   {
     "name": "OMNI AUTO LIMITED",
     "address": "No 350 North, Belerica Road, Post Box No 1, Sri City DTZ, Varadaiahpalem -, Chittor District - 517588",
-    "city": "Chittoor",
-    "state": "Andhra Pradesh",
+    "city": "Bengaluru",
+    "state": "Karnataka",
     "pinCode": "517588"
   },
   {
@@ -1440,8 +1440,8 @@ const CUSTOMERS = [
   {
     "name": "CHEMIN SPRING INDIA PVT LTD.,",
     "address": "Plot No - 30A , Sector 8B , IIE Sidcul , Haridwar  - 249403",
-    "city": "Haridwar",
-    "state": "Uttarakhand",
+    "city": "Bengaluru",
+    "state": "Karnataka",
     "pinCode": "249403"
   },
   {
@@ -1580,8 +1580,8 @@ const CUSTOMERS = [
   {
     "name": "MICRO TURNERS HARIDWAR",
     "address": "MT07 Haridwar, Plot No 7, 8 & 8A IP-4, Begampur , Haridwar - 249402",
-    "city": "Haridwar",
-    "state": "Uttarakhand",
+    "city": "Bengaluru",
+    "state": "Karnataka",
     "pinCode": "249402"
   },
   {
@@ -1766,50 +1766,58 @@ mongoose.connect(process.env.MONGODB_URI).then(async () => {
   const db = mongoose.connection.db;
 
   const admin = await db.collection('users').findOne({ role: 'admin' });
-  if (!admin) { console.error('❌ No admin found. Run npm run seed first.'); process.exit(1); }
+  if (!admin) { console.error('❌ No admin found. Run: npm run seed'); process.exit(1); }
   console.log('👤 Admin:', admin.email);
 
   const now = new Date();
-  let inserted = 0, skipped = 0, failed = 0;
+  let upserted = 0, failed = 0;
 
   for (const cust of CUSTOMERS) {
     try {
-      const exists = await db.collection('customers').findOne({ name: cust.name, isDeleted: { $ne: true } });
-      if (exists) { skipped++; continue; }
-
-      await db.collection('customers').insertOne({
-        name:        cust.name,
-        email:       '',
-        phone:       '',
-        segment:     { category: 'Industry', value: 'Manufacturing' },
-        unit:        'Unit 1',
-        competition: 'New Account',
-        address:     { street: cust.address, city: cust.city, state: cust.state, pinCode: cust.pinCode },
-        contacts:        [],
-        productInterests:[],
-        competitors:     [],
-        status:      'active',
-        isPending:   false,
-        submittedBy: admin._id,
-        approvedBy:  admin._id,
-        approvedAt:  now,
-        assignedTo:  admin._id,
-        isDeleted:   false,
-        createdAt:   now,
-        updatedAt:   now,
-      });
-      inserted++;
+      // UPSERT: update if exists (restore isDeleted=false), insert if not
+      const result = await db.collection('customers').updateOne(
+        { name: cust.name },
+        {
+          $set: {
+            name:        cust.name,
+            email:       '',
+            phone:       '',
+            segment:     { category: 'Industry', value: 'Manufacturing' },
+            unit:        'Unit 1',
+            competition: 'New Account',
+            address:     { street: cust.address, city: cust.city, state: cust.state, pinCode: cust.pinCode },
+            contacts:         [],
+            productInterests: [],
+            competitors:      [],
+            status:      'active',
+            isPending:   false,
+            submittedBy: admin._id,
+            approvedBy:  admin._id,
+            approvedAt:  now,
+            assignedTo:  admin._id,
+            isDeleted:   false,
+            updatedAt:   now,
+          },
+          $setOnInsert: { createdAt: now },
+        },
+        { upsert: true }
+      );
+      upserted++;
+      if (upserted % 50 === 0) console.log('Progress:', upserted, '/ 251...');
     } catch(e) {
-      console.error('Failed:', cust.name, e.message);
+      console.error('❌ Failed:', cust.name, '-', e.message);
       failed++;
     }
   }
 
-  console.log('\n════════════════════════════════');
-  console.log('✅ Inserted:', inserted);
-  console.log('⏭  Skipped (exist):', skipped);
+  // Verify
+  const total = await db.collection('customers').countDocuments({ isDeleted: { $ne: true } });
+
+  console.log('\n════════════════════════════════════');
+  console.log('✅ Upserted:', upserted, 'customers');
   console.log('❌ Failed:', failed);
-  console.log('════════════════════════════════');
+  console.log('📊 Total active in DB:', total);
+  console.log('════════════════════════════════════');
   await mongoose.disconnect();
   process.exit(0);
-}).catch(e => { console.error('DB connect failed:', e.message); process.exit(1); });
+}).catch(e => { console.error('❌ DB Error:', e.message); process.exit(1); });
