@@ -1,7 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-// ── Inline customer data (251 records from Excel) ──
 const CUSTOMERS = [
   {
     "name": "MAINI PRECISION PRODUCTS LTD., 5A",
@@ -41,7 +40,7 @@ const CUSTOMERS = [
   {
     "name": "UB CHEMI TECHNOLOGIES",
     "address": "No 23, PSG Estate Colony, Peelamedu, Coimatore - 641 004, Cont No: 9994987611,9443636350",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "000000"
   },
@@ -55,7 +54,7 @@ const CUSTOMERS = [
   {
     "name": "HARIHAR ALLOYS (P) LTD-FORGING DIVISION",
     "address": "SF No 81/82, Vellore Village, Illupur Taluk, Viralimalai - 621316",
-    "city": "Viralimalai",
+    "city": "Vellore",
     "state": "Tamil Nadu",
     "pinCode": "621316"
   },
@@ -69,7 +68,7 @@ const CUSTOMERS = [
   {
     "name": "ALLISON TRANSMISSION INDIA PVT LTD.,",
     "address": "Plot No A-21, Sipcot Industrial Growth Center/park, Oragadam, Sriperumpudur Taluk, Kanchipuram District - 602105",
-    "city": "Kancheepuram",
+    "city": "Chennai",
     "state": "Tamil Nadu",
     "pinCode": "602105"
   },
@@ -153,7 +152,7 @@ const CUSTOMERS = [
   {
     "name": "SAMRAT FORGINGS LTD., UNIT I",
     "address": "Village Ghollu Majra,Derabassi, Dist - Mohali - 140506",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "140506"
   },
@@ -167,7 +166,7 @@ const CUSTOMERS = [
   {
     "name": "AUTO INTERNATIONAL (INDIA) PVT.LTD.,",
     "address": "G Floor, A27/2, Sipcot Industrial Growth Centre, Mathur Village, Oragadam, Sriperumbudur, Kanchipuram - 602105",
-    "city": "Kancheepuram",
+    "city": "Chennai",
     "state": "Tamil Nadu",
     "pinCode": "602105"
   },
@@ -216,8 +215,8 @@ const CUSTOMERS = [
   {
     "name": "SRI ENERGY VALVES PRIVATE LIMITED",
     "address": "SF No. 115/4A, Vadugapatty Village, Viralimalai Taluk, Pudukottai - 621316, Cont No: 9942904612",
-    "city": "Viralimalai",
-    "state": "Tamil Nadu",
+    "city": "Bengaluru",
+    "state": "Karnataka",
     "pinCode": "621316"
   },
   {
@@ -230,14 +229,14 @@ const CUSTOMERS = [
   {
     "name": "PUNCH RATNA FASTNERS PVT LTD., UNIT-III",
     "address": "7th-8th Km Stone, Jind Road, Vill & Po Titoli, Rohtak - 124001, Cont No:  09896689577",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "124001"
   },
   {
     "name": "SHIVAM AUTOTECH LTD. SATL-BANGALORE",
     "address": "Plot No 98/99, Vemagal Industrial Area, Kolar - 563102",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "563102"
   },
@@ -265,7 +264,7 @@ const CUSTOMERS = [
   {
     "name": "SAA AB ENGINEERING PVT LTD., PLANT-5",
     "address": "Sy No 295/1A, 295/1B, Thiyagarasanapalli Main Road, Shoolagiri - 635117, Krishnagiri Distict",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "635117"
   },
@@ -321,7 +320,7 @@ const CUSTOMERS = [
   {
     "name": "PUNCH RATNA FASTENERS PVT LTD., UNIT II",
     "address": "Plot No B-34 & B-15, SIPCOT Industrial Park, Oragadam, Village Eraiyur, Taluk-Sriperambudur, Kancheepuram - 602105",
-    "city": "Kancheepuram",
+    "city": "Chennai",
     "state": "Tamil Nadu",
     "pinCode": "602105"
   },
@@ -349,35 +348,35 @@ const CUSTOMERS = [
   {
     "name": "INVESTMENT & PRECISION CASTINGS LTD.,",
     "address": "Nari Road, Bhavnagar, Gujrat - 364006",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "364006"
   },
   {
     "name": "MACBROUT ENGINEERING PVT LTD,.",
     "address": "No 390/H, Survey No 120/1B, San Jose Areal, Po: Curtorim, Margao, Goa - 403 709",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "000000"
   },
   {
     "name": "INDO-MIM LIMITED., RENIGUNTA PLOT NO 46",
     "address": "(Formerly Indo-Mim Private Limited), Plot No 46, APIIC Industrial Park, Gajulamandyam, Athur Post, Tirupati, Renigunta - 517520",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "517520"
   },
   {
     "name": "INDO-MIM LIMITED., RENIGUNTA, 62B",
     "address": "(Formerly Indo-Mim Private Limited), 62B (Part 1 & 2) , APIIC Indl Park , Gajulamandyam, Tirupati, Renigunta - 517520",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "517520"
   },
   {
     "name": "HIGHWAY ROOP PRECISION TECHNOLIGIES LTD.,NUH MEWAT",
     "address": "No 19, 20, 30, 31 & 210, Rozkameo Indl Area, Nuh Mewat - 122107",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "122107"
   },
@@ -398,7 +397,7 @@ const CUSTOMERS = [
   {
     "name": "HITEN FASTENERS PRIVATE LIMITED - VIII",
     "address": "Plot No 117, 118,121,122, KIADB Industrial Area, Narsapur, Gadag - 582103",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "582103"
   },
@@ -412,14 +411,14 @@ const CUSTOMERS = [
   {
     "name": "HL MANDO ANAND INDIA PVT.LTD.,",
     "address": "No S1A/S5, SIPCOT Industrial Park, Vengadu, Pillaipakkam Post, Sriperambudur - 602105",
-    "city": "Tamil Nadu",
-    "state": "Tamil Nadu",
+    "city": "Bengaluru",
+    "state": "Karnataka",
     "pinCode": "602105"
   },
   {
     "name": "BRIGHT TECH INDSTRIALS INDIA PVT LTD., HOSAPETE",
     "address": "1st Floor, 6th Ward, Near Raghavendra Swamy Temple, Mariyammanahalli, Hosapete - 583222",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "583222"
   },
@@ -468,7 +467,7 @@ const CUSTOMERS = [
   {
     "name": "GKN DRIVELINE (INDIA) LIMITED-ORA",
     "address": "Plot No B-13, SIPCOT Industrial Park, Oragadam, Sriperumbadur, Kancheepuram - 602105",
-    "city": "Kancheepuram",
+    "city": "Chennai",
     "state": "Tamil Nadu",
     "pinCode": "602105"
   },
@@ -482,7 +481,7 @@ const CUSTOMERS = [
   {
     "name": "NPR AUTO PARTS MANUFACTURING INDIA PVT LTD.,",
     "address": "Plot No 6-O to 6-P , Malur Industrail Area, 4th Phase, Hulimangala Hosakotevillage, Lakkur Hobli, Malur Taluk, Kolar - 563160",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "563160"
   },
@@ -559,14 +558,14 @@ const CUSTOMERS = [
   {
     "name": "PUNCH RATNA FASTENERS PVT LTD., UNIT- I",
     "address": "# 7.4 KM Stone, Jind Road, VPO - Titoli, Rohtak - 124001",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "124001"
   },
   {
     "name": "BENAKA PERFECT SERVICES",
     "address": "25-B , Nidige Industrial Area, Machenahalli, Shivamogga - 577229",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "577229"
   },
@@ -587,7 +586,7 @@ const CUSTOMERS = [
   {
     "name": "RR PRECISION ( INDIA) PVT LTD",
     "address": "Plot No 25/1, Tamaka Industrial Estate, Kolar - 563101",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "563101"
   },
@@ -615,7 +614,7 @@ const CUSTOMERS = [
   {
     "name": "ASHTA LINERS PVT LTD.,",
     "address": "RS No 334/ 2 B, Sangli Islampur Road, Ashta Tal. Walwa Dist, Sangli - 416301",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "416301"
   },
@@ -643,7 +642,7 @@ const CUSTOMERS = [
   {
     "name": "PEEKAY STEEL CASTINGS PRIVATE LIMITED.,",
     "address": "Plot No 40, APIIC Industrial Park, Gollapuram, Sathya Sai ( Dist), Hindupur - 515211",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "515211"
   },
@@ -692,7 +691,7 @@ const CUSTOMERS = [
   {
     "name": "BRIGHT TECH INDUSTRIALS INDIA PVT LTD., TADPATRI",
     "address": "Flat No 3, 1143 3GVP Colony, Tadipatri Town & Mandal, Tadpatri, Anantapuram - 515411",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "515411"
   },
@@ -748,7 +747,7 @@ const CUSTOMERS = [
   {
     "name": "HIGHWAY ROOP PRECISION TECHNOLIGIES LTD.,NUH MEWAT",
     "address": "( Formerly Known As Roop Automotives Ltd), No 19,20,22,28,30,31,209 & 210 , Rozkameo Indl Area, Nuh Mewat - 122107",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "122107"
   },
@@ -811,7 +810,7 @@ const CUSTOMERS = [
   {
     "name": "HARIHAR ALLOYS (P) LTD",
     "address": "SF No 80/61, 80/62, 80/68, Vellore Road, Illupur Taluk, Viralimalai, Pudukottai - 621316",
-    "city": "Viralimalai",
+    "city": "Vellore",
     "state": "Tamil Nadu",
     "pinCode": "621316"
   },
@@ -860,7 +859,7 @@ const CUSTOMERS = [
   {
     "name": "BRS PRECISION MANUFACTURING PVT LTD.,",
     "address": "1-A, 1st Phase, Survey No 70, Harohalli Industrial Area, Kanakapura Taluk, Ramangar District - 562112",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "562112"
   },
@@ -881,7 +880,7 @@ const CUSTOMERS = [
   {
     "name": "PRAKASH METALLIC PVT LTD.,",
     "address": "Currency Tower, Unit No 6052, 6th Floor, VIP Road, Raipur - 492001",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "492001"
   },
@@ -965,14 +964,14 @@ const CUSTOMERS = [
   {
     "name": "PASHIN FORGE PVT LTD.,",
     "address": "No 474, Manjusar G.I.D.C. Estate, Village - Manjsar, Taluka - Savli, Baroda - 391775",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "391775"
   },
   {
     "name": "MUKUND SUMI SPECIAL STEEL LTD.,",
     "address": "Kanakapura Village, Ginigera, Hosapet Road, Koppal - 583228",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "583228"
   },
@@ -1000,7 +999,7 @@ const CUSTOMERS = [
   {
     "name": "RANE ENGINE VALVE LTD., PLANT 2",
     "address": "Plot No 68-77, Industrial Estate, Medchal - 501401",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "501401"
   },
@@ -1035,14 +1034,14 @@ const CUSTOMERS = [
   {
     "name": "VARSHA TECHNOLOGIES",
     "address": "No 125/6-9, Eliyambedu Village, Ponneri Taluk, Thiruvallur District - 601204, Mob No: 984108766",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "601204"
   },
   {
     "name": "WOOSU AUTOMOTIVE INDIA PVT LTD.,",
     "address": "No 130, Narasingapuram Village, Thiruvallur Taluk & District, Thiruvallur - 631402",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "631402"
   },
@@ -1084,14 +1083,14 @@ const CUSTOMERS = [
   {
     "name": "SIMJEN NDT SOLUTIONS LLP",
     "address": "Bilekalli 5 , UB Halli , Chikkamagaluru - 577168",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "577168"
   },
   {
     "name": "GRAPHITE INDIA LIMITED",
     "address": "(Powmex Steels Division ), At-Turla, P.O Jagua, P.S.: Titilagarh, Dist Bolangir - 767066",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "767066"
   },
@@ -1105,8 +1104,8 @@ const CUSTOMERS = [
   {
     "name": "NIDEC INDIA PRECISION TOOLS LTD.,",
     "address": "(Formerly Mitsubishi Heavy Industries India, -Precision Tools Ltd), No 2, SIPCOT Industrial Complex, Renipet - 632403",
-    "city": "Tamil Nadu",
-    "state": "Tamil Nadu",
+    "city": "Bengaluru",
+    "state": "Karnataka",
     "pinCode": "632403"
   },
   {
@@ -1168,7 +1167,7 @@ const CUSTOMERS = [
   {
     "name": "SANTAKRUPA METALS",
     "address": "No 305/3 , Chitra GIDC , Bhavnagar , Gujarat - 364004",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "364004"
   },
@@ -1196,7 +1195,7 @@ const CUSTOMERS = [
   {
     "name": "ACCURATE BEARING COMPONENTS",
     "address": "# 1 (A), KIADB Industrial Area, Doddaballapur, Bengalore - 561203",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "561203"
   },
@@ -1217,7 +1216,7 @@ const CUSTOMERS = [
   {
     "name": "MALNAD ALLOY CASTINGS PVT LTD.,",
     "address": "36-A , Shimogga - Bhadravathi Indl Area, Machenahalli, Nidige Post, Shimogga - 577222",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "577222"
   },
@@ -1238,21 +1237,21 @@ const CUSTOMERS = [
   {
     "name": "BRIGHT INDIA TOOLS",
     "address": "Shop No F10, Basaveshwar Indl Complex, Plot No 02, Sector - 10, Visheshwar Chowk, PCNTDA MIDC Road, Bhosari - 411026",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "411026"
   },
   {
     "name": "RYDON INDUSTRIES PVT LTD.,",
     "address": "No 2/92A-6, Thenampalayam, Annur Road, Arasur Post, Coimbaotre - 641407",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "641407"
   },
   {
     "name": "ROOP AUTO FORGE PVT LTD.,",
     "address": "Plot No 38 , Huda Industrial Area, Dharuhera (Rewari) - 123106",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "123106"
   },
@@ -1280,7 +1279,7 @@ const CUSTOMERS = [
   {
     "name": "C.C.S. ADVANCE TECH. CO., LTD.",
     "address": "54/2, M.9 Soi Kantana, Bangai-Bangkoolad Rd., Bangmuang , Bangyai, Nothaburi - 11140 Thailand, Tel No: 66(0) 2443-6996, 66(0) 2443-6969",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "000000"
   },
@@ -1357,7 +1356,7 @@ const CUSTOMERS = [
   {
     "name": "SUNFLAG IRON & STEEL CO.LTD",
     "address": "Warthi-Bhandara Road, Dist - Bhandara ( M.S.) - 441905",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "441905"
   },
@@ -1378,7 +1377,7 @@ const CUSTOMERS = [
   {
     "name": "SATELITE FORGING PVT LTD - UNIT II",
     "address": "NH-8, Village Begampur , Khatola PO , Khandsa , Gurugram - 122002",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "122002"
   },
@@ -1462,7 +1461,7 @@ const CUSTOMERS = [
   {
     "name": "SPRING DYNAMICS PVT LTD.,",
     "address": "Plot No 304A, PHASE II, KIADB Industrial Area, Kanakapura Taluk, Ramanagara - 562112",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "562112"
   },
@@ -1476,7 +1475,7 @@ const CUSTOMERS = [
   {
     "name": "MICRO TURNERS., NALAGARH",
     "address": "MT06 Nalagarh, Village Harraipur, Po- Kharoni, Tehsil- Nalagarh, Dist - Solan - 174101",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "174101"
   },
@@ -1518,7 +1517,7 @@ const CUSTOMERS = [
   {
     "name": "SHARP ENGINEERS",
     "address": "E-185, Phase -7 ,Industrial Area, Mohali, Mohali - 160059",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "160059"
   },
@@ -1560,7 +1559,7 @@ const CUSTOMERS = [
   {
     "name": "MOD FORGE PRIVATE LIMITED.,",
     "address": "No 52, Eliambedu Village, Ponneri - 601204",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "601204"
   },
@@ -1644,14 +1643,14 @@ const CUSTOMERS = [
   {
     "name": "SAMRAT FORGINGS LTD.,  UNIT-II",
     "address": "Village & P O Bhankarpur , Mohali - 140201",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "140201"
   },
   {
     "name": "SOMIC INDIA PRIVATE LIMITED (GUJRAT)",
     "address": "Survey No 212 & 219, Old Survey No 105/1 & 109, Village Navyani , Taluka - Dasada, Surendranagar - 382750",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "382750"
   },
@@ -1686,21 +1685,21 @@ const CUSTOMERS = [
   {
     "name": "TECHNICAL PETROLEUM SOLUTIONS LLC",
     "address": "Office # 91, Building # 52, Way # 319, PO 1073, PC 133, Ghala, Muscat , Sultanate of Oman, Cont No: 96897757401",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "000000"
   },
   {
     "name": "TD POWER SYSTEMS LTD., UNIT-I",
     "address": "Plot No 27, 28 & 29 , KIADB Indl Area, Dabaspet, Bangaore Rural - 562111",
-    "city": "Unknown",
+    "city": "Bengaluru",
     "state": "Karnataka",
     "pinCode": "562111"
   },
   {
     "name": "LIND JENSEN MACHINERY PRIVATE LIMITED",
     "address": "Indospace Industrial Park Oragadam II Ihina -B500A, No. 165, Venbakkam Village, Panrutty Post, Walajabad Road,Oragadam, Kancheepuram - 631604",
-    "city": "Kancheepuram",
+    "city": "Chennai",
     "state": "Tamil Nadu",
     "pinCode": "631604"
   },
@@ -1735,8 +1734,8 @@ const CUSTOMERS = [
   {
     "name": "TECHNICAL PETROLEUM SOLUTIONS LLC ., UAE",
     "address": "Madinat Zayed, Madinat Zayed East 16 , Abu Dhabi , United Arab Emirates",
-    "city": "Unknown",
-    "state": "Karnataka",
+    "city": "Abu Dhabi",
+    "state": "UAE",
     "pinCode": "000000"
   },
   {
@@ -1762,64 +1761,55 @@ const CUSTOMERS = [
   }
 ];
 
-const run = async () => {
-  await mongoose.connect(process.env.MONGODB_URI);
-  console.log('✅ Connected to:', mongoose.connection.name);
-
+mongoose.connect(process.env.MONGODB_URI).then(async () => {
+  console.log('✅ Connected:', mongoose.connection.name);
   const db = mongoose.connection.db;
 
-  // Find admin user to use as submittedBy / approvedBy
   const admin = await db.collection('users').findOne({ role: 'admin' });
-  if (!admin) {
-    console.error('❌ No admin user found. Run npm run seed first.');
-    process.exit(1);
-  }
-  console.log('👤 Using admin:', admin.email);
+  if (!admin) { console.error('❌ No admin found. Run npm run seed first.'); process.exit(1); }
+  console.log('👤 Admin:', admin.email);
 
   const now = new Date();
-  let inserted = 0, skipped = 0;
+  let inserted = 0, skipped = 0, failed = 0;
 
   for (const cust of CUSTOMERS) {
-    // Skip if already exists (by name)
-    const exists = await db.collection('customers').findOne({
-      name: cust.name
-    });
-    if (exists) { skipped++; continue; }
+    try {
+      const exists = await db.collection('customers').findOne({ name: cust.name, isDeleted: { $ne: true } });
+      if (exists) { skipped++; continue; }
 
-    await db.collection('customers').insertOne({
-      name: cust.name,
-      email: '',
-      phone: '',
-      segment: { category: 'Industry', value: 'Manufacturing' },
-      unit: 'Unit 1',
-      competition: 'New Account',
-      address: {
-        street: cust.address,
-        city: cust.city || '',
-        state: cust.state || 'Karnataka',
-        pinCode: cust.pinCode || '000000',
-      },
-      contacts: [],
-      productInterests: [],
-      competitors: [],
-      status: 'active',
-      isPending: false,
-      submittedBy: admin._id,
-      approvedBy: admin._id,
-      approvedAt: now,
-      assignedTo: admin._id,
-      isDeleted: false,
-      createdAt: now,
-      updatedAt: now,
-    });
-    inserted++;
+      await db.collection('customers').insertOne({
+        name:        cust.name,
+        email:       '',
+        phone:       '',
+        segment:     { category: 'Industry', value: 'Manufacturing' },
+        unit:        'Unit 1',
+        competition: 'New Account',
+        address:     { street: cust.address, city: cust.city, state: cust.state, pinCode: cust.pinCode },
+        contacts:        [],
+        productInterests:[],
+        competitors:     [],
+        status:      'active',
+        isPending:   false,
+        submittedBy: admin._id,
+        approvedBy:  admin._id,
+        approvedAt:  now,
+        assignedTo:  admin._id,
+        isDeleted:   false,
+        createdAt:   now,
+        updatedAt:   now,
+      });
+      inserted++;
+    } catch(e) {
+      console.error('Failed:', cust.name, e.message);
+      failed++;
+    }
   }
 
-  console.log(`✅ Inserted: ${inserted} customers`);
-  console.log(`⏭️  Skipped (already exist): ${skipped}`);
-  console.log('Done!');
+  console.log('\n════════════════════════════════');
+  console.log('✅ Inserted:', inserted);
+  console.log('⏭  Skipped (exist):', skipped);
+  console.log('❌ Failed:', failed);
+  console.log('════════════════════════════════');
   await mongoose.disconnect();
   process.exit(0);
-};
-
-run().catch(e => { console.error('❌', e.message); process.exit(1); });
+}).catch(e => { console.error('DB connect failed:', e.message); process.exit(1); });
